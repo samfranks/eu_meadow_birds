@@ -84,7 +84,7 @@ mgmtvars <- c("AE","basic.AE","higher.AE","reserve","designation","mowing","graz
 
 d0.3 <- d0.2
 
-# recode manamgement vars as characters to be able to use string substitution find and replace (create generic applied, restricted, removed levels for all management types)
+# recode manamgement vars as characters to be able to use string substitution find and replace to create generic applied, restricted, removed levels for all management types
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, as.character)
 
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, function(x) {
@@ -118,14 +118,54 @@ for (i in 1:length(mgmtvars)) {
 
 # change management vars back to factors for analysis
 d0.4 <- d0.3
-
 # d0.4[,mgmtvars] <- apply(d0.4[,mgmtvars], 2, function(x) as.factor(x)) # this line won't convert back to factors for some reason!
 for (i in 1:length(mgmtvars)) {
   d0.4[,mgmtvars[i]] <- as.factor(d0.4[,mgmtvars[i]])
 }
 summary(d0.4)
 
+### Add some additional grouping variables and success variable
+
+# success variable defined as 1 = significant positive effect, 0 = neutral or negative effect
+d0.4$success <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, 0) # success variable (defin)
+
+# group fertilizer and pesticides into single variable
+d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied", 
+                        "applied",
+                        ifelse(d0.4$fertilizer=="restricted" | d0.4$pesticide=="restricted", 
+                               "restricted", 
+                               ifelse(d0.4$fertilizer=="removed" | d0.4$pesticide=="removed", 
+                                      "removed", "none"))
+                        )
+# group groundwater.drainage and surface.water into single variable meaning 'more water'
+# restricted/removed groundwater drainage equates to more water (same as applying surface water)
+# combinations of drainage/surface water in dataset
+unique(d0.4[,c("groundwater.drainage","surface.water")])
+d0.4$water <- ifelse(d0.4$groundwater.drainage=="restricted" | d0.4$groundwater.drainage=="removed" & d0.4$surface.water=="applied", "applied", ifelse(d0.4$groundwater.drainage=="restricted" | d0.4$groundwater.drainage=="removed", "applied", ifelse(d0.4$surface.water=="applied", "applied", ifelse(d0.4$groundwater.drainage=="applied","restricted","none"))))
+
+# group nest protection (predation) with predator control (more sensible than grouping it with nest protection for agriculture given predation measures are more likely to go together)
+unique(d0.4[,c("nest.protect.ag","nest.protect.predation","predator.control")])
+d0.4$predation.reduction <- ifelse(d0.4$nest.protect.predation=="applied" | d0.4$predator.control=="applied", "applied", ifelse(d0.4$predator.control=="restricted", "restricted", ifelse(d0.4$predator.control=="removed", "removed","none")))
+
+# group reserves and site designations
+d0.4$reserve.desig <- ifelse(d0.4$reserve=="applied" | d0.4$designation=="applied", "applied", "none")
+
+# create a AE-level variable (with basic and higher as levels) for analysis 1a
+# if no info was provided on type of AES, then assume it was basic rather than higher-level or targetted
+d0.4$AE.level <- ifelse(d0.4$higher.AE=="applied", "higher", ifelse(d0.4$AE=="none", "none", "basic"))
+
+# calculate study duration variable
+d0.4$study.length <- d0.4$end.year - d0.4$start.year + 1
+
+#------------- Definitive dataset --------------
+
+# final dataset for analysis 
 d1 <- d0.4
+
+# new set of management variables
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect.ag","predation.reduction","water")
+
+
 
 #=================================  SUMMARY STATISTICS  ===============================
 
@@ -184,6 +224,80 @@ text(x, par("usr")[3]-0.02, srt = 45, adj=1, xpd = TRUE, labels = c("abundance",
 title(xlab="Study metric", font=2, cex.lab=1.2, line=4.5)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
 text(x, metricsum.prop+0.02, metricsum) # sample sizes for each metric
+
+dev.off()
+
+#---------- Proportion of studies examining the effect of an intervention type ----------
+
+### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
+# create blank objects
+intervensum <- numeric()
+intervensum.prop <- numeric()
+
+# mgmtvars to evluate, minus AE.level
+eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% "AE.level")]
+
+for (i in 1:length(eval.mgmtvars)) {
+  
+  # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
+  x <- unique(d1[,c("reference",eval.mgmtvars[i])]) # unique references and levels of the intervention
+  y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
+  intervensum[i] <- nrow(y) # the number of studies that evaluated the intervention
+  intervensum.prop[i] <- intervensum[i]/62
+  
+}
+
+names(intervensum) <- eval.mgmtvars
+names(intervensum.prop) <- eval.mgmtvars
+
+png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
+text(x, par("usr")[3]-0.02, srt = 45, adj=1, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
+title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
+title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
+text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
+
+dev.off()
+
+#---------- Proportion of studies examining the effect of an intervention type, by species ----------
+
+### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
+# create blank objects
+intervensum <- list()
+intervensum.prop <- list()
+
+# mgmtvars to evluate, minus AE.level
+eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% "AE.level")]
+
+for (i in 1:length(eval.mgmtvars)) {
+  
+  # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
+  x <- unique(d1[,c("reference","species",eval.mgmtvars[i])]) # unique references and levels of the intervention
+  y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
+  intervensum[[i]] <- table(y$species)
+}
+
+intervensum.all <- do.call(cbind, intervensum)
+colnames(intervensum.all) <- eval.mgmtvars
+
+intervensum.prop.all <- intervensum.all/62
+
+# creates grey-scale colour vector for plotting, but randomly shuffled so darks don't end up next to each other
+set.seed(3)
+# colourvec <- sample(grey(seq(from=0,to=1,length.out = 8)), 8)
+colourvec <- grey(seq(from=1,to=0,length.out = 8))
+
+png(paste(outputwd, "summary_proportion of studies by intervention by species.png", sep="/"), res=300, height=12, width=20, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(intervensum.prop.all, beside=TRUE, las=1, col=colourvec, ylim=c(0,0.4), xaxt="n")
+text(apply(x,2,mean), par("usr")[3]-0.02, srt = 0, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
+title(xlab="Management intervention", font=2, cex.lab=1.2, line=3)
+title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
+legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1, bty="n")
+# text(x, intervensum.prop.all+0.02, intervensum.all) # sample sizes for each intervention type
 
 dev.off()
 
