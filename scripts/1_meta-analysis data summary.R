@@ -88,11 +88,11 @@ d0.3 <- d0.2
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, as.character)
 
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, function(x) {
-  gsub("applied site scale", "applied", x, fixed=FALSE)
+  gsub("applied site scale", "applied", x)
 })
 
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, function(x) {
-    gsub("applied landscape scale", "applied", x, fixed=FALSE)
+    gsub("applied landscape scale", "applied", x)
   })
 
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, function(x) {
@@ -116,18 +116,27 @@ for (i in 1:length(mgmtvars)) {
   d0.3[d0.3[,mgmtvars[i]]=="",mgmtvars[i]] <- "none"
 }
 
-# change management vars back to factors for analysis
-d0.4 <- d0.3
-# d0.4[,mgmtvars] <- apply(d0.4[,mgmtvars], 2, function(x) as.factor(x)) # this line won't convert back to factors for some reason!
-for (i in 1:length(mgmtvars)) {
-  d0.4[,mgmtvars[i]] <- as.factor(d0.4[,mgmtvars[i]])
-}
-summary(d0.4)
+# recode sample size as small, medium, large
+d0.3$sample.size <- ifelse(d0.3$sample.size=="small (< 30)", "small", ifelse(d0.3$sample.size=="medium (30-100)", "medium", "large"))
 
-### Add some additional grouping variables and success variable
+
+
+# redefine dataset
+d0.4 <- d0.3
+
+# # change management vars back to factors for analysis
+# # d0.4[,mgmtvars] <- apply(d0.4[,mgmtvars], 2, function(x) as.factor(x)) # this line won't convert back to factors for some reason!
+# for (i in 1:length(mgmtvars)) {
+#   d0.4[,mgmtvars[i]] <- as.factor(d0.4[,mgmtvars[i]])
+# }
+# summary(d0.4)
+
+### Add some additional grouping variables and the success variable
 
 # success variable defined as 1 = significant positive effect, 0 = neutral or negative effect
-d0.4$success <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, 0) # success variable (defin)
+d0.4$success <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, 0) # success variable
+
+
 
 # group fertilizer and pesticides into single variable
 d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied", 
@@ -143,9 +152,13 @@ d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied",
 unique(d0.4[,c("groundwater.drainage","surface.water")])
 d0.4$water <- ifelse(d0.4$groundwater.drainage=="restricted" | d0.4$groundwater.drainage=="removed" & d0.4$surface.water=="applied", "applied", ifelse(d0.4$groundwater.drainage=="restricted" | d0.4$groundwater.drainage=="removed", "applied", ifelse(d0.4$surface.water=="applied", "applied", ifelse(d0.4$groundwater.drainage=="applied","restricted","none"))))
 
-# group nest protection (predation) with predator control (more sensible than grouping it with nest protection for agriculture given predation measures are more likely to go together)
-unique(d0.4[,c("nest.protect.ag","nest.protect.predation","predator.control")])
-d0.4$predation.reduction <- ifelse(d0.4$nest.protect.predation=="applied" | d0.4$predator.control=="applied", "applied", ifelse(d0.4$predator.control=="restricted", "restricted", ifelse(d0.4$predator.control=="removed", "removed","none")))
+# group nest protection (predation and agricultural) variables together
+unique(d0.4[,c("nest.protect.ag","nest.protect.predation")])
+d0.4$nest.protect <- ifelse(d0.4$nest.protect.predation=="applied" | d0.4$nest.protect.ag=="applied", "applied","none")
+
+# # group nest protection (predation) with predator control (more sensible than grouping it with nest protection for agriculture given predation measures are more likely to go together)
+# unique(d0.4[,c("nest.protect.ag","nest.protect.predation","predator.control")])
+# d0.4$predation.reduction <- ifelse(d0.4$nest.protect.predation=="applied" | d0.4$predator.control=="applied", "applied", ifelse(d0.4$predator.control=="restricted", "restricted", ifelse(d0.4$predator.control=="removed", "removed","none")))
 
 # group reserves and site designations
 d0.4$reserve.desig <- ifelse(d0.4$reserve=="applied" | d0.4$designation=="applied", "applied", "none")
@@ -157,14 +170,28 @@ d0.4$AE.level <- ifelse(d0.4$higher.AE=="applied", "higher", ifelse(d0.4$AE=="no
 # calculate study duration variable
 d0.4$study.length <- d0.4$end.year - d0.4$start.year + 1
 
+
+
 #------------- Definitive dataset --------------
 
 # final dataset for analysis 
 d1 <- d0.4
 
 # new set of management variables
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect.ag","predation.reduction","water")
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
+# convert removed or restricted levels of the management vars (all but AE.level) to a single level of removed/restricted
+# use find and replace with gsub
+d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
+  gsub("removed", "reduced", x)
+})
+
+d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
+  gsub("restricted", "reduced", x)
+})
+
+### Save definitive dataset
+saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset.rds", sep="/"))
 
 
 #=================================  SUMMARY STATISTICS  ===============================
@@ -181,7 +208,7 @@ png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), re
 
 par(mar=c(6,5,2,1))
 x <- barplot(countrysum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 45, adj=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
 title(xlab="Country", font=2, cex.lab=1.2, line=4.5)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
 text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
@@ -198,7 +225,7 @@ png(paste(outputwd, "summary_proportion of studies by species.png", sep="/"), re
 
 par(mar=c(6,5,2,1))
 x <- barplot(speciessum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 45, adj=1, xpd = TRUE, labels = c( "black-tailed \n godwit",names(speciessum.prop)[-which(names(speciessum.prop) %in% "black-tailed godwit")]))
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c( "black-tailed \n godwit",names(speciessum.prop)[-which(names(speciessum.prop) %in% "black-tailed godwit")]))
 title(xlab="Species", font=2, cex.lab=1.2, line=4.5)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
 text(x, speciessum.prop+0.02, speciessum) # sample sizes for each species
@@ -220,7 +247,7 @@ png(paste(outputwd, "summary_proportion of studies by metric.png", sep="/"), res
 
 par(mar=c(6,5,2,1))
 x <- barplot(metricsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 45, adj=1, xpd = TRUE, labels = c("abundance","abundance \n change","occupancy","occupancy \n change","productivity \n (nest-level)","productivity \n (chick-level)","productivity \n (nest + chick-level)", "recruitment","adult survival"), cex=0.8)
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("abundance","abundance \n change","occupancy","occupancy \n change","productivity \n (nest-level)","productivity \n (chick-level)","productivity \n (nest + chick-level)", "recruitment","adult survival"), cex=0.8)
 title(xlab="Study metric", font=2, cex.lab=1.2, line=4.5)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
 text(x, metricsum.prop+0.02, metricsum) # sample sizes for each metric
@@ -254,7 +281,7 @@ png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"
 
 par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 45, adj=1, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
 text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
@@ -296,11 +323,119 @@ x <- barplot(intervensum.prop.all, beside=TRUE, las=1, col=colourvec, ylim=c(0,0
 text(apply(x,2,mean), par("usr")[3]-0.02, srt = 0, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=3)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
-legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1, bty="n")
+legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1, pt.cex=1.5, bty="n")
 # text(x, intervensum.prop.all+0.02, intervensum.all) # sample sizes for each intervention type
 
 dev.off()
 
+#---------- Proportion of successful interventions by intervention type, on any metric ----------
+
+####################   AES and Reserves   ####################
+
+# proportion of time AES or reserves/designation was successful, on any metric and across all species
+# total N is the number of times the effectiveness of an AES type or reserves were evaluated, for any metric, for any species (i.e. not including cases = 'none')
+
+### AES all kinds ###
+sub <- subset(d1, AE!="none")
+success <- table(sub$success, sub$AE)
+success.prop <- prop.table(success, 2) # calculates proportion of 0/1 for each of basic AES applied and higher AES applied (across columns) e.g. out of 125 cases of the effectiveness of basic AES being evaluated, 94 times it did not have a successful outcome and 31 times it did have a successful outcome
+
+AES.prop <- success.prop
+AES.n <- success
+
+### AES level ###
+sub <- subset(d1, AE.level!="none")
+success <- table(sub$success, sub$AE.level)
+success.prop <- prop.table(success, 2) # calculates proportion of 0/1 for each of basic AES applied and higher AES applied (across columns) e.g. out of 125 cases of the effectiveness of basic AES being evaluated, 94 times it did not have a successful outcome and 31 times it did have a successful outcome
+
+AES.level.prop <- success.prop
+AES.level.n <- success
+
+### Reserves ###
+sub <- subset(d1, reserve!="none")
+success <- table(sub$success, sub$reserve)
+success.prop <- prop.table(success, 2)
+
+reserve.prop <- success.prop
+reserve.n <- success
+
+### both AES and reserves ###
+success.prop <- cbind(AES.prop, AES.level.prop,reserve.prop)
+success <- cbind(AES.n,AES.level.n,reserve.n)
+
+colourvec <- grey(seq(from=1,to=0,length.out = 2))
+
+png(paste(outputwd, "summary_success of AES and reserves.png", sep="/"), res=300, height=12, width=20, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(success.prop, beside=TRUE, las=1, col=colourvec, ylim=c(0,1), xaxt="n")
+text(apply(x,2,mean), par("usr")[3]-0.02, srt = 0, xpd = TRUE, labels = c("AES","basic AES","higher-level AES","nature reserve/designation"))
+title(xlab="Management intervention", font=2, cex.lab=1.2, line=3)
+title(ylab="Proportion of occasions \n where management was applied", font=2, cex.lab=1.2, line=2.5)
+legend("topright",legend=c("not successful","successful"), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1.2, pt.cex=1.5, bty="n")
+text(x, success.prop+0.02, success) # sample sizes for number of cases
+
+dev.off()
+
+
+####################   Other management interventions   ####################
+
+### Mowing ###
+sub <- subset(d1, mowing!="none")
+success <- table(sub$success, sub$mowing)
+success.prop <- prop.table(success, 2)
+(mow.prop <- success.prop)
+(mow.n <- success)
+
+### Grazing ###
+sub <- subset(d1, grazing!="none")
+success <- table(sub$success, sub$grazing)
+success.prop <- prop.table(success, 2)
+(graze.prop <- success.prop)
+(graze.n <- success)
+
+### Fertilizer/pesticides ###
+sub <- subset(d1, fertpest!="none")
+success <- table(sub$success, sub$fertpest)
+success.prop <- prop.table(success, 2)
+(fertpest.prop <- success.prop)
+(fertpest.n <- success)
+
+### Nest protection ###
+sub <- subset(d1, nest.protect!="none")
+success <- table(sub$success, sub$nest.protect)
+success.prop <- prop.table(success, 2)
+(nestprotect.prop <- success.prop)
+(nestprotect.n <- success)
+
+### Predator control ###
+sub <- subset(d1, predator.control!="none")
+success <- table(sub$success, sub$predator.control)
+success.prop <- prop.table(success, 2)
+(control.prop <- success.prop)
+(control.n <- success)
+
+### Water ###
+sub <- subset(d1, water!="none")
+success <- table(sub$success, sub$water)
+success.prop <- prop.table(success, 2)
+(water.prop <- success.prop)
+(water.n <- success)
+
+success.prop <- cbind(mow.prop, graze.prop, fertpest.prop, nestprotect.prop, control.prop, water.prop)
+success <- cbind(mow.n, graze.n, fertpest.n, nestprotect.n, control.n, water.n)
+
+png(paste(outputwd, "summary_success of other management types.png", sep="/"), res=300, height=12, width=25, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(success.prop, beside=TRUE, las=1, col=colourvec, ylim=c(0,1.1), xaxt="n")
+text(apply(x,2,mean), par("usr")[3]-0.03, srt = 30, adj=1, xpd = TRUE, labels = c("mowing applied", "mowing reduced","grazing applied","grazing reduced","fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","predator control \n reduced","water applied","water reduced"))
+title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
+title(ylab="Proportion of occasions \n where management was applied", font=2, cex.lab=1.2, line=2.5)
+legend("topright",legend=c("not successful","successful"), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1.2, pt.cex=1.5, bty="n")
+text(x, success.prop+0.02, success) # sample sizes for number of cases
+
+dev.off()
 
 #######################################################
 #######################################################
