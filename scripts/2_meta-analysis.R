@@ -66,23 +66,24 @@ options(digits=6)
 
 dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset.rds", sep="/"))
 
-mgmtvars2 <- mgmtvars[-which(mgmtvars %in% "AE")]
+mgmtvars <- c("AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset dataset for analysis to desired columns only
-dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","sample.size","analysis2",mgmtvars2))
-
-# recode management variables as factors instead of characters and specify the reference level
+dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
 
 
 #------------  Recode management variables as factors for analysis and make 'none' the reference level -----------------
 
-for (i in 1:length(mgmtvars2)) {
-  dat[,mgmtvars2[i]] <- as.factor(dat[,mgmtvars2[i]])
-  dat[,mgmtvars2[i]] <- relevel(dat[,mgmtvars2[i]], ref="none")
+for (i in 1:length(mgmtvars)) {
+  dat[,mgmtvars[i]] <- as.factor(dat[,mgmtvars[i]])
+  dat[,mgmtvars[i]] <- relevel(dat[,mgmtvars[i]], ref="none")
+  print(levels(dat[,mgmtvars[i]]))
 }
 
 #=================================  ANALYSIS  ===============================
 
+# 0a) success of individual management types overall
+# 0b) success of individual management types by species
 # 1a) success of AES and nature reserves
 # 1b) success of specific management interventions
 # 2a) success of AES and nature reserves by species
@@ -96,14 +97,76 @@ for (i in 1:length(mgmtvars2)) {
 # 6a) success of AES and nature reserves by habitat and species
 # 6b) success of specific management interventions by habitat and species
 
+### Nuisance explanatory variables and random effects
+# ‘nuisance explanatory variables: study duration (continuous), sample size (categorical: small, medium, large), multivariate/univariate (categorical)
+# Random effects: country, study id - habitat will be included later on
+
+#------------------------------ 0a) success of individual management types -------------------------
+
+m <- list()
+
+print(Sys.time())
+
+for (i in 1:length(mgmtvars)) {
+  
+#   mdat <- dat[dat[,mgmtvars[i]]!="none",]
+#   mdat <- droplevels(mdat)
+  
+  mdat <- dat
+  
+  modform <- as.formula(paste("success ~ ", mgmtvars[i], " + study.length + analysis2 + sample.size + (1|reference) + (1|country)", sep=""))
+  m[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  
+}
+
+print(Sys.time())
+
+
 #------------------------------ 1a) overall success of AES and nature reserves -------------------------
+m <- list()
 
-# code AE.level as factor and relevel to make 'none' the reference level
-dat$AE.level <- as.factor(dat$AE.level)
-dat$AE.level <- relevel(dat$AE.level, ref="none")
+# subset to include data where AES or reserve management was attempted
+subdat <- subset(dat, AE.level!="none" | reserve.desig!="none")
+subdat <- droplevels(subdat)
 
-m <- glmer(success ~ AE.level + reserve.desig + (1|reference) + (1|country), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+print(Sys.time())
 
+m[[1]] <- glmer(success ~ AE.level + reserve.desig + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+
+print(Sys.time())
+
+#------------------------------ 1b) success of specific management interventions -------------------------
+
+print(Sys.time())
+
+m[[2]] <- glmer(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+
+print(Sys.time())
+
+#------------------------------ 2a) success of AES and nature reserves by species -------------------------
+
+# subset dataset to remove dunline and ruff, not enough data for these species
+subdat <- subset(dat, species!="dunlin" & species!="ruff")
+subdat <- droplevels(subdat)
+
+print(Sys.time())
+
+m[[3]] <- glmer(success ~ AE.level*species + reserve.desig*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=subdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+
+print(Sys.time())
+
+
+#------------------------------ 2b) success of specific management interventions by species -------------------------
+
+# subset dataset to remove dunline and ruff, not enough data for these species
+subdat <- subset(dat, species!="dunlin" & species!="ruff")
+subdat <- droplevels(subdat)
+
+print(Sys.time())
+
+m[[3]] <- glmer(success ~ AE.level*species + reserve.desig*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=subdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+
+print(Sys.time())
 
 
 #######################################################
