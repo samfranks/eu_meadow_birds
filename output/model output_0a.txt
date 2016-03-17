@@ -1,327 +1,234 @@
 
 ########==========  0a) success of individual management types ==========########
 
-$AE.level
+$AE
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ AE.level + study.length + analysis2 + sample.size +      (1 | reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   584.2    625.9   -282.1    564.2      469 
+   280.7    287.7   -138.4    276.7      237 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.400 -0.605 -0.504  0.912  3.039 
+-1.340 -0.750 -0.422  0.774  2.607 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.530    0.728   
- country   (Intercept) 0.451    0.672   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 1.66     1.29    
+Number of obs: 239, groups:  reference, 24
 
 Fixed effects:
-                       Estimate Std. Error z value Pr(>|z|)  
-(Intercept)           -1.410531   1.050468   -1.34    0.179  
-AE.levelbasic         -0.606295   0.310481   -1.95    0.051 .
-AE.levelhigher         0.400963   0.342088    1.17    0.241  
-study.length           0.000661   0.028107    0.02    0.981  
-analysis2multivariate  1.527355   1.022252    1.49    0.135  
-analysis2univariate    0.904011   1.013593    0.89    0.372  
-sample.sizemedium     -0.554756   0.415122   -1.34    0.181  
-sample.sizesmall      -0.539893   0.469426   -1.15    0.250  
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)   -0.724      0.361      -2    0.045 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$AE.level
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ AE.level + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   275.9    286.3   -134.9    269.9      236 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.468 -0.603 -0.367  0.673  2.725 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.7      1.3     
+Number of obs: 239, groups:  reference, 24
+
+Fixed effects:
+               Estimate Std. Error z value Pr(>|z|)   
+(Intercept)      -1.256      0.418   -3.00   0.0027 **
+AE.levelhigher    1.030      0.401    2.57   0.0102 * 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) AE.lvlb AE.lvlh stdy.l anlyss2m anlyss2n smpl.szm
-AE.levelbsc -0.049                                                  
-AE.levlhghr -0.028  0.391                                           
-study.lngth -0.151 -0.047  -0.093                                   
-anlyss2mltv -0.875 -0.024  -0.008  -0.086                           
-anlyss2nvrt -0.851 -0.016   0.002  -0.070  0.920                    
-sampl.szmdm -0.316  0.093   0.021   0.153  0.117    0.088           
-smpl.szsmll -0.144  0.123   0.062   0.142 -0.006   -0.044    0.367  
+            (Intr)
+AE.levlhghr -0.485
 
 $reserve.desig
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ reserve.desig + study.length + analysis2 + sample.size +      (1 | reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   590.4    627.9   -286.2    572.4      470 
+   172.6    178.3    -84.3    168.6      126 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.511 -0.731 -0.500  0.892  2.589 
+-1.365 -0.696 -0.696  1.093  1.437 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.587    0.766   
- country   (Intercept) 0.355    0.595   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 0.391    0.625   
+Number of obs: 128, groups:  reference, 6
 
 Fixed effects:
-                       Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -1.530202   1.045283   -1.46     0.14
-reserve.desigapplied   0.162534   0.319733    0.51     0.61
-study.length          -0.000375   0.029241   -0.01     0.99
-analysis2multivariate  1.503829   1.034133    1.45     0.15
-analysis2univariate    0.842230   1.022661    0.82     0.41
-sample.sizemedium     -0.391101   0.421703   -0.93     0.35
-sample.sizesmall      -0.418032   0.472161   -0.88     0.38
-
-Correlation of Fixed Effects:
-            (Intr) rsrv.d stdy.l anlyss2m anlyss2n smpl.szm
-rsrv.dsgppl -0.009                                         
-study.lngth -0.151 -0.235                                  
-anlyss2mltv -0.878  0.027 -0.099                           
-anlyss2nvrt -0.853  0.020 -0.078  0.919                    
-sampl.szmdm -0.314  0.116  0.120  0.116    0.082           
-smpl.szsmll -0.138  0.055  0.117  0.001   -0.042    0.352  
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -0.270      0.371   -0.73     0.47
 
 $mowing
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ mowing + study.length + analysis2 + sample.size + (1 |      reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   585.3    622.9   -283.7    567.3      470 
+    76.8     81.7    -36.4     72.8       85 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.525 -0.737 -0.471  0.895  3.390 
+-0.540 -0.444 -0.331 -0.312  3.018 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.625    0.791   
- country   (Intercept) 0.000    0.000   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 0.47     0.686   
+Number of obs: 87, groups:  reference, 12
 
 Fixed effects:
-                      Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -1.5142     0.9983   -1.52    0.129  
-mowingreduced          -1.0292     0.4142   -2.48    0.013 *
-study.length            0.0184     0.0270    0.68    0.496  
-analysis2multivariate   1.2108     0.9753    1.24    0.214  
-analysis2univariate     0.5832     0.9729    0.60    0.549  
-sample.sizemedium      -0.2871     0.4022   -0.71    0.475  
-sample.sizesmall       -0.3157     0.4647   -0.68    0.497  
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   -1.748      0.398   -4.39  1.1e-05 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Correlation of Fixed Effects:
-            (Intr) mwngrd stdy.l anlyss2m anlyss2n smpl.szm
-mowingredcd -0.001                                         
-study.lngth -0.185 -0.052                                  
-anlyss2mltv -0.936 -0.056 -0.044                           
-anlyss2nvrt -0.898 -0.042 -0.011  0.913                    
-sampl.szmdm -0.350 -0.010  0.090  0.201    0.158           
-smpl.szsmll -0.133 -0.026  0.065 -0.002   -0.033    0.326  
 
 $grazing
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ grazing + study.length + analysis2 + sample.size +      (1 | reference) + (1 | country)
+Formula: success ~ grazing + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   590.5    632.2   -285.2    570.5      469 
+   118.3    126.1    -56.1    112.3       99 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.496 -0.741 -0.468  0.891  2.535 
+-0.741 -0.499 -0.443 -0.403  2.259 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.602    0.776   
- country   (Intercept) 0.349    0.591   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 0.855    0.925   
+Number of obs: 102, groups:  reference, 23
 
 Fixed effects:
-                       Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -1.337469   1.072043   -1.25     0.21
-grazingapplied        -0.473788   0.387561   -1.22     0.22
-grazingreduced        -0.532785   0.591021   -0.90     0.37
-study.length          -0.000622   0.029020   -0.02     0.98
-analysis2multivariate  1.502919   1.053442    1.43     0.15
-analysis2univariate    0.729857   1.040590    0.70     0.48
-sample.sizemedium     -0.425986   0.423516   -1.01     0.31
-sample.sizesmall      -0.461895   0.477604   -0.97     0.33
+               Estimate Std. Error z value Pr(>|z|)   
+(Intercept)      -1.099      0.395   -2.78   0.0054 **
+grazingreduced   -0.305      0.800   -0.38   0.7030   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) grzngp grzngr stdy.l anlyss2m anlyss2n smpl.szm
-grazingppld -0.145                                                
-grazingrdcd  0.010  0.083                                         
-study.lngth -0.181  0.149 -0.047                                  
-anlyss2mltv -0.869 -0.009 -0.020 -0.089                           
-anlyss2nvrt -0.852  0.067  0.023 -0.062  0.917                    
-sampl.szmdm -0.312  0.034 -0.062  0.158  0.110    0.076           
-smpl.szsmll -0.152  0.092 -0.052  0.151  0.002   -0.035    0.352  
+            (Intr)
+grazingrdcd -0.447
 
 $fertpest
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ fertpest + study.length + analysis2 + sample.size +      (1 | reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   590.6    628.1   -286.3    572.6      470 
+    39.5     42.8    -17.8     35.5       36 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.473 -0.737 -0.497  0.882  2.614 
+-0.604 -0.430 -0.170 -0.170  1.690 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.590    0.768   
- country   (Intercept) 0.361    0.601   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 7.83     2.8     
+Number of obs: 38, groups:  reference, 11
 
 Fixed effects:
-                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -1.53683    1.04824   -1.47     0.14
-fertpestreduced        0.12239    0.58506    0.21     0.83
-study.length           0.00295    0.02845    0.10     0.92
-analysis2multivariate  1.49913    1.03438    1.45     0.15
-analysis2univariate    0.84246    1.02375    0.82     0.41
-sample.sizemedium     -0.41847    0.42141   -0.99     0.32
-sample.sizesmall      -0.44352    0.47610   -0.93     0.35
-
-Correlation of Fixed Effects:
-            (Intr) frtpst stdy.l anlyss2m anlyss2n smpl.szm
-fertpstrdcd -0.051                                         
-study.lngth -0.155 -0.029                                  
-anlyss2mltv -0.878  0.042 -0.096                           
-anlyss2nvrt -0.853  0.049 -0.077  0.919                    
-sampl.szmdm -0.312 -0.034  0.152  0.112    0.077           
-smpl.szsmll -0.131 -0.128  0.137 -0.007   -0.050    0.353  
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)    -0.46       1.10   -0.42     0.68
 
 $nest.protect
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ nest.protect + study.length + analysis2 + sample.size +      (1 | reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   590.6    628.2   -286.3    572.6      470 
+    80.0     84.3    -38.0     76.0       61 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.474 -0.737 -0.501  0.882  2.600 
+-0.877 -0.626 -0.504  1.140  1.986 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.591    0.769   
- country   (Intercept) 0.339    0.582   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 0.445    0.667   
+Number of obs: 63, groups:  reference, 11
 
 Fixed effects:
-                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -1.52369    1.07852   -1.41     0.16
-nest.protectapplied   -0.00409    0.46745   -0.01     0.99
-study.length           0.00308    0.02874    0.11     0.91
-analysis2multivariate  1.48914    1.03752    1.44     0.15
-analysis2univariate    0.83099    1.02401    0.81     0.42
-sample.sizemedium     -0.41517    0.42462   -0.98     0.33
-sample.sizesmall      -0.43147    0.47630   -0.91     0.37
-
-Correlation of Fixed Effects:
-            (Intr) nst.pr stdy.l anlyss2m anlyss2n smpl.szm
-nst.prtctpp -0.250                                         
-study.lngth -0.187  0.143                                  
-anlyss2mltv -0.866  0.074 -0.085                           
-anlyss2nvrt -0.835  0.041 -0.070  0.919                    
-sampl.szmdm -0.334  0.122  0.167  0.119    0.081           
-smpl.szsmll -0.165  0.131  0.149  0.007   -0.039    0.361  
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)   -0.822      0.365   -2.25    0.024 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $predator.control
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ predator.control + study.length + analysis2 + sample.size +      (1 | reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   590.2    627.8   -286.1    572.2      470 
+    45.4     48.6    -20.7     41.4       34 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.500 -0.737 -0.495  0.863  2.611 
+-1.445 -0.632 -0.310  0.682  1.582 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.647    0.804   
- country   (Intercept) 0.312    0.559   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 3.49     1.87    
+Number of obs: 36, groups:  reference, 9
 
 Fixed effects:
-                        Estimate Std. Error z value Pr(>|z|)
-(Intercept)             -1.55997    1.05060   -1.49     0.14
-predator.controlapplied -0.38982    0.60480   -0.64     0.52
-study.length             0.00435    0.02937    0.15     0.88
-analysis2multivariate    1.50599    1.04128    1.45     0.15
-analysis2univariate      0.84388    1.03027    0.82     0.41
-sample.sizemedium       -0.38480    0.43401   -0.89     0.38
-sample.sizesmall        -0.32447    0.50790   -0.64     0.52
-
-Correlation of Fixed Effects:
-            (Intr) prdtr. stdy.l anlyss2m anlyss2n smpl.szm
-prdtr.cntrl  0.057                                         
-study.lngth -0.167 -0.073                                  
-anlyss2mltv -0.875 -0.028 -0.101                           
-anlyss2nvrt -0.847 -0.013 -0.084  0.917                    
-sampl.szmdm -0.323 -0.130  0.174  0.108    0.070           
-smpl.szsmll -0.150 -0.324  0.145  0.003   -0.042    0.373  
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)    -1.43       1.10    -1.3     0.19
 
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ water + study.length + analysis2 + sample.size + (1 |      reference) + (1 | country)
+Formula: success ~ 1 + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   591.2    632.9   -285.6    571.2      469 
+    92.5     97.4    -44.2     88.5       86 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.477 -0.737 -0.449  0.885  3.013 
+-0.994 -0.482 -0.262 -0.256  2.236 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.597    0.772   
- country   (Intercept) 0.295    0.543   
-Number of obs: 479, groups:  reference, 60; country, 9
+ reference (Intercept) 1.9      1.38    
+Number of obs: 88, groups:  reference, 15
 
 Fixed effects:
-                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -1.54057    1.03721   -1.49     0.14
-waterapplied          -0.46419    0.40532   -1.15     0.25
-waterreduced          -0.45650    1.15201   -0.40     0.69
-study.length           0.00194    0.02836    0.07     0.95
-analysis2multivariate  1.58446    1.03581    1.53     0.13
-analysis2univariate    0.90396    1.02034    0.89     0.38
-sample.sizemedium     -0.29702    0.43191   -0.69     0.49
-sample.sizesmall      -0.35554    0.47781   -0.74     0.46
-
-Correlation of Fixed Effects:
-            (Intr) wtrppl wtrrdc stdy.l anlyss2m anlyss2n smpl.szm
-waterapplid  0.019                                                
-waterreducd  0.007  0.045                                         
-study.lngth -0.163  0.039  0.019                                  
-anlyss2mltv -0.872 -0.087 -0.010 -0.097                           
-anlyss2nvrt -0.851 -0.063 -0.006 -0.075  0.918                    
-sampl.szmdm -0.314 -0.238 -0.061  0.138  0.124    0.090           
-smpl.szsmll -0.140 -0.134 -0.018  0.124  0.008   -0.037    0.366  
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)   -0.978      0.497   -1.97    0.049 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $AE.level
 NULL
@@ -333,10 +240,15 @@ $mowing
 NULL
 
 $grazing
-NULL
+[1] "Model failed to converge with max|grad| = 0.110626 (tol = 0.001, component 1)"
 
 $fertpest
-NULL
+$fertpest[[1]]
+[1] "Model failed to converge with max|grad| = 0.0572996 (tol = 0.001, component 1)"
+
+$fertpest[[2]]
+[1] "Model is nearly unidentifiable: very large eigenvalue\n - Rescale variables?"
+
 
 $nest.protect
 NULL

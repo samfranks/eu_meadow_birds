@@ -120,13 +120,8 @@ for(i in 1:length(mgmtvars)) {
 names(out) <- mgmtvars
 out
 
-# # subset out management categories with few observations
-# mdat <- subset(dat, mowing!="applied" & fertpest!="applied" & predator.control!="reduced")
-# mdat <- droplevels(mdat)
-
-m.ind.lme4 <- list()
-m.ind.blme <- list()
-
+# set up list to output models and model datasets to
+m.ind <- list()
 usedat <- list() # data subset used to run a model
 
 for (i in 1:length(mgmtvars)) {
@@ -148,68 +143,45 @@ for (i in 1:length(mgmtvars)) {
   }
   
   mdat <- droplevels(mdat)
-  
-  
-  m.text <- glmer(success ~ analysis2  + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-  
   usedat[[i]] <- mdat
   
-  # create different formulas to use depending on whether management variable is 1 or 2 levels, and whether the random effect country has more than 1 level or not
-  # if country has < 1 level, following error is produced: Error: grouping factors must have > 1 sampled level
+  # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
     modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference)", sep=""))
   }
   
-  if (length(levels(mdat[,mgmtvars[i]])) > 1 & length(levels(mdat$country)) < 2) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference)", sep=""))
+  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+    modform <- as.formula("success ~ 1 + (1|reference)")
   }
-  
-  if (length(levels(mdat[,mgmtvars[i]])) < 2 & length(levels(mdat$country)) > 1) {
-    modform <- as.formula(paste("success ~ study.length + analysis2 + sample.size + (1|reference)", sep=""))
-  }
-  
-  if (length(levels(mdat[,mgmtvars[i]])) < 2 & length(levels(mdat$country)) < 2) {
-    modform <- as.formula(paste("success ~ study.length + analysis2 + sample.size + (1|reference)", sep=""))
-  }
-  
-  
-  # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables e.g. model 3 for mowing and small sample size
-  # calculate the dimensions of the covariance matrix (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1
-  vcov.dim <- length(levels(mdat[,mgmtvars[i]])) + length(levels(mdat$analysis2)) + length(levels(as.factor(mdat$sample.size))) - 1
-  m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
-  
-  # x <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(4,vcov.dim)))
   
   # run a normal glmer model
-  m.ind.lme4[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
-  
-  #   modform <- as.formula(paste("success ~ ", mgmtvars[i], " + study.length + analysis2 + sample.size + (1|reference) + (1|country)", sep=""))
-  #   m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+#   # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
+#   # calculate the dimensions of the covariance matrix for bglmer (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1
+#   vcov.dim <- length(levels(mdat[,mgmtvars[i]])) - 1
+#   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+
   
 }
 
-names(m.ind.lme4) <- mgmtvars
-names(m.ind.blme) <- mgmtvars
+names(m.ind) <- mgmtvars
 names(usedat) <- mgmtvars
 
-warningmessages.lme4 <- lapply(m.ind.lme4, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
 warningmessages.lme4
 
-warningmessages.blme <- lapply(m.ind.blme, function(x) slot(x, "optinfo")$conv$lme4$messages)
-warningmessages.blme
-
-### lme4 convergence troubleshooting
-# check singularity
-tt <- getME(m.ind.blme[[5]],"theta")
-ll <- getME(m.ind.blme[[5]],"lower")
-min(tt[ll==0])
-
-# check gradient calculations
-derivs1 <- m.ind.blme[[5]]@optinfo$derivs
-sc_grad1 <- with(derivs1,solve(Hessian,gradient))
-max(abs(sc_grad1))
-max(pmin(abs(sc_grad1),abs(derivs1$gradient)))
+# ### lme4 convergence troubleshooting
+# # check singularity
+# tt <- getME(m.ind.blme[[5]],"theta")
+# ll <- getME(m.ind.blme[[5]],"lower")
+# min(tt[ll==0])
+# 
+# # check gradient calculations
+# derivs1 <- m.ind.blme[[5]]@optinfo$derivs
+# sc_grad1 <- with(derivs1,solve(Hessian,gradient))
+# max(abs(sc_grad1))
+# max(pmin(abs(sc_grad1),abs(derivs1$gradient)))
 
 ### Output model results ###
 
@@ -223,6 +195,8 @@ sink()
 ### Save individual interventions models
 saveRDS(m.ind, file=paste(workspacewd, "models_0a.rds", sep="/"))
 
+### Save dataset for 0a models
+saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
 
 
 #######################################################
@@ -235,10 +209,8 @@ saveRDS(m.ind, file=paste(workspacewd, "models_0a.rds", sep="/"))
 #------------------------------ 0b) success of individual management types by species -------------------------
 
 # subset dataset to remove dunlin and ruff, not enough data for these species for any analysis that includes species as a covariate
-mdat <- subset(dat, mowing!="applied" & fertpest!="applied" & predator.control!="reduced" & species!="dunlin" & species!="ruff" & species!="oystercatcher")
+mdat <- subset(dat, species!="dunlin" & species!="ruff")
 mdat <- droplevels(mdat)
-
-# write.csv(mdat, paste(datawd, "eu_meadow birds_reduced dataset with small-sample categories removed.csv", sep="/"), row.names = FALSE)
 
 # identify which categories have low numbers
 out <- list()
@@ -248,8 +220,57 @@ for(i in 1:length(mgmtvars)) {
 names(out) <- mgmtvars
 out
 
-# identify which categories have low numbers of 0/1
-out.AE <- table(mdat$species, mdat$AE.level, mdat$success)
+# set up list to output models and model datasets to
+m.ind.sp <- list()
+usedat <- list() # data subset used to run a model
+
+for (i in 1:length(mgmtvars)) {
+  
+  mdat <- mdat[mdat[,mgmtvars[i]]!="none",]
+  table(mdat[,mgmtvars[i]], mdat$species, mdat$success)
+  
+  # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+  if (mgmtvars[i]=="mowing") {
+    mdat <- subset(mdat, mowing!="applied")
+  }
+  if (mgmtvars[i]=="fertpest") {
+    mdat <- subset(mdat, fertpest!="applied")
+  }
+  if (mgmtvars[i]=="predator.control") {
+    mdat <- subset(mdat, predator.control!="reduced")
+  }
+  if (mgmtvars[i]=="water") {
+    mdat <- subset(mdat, water!="reduced")
+  }
+  
+  mdat <- droplevels(mdat)
+  usedat[[i]] <- mdat
+  
+  # create different formulas to use depending on whether management variable is 1 or 2 levels
+  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + species + (1|reference)", sep=""))
+  }
+  
+  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+    modform <- as.formula("success ~ species +  (1|reference)")
+  }
+  
+  # run a normal glmer model
+  m.ind.sp[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  
+  #   # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
+  #   # calculate the dimensions of the covariance matrix for bglmer (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1
+  #   vcov.dim <- length(levels(mdat[,mgmtvars[i]])) - 1
+  #   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  
+  
+}
+
+names(m.ind.sp) <- mgmtvars
+names(usedat) <- mgmtvars
+
+warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.lme4
 
 
 # problems with all 0's or all 1's in a single category level - complete separation
