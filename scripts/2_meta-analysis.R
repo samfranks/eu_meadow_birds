@@ -69,7 +69,7 @@ dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset.rds", sep="/")
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset dataset for analysis to desired columns only
-dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
+dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
 
 
 #------------  Recode management variables as factors for analysis and make 'none' the reference level -----------------
@@ -145,6 +145,9 @@ for (i in 1:length(mgmtvars)) {
   
   mdat <- droplevels(mdat)
   usedat[[i]] <- mdat
+  
+  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$success))
+  
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
@@ -339,6 +342,117 @@ saveRDS(m.ind.sp, file=paste(workspacewd, "models_0b_lme4.rds", sep="/"))
 ### Save dataset for 0b models
 saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
 
+#------------------------------ 0c) success of individual management types by metric -------------------------
+
+### ANALYSIS ###
+
+# subset dataset to remove recruitment and survival metrics, too few observations
+metricdat <- subset(dat, metric!="recruitment" & metric!="survival")
+metricdat <- droplevels(metricdat)
+
+# identify which categories have low numbers
+out <- list()
+for(i in 1:length(mgmtvars)) {
+  out[[i]] <- table(metricdat$metric, metricdat[,mgmtvars[i]])
+}
+names(out) <- mgmtvars
+out
+
+# set up list to output models and model datasets to
+m.ind.sp <- list()
+m.ind.sp.blme <- list()
+usedat <- list() # data subset used to run a model
+
+for (i in 1:length(mgmtvars)) {
+  
+  mgmtvars[i]
+  mdat <- metricdat[metricdat[,mgmtvars[i]]!="none",]
+  table(mdat[,mgmtvars[i]], mdat$metric, mdat$success)
+  
+  # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+  if (mgmtvars[i]=="reserve.desig") {
+    mdat <- subset(mdat, metric!="productivity")
+  }
+  if (mgmtvars[i]=="mowing") {
+    mdat <- subset(mdat, mowing!="applied")
+  }
+  if (mgmtvars[i]=="grazing") {
+    mdat <- subset(mdat, metric!="occupancy")
+  }
+  if (mgmtvars[i]=="fertpest") {
+    mdat <- subset(mdat, fertpest!="applied")
+    mdat <- subset(mdat, metric!="occupancy")
+  }
+  if (mgmtvars[i]=="predator.control") {
+    mdat <- subset(mdat, predator.control!="reduced")
+  }
+  if (mgmtvars[i]=="water") {
+    mdat <- subset(mdat, water!="reduced")
+    # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
+    # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
+    # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
+  }
+  
+  mdat <- droplevels(mdat)
+  usedat[[i]] <- mdat
+  
+  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$metric, mdat$success))
+  
+  # create different formulas to use depending on whether management variable is 1 or 2 levels
+  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference)", sep=""))
+  }
+  
+  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+    modform <- as.formula("success ~ metric +  (1|reference)")
+  }
+  
+  # run a normal glmer model
+  m.ind.sp[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  
+  # if ANY checkzeros==0, then there are categories which are missing any observations whatsoever, so will have problems with complete separation and/or convergence
+  # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
+  # calculate the dimensions of the covariance matrix for bglmer, based on the dimensions of the covariance matrix from the regular glmer model
+  
+  # if (any(checkzeros==0)) {
+  vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
+  m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  # }
+  
+}
+
+names(m.ind.sp) <- mgmtvars
+names(m.ind.sp.blme) <- mgmtvars
+names(usedat) <- mgmtvars
+
+warningmessages.lme4 <- lapply(m.ind.sp, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.lme4
+
+warningmessages.blme <- lapply(m.ind.sp.blme, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.blme
+
+
+setwd(outputwd)
+sink(paste("model output_0c.txt", sep=" "))
+cat("\n########==========  0b) success of individual management types by metric - BLME models (good) ==========########\n", sep="\n")
+print(lapply(m.ind.sp.blme, summary))
+
+cat("\n########==========  0b) success of individual management types by metric - lme4 models (also good) ==========########\n", sep="\n")
+print(lapply(m.ind.sp, summary))
+
+cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
+print(warningmessages.blme)
+
+cat("\n########==========  Warning messages lme4 models (also good) ==========########\n", sep="\n")
+print(warningmessages.lme4)
+sink()
+
+### Save individual interventions models
+saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_0c_blme.rds", sep="/"))
+saveRDS(m.ind.sp, file=paste(workspacewd, "models_0c_lme4.rds", sep="/"))
+
+### Save dataset for 0b models
+saveRDS(usedat, file=paste(workspacewd, "model dataset_0c.rds", sep="/"))
 
 #######################################################
 #######################################################

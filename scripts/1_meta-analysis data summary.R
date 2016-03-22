@@ -170,7 +170,8 @@ d0.4$AE.level <- ifelse(d0.4$higher.AE=="applied", "higher", ifelse(d0.4$AE=="no
 # calculate study duration variable
 d0.4$study.length <- d0.4$end.year - d0.4$start.year + 1
 
-
+# add some overall metrics which lump all productivity metrics, all abundance metrics, all occupancy metrics
+d0.4$metric <- ifelse(grepl("productivity", d0.4$overall.metric), "productivity", ifelse(grepl("abundance", d0.4$overall.metric), "abundance", ifelse(grepl("recruitment", d0.4$overall.metric), "recruitment", ifelse(grepl("survival", d0.4$overall.metric), "survival", "occupancy"))))
 
 #------------- Definitive dataset --------------
 
@@ -195,6 +196,12 @@ saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset.rds", sep="/"
 
 
 #=================================  SUMMARY STATISTICS  ===============================
+
+
+d1 <- readRDS(paste(workspacewd, "meadow birds analysis dataset.rds", sep="/"))
+
+# management variables
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 #---------- Proportion of studies by country ----------
 
@@ -260,31 +267,58 @@ dev.off()
 # create blank objects
 intervensum <- numeric()
 intervensum.prop <- numeric()
+intervensum.level <- list()
+intervensum.level.prop <- list()
 
 # mgmtvars to evluate, minus AE.level
 eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% "AE.level")]
 
-for (i in 1:length(eval.mgmtvars)) {
+for (i in 1:length(mgmtvars)) {
   
   # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
-  x <- unique(d1[,c("reference",eval.mgmtvars[i])]) # unique references and levels of the intervention
-  y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
+  x <- unique(d1[,c("reference",mgmtvars[i])]) # unique references and levels of the intervention
+  y <- x[x[mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
   intervensum[i] <- nrow(y) # the number of studies that evaluated the intervention
   intervensum.prop[i] <- intervensum[i]/62
-  
+  intervensum.level[[i]] <- table(y[,mgmtvars[i]])
+  intervensum.level.prop[[i]] <- intervensum.level[[i]]/62
 }
 
-names(intervensum) <- eval.mgmtvars
-names(intervensum.prop) <- eval.mgmtvars
+names(intervensum) <- mgmtvars
+names(intervensum.prop) <- mgmtvars
+names(intervensum.level.prop) <- mgmtvars
+
+# remove AE level from being plotted
+intervensum.prop <- intervensum.prop[-which(names(intervensum.prop) %in% "AE.level")]
+intervensum <- intervensum[-which(names(intervensum) %in% "AE.level")]
 
 png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
 
 par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predator \n control","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
 title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
 text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
+
+dev.off()
+
+### plot levels of different management types attempted
+level.prop.all <- as.data.frame(do.call(rbind, intervensum.level.prop))
+
+level.prop.all$level1 <- level.prop.all$basic
+level.prop.all$level2 <- ifelse(level.prop.all$basic==level.prop.all$higher, 0, level.prop.all$higher)
+
+(level.prop.all <- t(level.prop.all[,c("level1","level2")]))
+
+png(paste(outputwd, "summary_proportion of studies by intervention_level.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(level.prop.all, las=1, col=c("grey90","grey30"), beside=FALSE, ylim=c(0,0.6), xaxt="n")
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","AES level", "nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
+title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
+title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
+text(x, intervensum.prop[c(1,1,2:8)]+0.02, intervensum[c(1,1,2:8)]) # sample sizes for each intervention type
 
 dev.off()
 
