@@ -64,12 +64,12 @@ options(digits=6)
 
 #=================================  LOAD DATA  ===============================
 
-dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset.rds", sep="/"))
+dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
 
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset dataset for analysis to desired columns only
-dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
+dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
 
 
 #------------  Recode management variables as factors for analysis and make 'none' the reference level -----------------
@@ -107,70 +107,81 @@ for (i in 1:length(mgmtvars)) {
 
 #------------------------------ Test effect of nuisance variables on success for the full dataset -------------------------
 
-m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.nui1)
 
-# no significant effect of any of these nuisance variables on success, so leave out of subsequent models
+# only significant effect of a nuisance variable is literature type
+# primary literature study is more likely to be unsuccessful than successful
+# include lit.type in subsequent analyses
 
 #------------------------------ 0a) success of individual management types -------------------------
 
 # identify which categories have low numbers
 out <- list()
 for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$species, dat[,mgmtvars[i]])
+  out[[i]] <- table(dat$success, dat[,mgmtvars[i]])
 }
 names(out) <- mgmtvars
 out
 
 # set up list to output models and model datasets to
 m.ind <- list()
+m.ind.blme <- list()
 usedat <- list() # data subset used to run a model
 
 for (i in 1:length(mgmtvars)) {
   
+  print(mgmtvars[i])
   mdat <- dat[dat[,mgmtvars[i]]!="none",]
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-  if (mgmtvars[i]=="mowing") {
-    mdat <- subset(mdat, mowing!="applied")
-  }
-  if (mgmtvars[i]=="fertpest") {
-    mdat <- subset(mdat, fertpest!="applied")
-  }
+  #   if (mgmtvars[i]=="mowing") {
+  #     mdat <- subset(mdat, mowing!="applied")
+  #   }
+  #   if (mgmtvars[i]=="fertpest") {
+  #     mdat <- subset(mdat, fertpest!="applied")
+  #   }
   if (mgmtvars[i]=="predator.control") {
     mdat <- subset(mdat, predator.control!="reduced")
   }
-  if (mgmtvars[i]=="water") {
-    mdat <- subset(mdat, water!="reduced")
-  }
+  #   if (mgmtvars[i]=="water") {
+  #     mdat <- subset(mdat, water!="reduced")
+  #   }
   
   mdat <- droplevels(mdat)
   usedat[[i]] <- mdat
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + lit.type + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ 1 + (1|reference)")
+    modform <- as.formula("success ~ 1 + lit.type + (1|reference)")
   }
   
   # run a normal glmer model
   m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
-  #   # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
-  #   # calculate the dimensions of the covariance matrix for bglmer (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1
-  #   vcov.dim <- length(levels(mdat[,mgmtvars[i]])) - 1
-  #   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  # vars with warnings using glmer: mowing, fertpest, predator.control
+  
+  # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
+  # calculate the dimensions of the covariance matrix for bglmer (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1; if lit.type is included as a variable, then add the number of levels of lit.type to the calculations for the dimensions of the covariance matrix
+  vcov.dim <- length(levels(mdat[,mgmtvars[i]])) + length(levels(mdat$lit.type)) - 1
+  m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
   
   
 }
 
 names(m.ind) <- mgmtvars
+names(m.ind.blme) <- mgmtvars
 names(usedat) <- mgmtvars
 
 warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
 warningmessages.lme4
+
+warningmessages.blme <- lapply(m.ind.blme, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.blme
 
 # ### lme4 convergence troubleshooting
 # # check singularity
@@ -188,14 +199,23 @@ warningmessages.lme4
 
 setwd(outputwd)
 sink(paste("model output_0a.txt", sep=" "))
-cat("\n########==========  0a) success of individual management types ==========########\n", sep="\n")
+
+cat("\n########==========  0a) success of individual management types - BLME models (good) ==========########\n", sep="\n")
+print(lapply(m.ind.blme, summary))
+
+cat("\n########==========  0a) success of individual management types - lme4 models (convergence issues) ==========########\n", sep="\n")
 print(lapply(m.ind, summary))
-cat("\n########==========  Model warning messages ==========########\n", sep="\n")
+
+cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
+print(warningmessages.blme)
+
+cat("\n########==========  Warning messages lme4 models (convergence issues) ==========########\n", sep="\n")
 print(warningmessages.lme4)
 sink()
 
 ### Save individual interventions models
-saveRDS(m.ind, file=paste(workspacewd, "models_0a.rds", sep="/"))
+saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4.rds", sep="/"))
+saveRDS(m.ind.blme, file=paste(workspacewd, "models_0a_blme.rds", sep="/"))
 
 ### Save dataset for 0a models
 saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
@@ -300,8 +320,8 @@ for (i in 1:length(mgmtvars)) {
   # calculate the dimensions of the covariance matrix for bglmer, based on the dimensions of the covariance matrix from the regular glmer model
   
   # if (any(checkzeros==0)) {
-    vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
-    m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
+  m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
   # }
   
 }
@@ -346,85 +366,85 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
 #######################################################
 #######################################################
 
-
-#------------------------------ 1a) overall success of AES and nature reserves -------------------------
-
-m1 <- list()
-
-print(Sys.time())
-
-m1[[1]] <- glmer(success ~ AE.level + reserve.desig + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-
-print(Sys.time())
-
-#------------------------------ 1b) success of specific management interventions -------------------------
-
-# subset out management categories with few observations
-mdat <- subset(dat, mowing!="applied" & fertpest!="applied" & predator.control!="reduced")
-mdat <- droplevels(mdat)
-
-print(Sys.time())
-
-m1[[2]] <- glmer(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-
-print(Sys.time())
-
-warningmessages <- lapply(m1, function(x) slot(x, "optinfo")$conv$lme4$messages)
-warningmessages
-
-### Output model results ###
-
-setwd(outputwd)
-sink(paste("model output_1ab.txt", sep=" "))
-cat("\n########==========  1) success of AES/natures reserves and specific management interventions (species pooled) ==========########\n", sep="\n")
-print(lapply(m1, summary))
-print(warningmessages)
-sink()
-
-### Save individual interventions models
-saveRDS(m1, file=paste(workspacewd, "models_1ab.rds", sep="/"))
-
-
-
-#------------------------------ 2a) success of AES and nature reserves by species -------------------------
-
-# subset dataset to remove dunlin and ruff, not enough data for these species
-mdat <- subset(dat, species!="dunlin" & species!="ruff")
-mdat <- droplevels(mdat)
-
-
-print(Sys.time())
-
-m[[3]] <- glmer(success ~ AE.level*species + reserve.desig*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-
-print(Sys.time())
-
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-
-
-#------------------------------ 2b) success of specific management interventions by species -------------------------
-
-# subset dataset to remove dunlin and ruff, not enough data for these species
-mdat <- subset(dat, species!="dunlin" & species!="ruff")
-mdat <- droplevels(mdat)
-
-print(Sys.time())
-
-m[[4]] <- glmer(success ~ mowing*species + grazing*species + fertpest*species + nest.protect*species + predator.control*species + water*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-
-print(Sys.time())
-
-
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-
-
-
-
+# 
+# #------------------------------ 1a) overall success of AES and nature reserves -------------------------
+# 
+# m1 <- list()
+# 
+# print(Sys.time())
+# 
+# m1[[1]] <- glmer(success ~ AE.level + reserve.desig + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# 
+# print(Sys.time())
+# 
+# #------------------------------ 1b) success of specific management interventions -------------------------
+# 
+# # subset out management categories with few observations
+# mdat <- subset(dat, mowing!="applied" & fertpest!="applied" & predator.control!="reduced")
+# mdat <- droplevels(mdat)
+# 
+# print(Sys.time())
+# 
+# m1[[2]] <- glmer(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# 
+# print(Sys.time())
+# 
+# warningmessages <- lapply(m1, function(x) slot(x, "optinfo")$conv$lme4$messages)
+# warningmessages
+# 
+# ### Output model results ###
+# 
+# setwd(outputwd)
+# sink(paste("model output_1ab.txt", sep=" "))
+# cat("\n########==========  1) success of AES/natures reserves and specific management interventions (species pooled) ==========########\n", sep="\n")
+# print(lapply(m1, summary))
+# print(warningmessages)
+# sink()
+# 
+# ### Save individual interventions models
+# saveRDS(m1, file=paste(workspacewd, "models_1ab.rds", sep="/"))
+# 
+# 
+# 
+# #------------------------------ 2a) success of AES and nature reserves by species -------------------------
+# 
+# # subset dataset to remove dunlin and ruff, not enough data for these species
+# mdat <- subset(dat, species!="dunlin" & species!="ruff")
+# mdat <- droplevels(mdat)
+# 
+# 
+# print(Sys.time())
+# 
+# m[[3]] <- glmer(success ~ AE.level*species + reserve.desig*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# 
+# print(Sys.time())
+# 
+# #######################################################
+# #######################################################
+# #######################################################
+# #######################################################
+# #######################################################
+# 
+# 
+# #------------------------------ 2b) success of specific management interventions by species -------------------------
+# 
+# # subset dataset to remove dunlin and ruff, not enough data for these species
+# mdat <- subset(dat, species!="dunlin" & species!="ruff")
+# mdat <- droplevels(mdat)
+# 
+# print(Sys.time())
+# 
+# m[[4]] <- glmer(success ~ mowing*species + grazing*species + fertpest*species + nest.protect*species + predator.control*species + water*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# 
+# print(Sys.time())
+# 
+# 
+# #######################################################
+# #######################################################
+# #######################################################
+# #######################################################
+# #######################################################
+# 
+# 
+# 
+# 
