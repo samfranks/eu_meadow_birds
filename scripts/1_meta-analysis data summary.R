@@ -293,14 +293,15 @@ for (i in 1:length(mgmtvars)) {
   # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
   x <- unique(d1[,c("reference",mgmtvars[i])]) # unique references and levels of the intervention
   y <- x[x[mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
-  intervensum[i] <- nrow(y) # the number of studies that evaluated the intervention
+  intervensum[i] <- length(unique(y$reference)) # the number of studies that evaluated the intervention
   intervensum.prop[i] <- intervensum[i]/max(d1$reference)
   intervensum.level[[i]] <- table(y[,mgmtvars[i]])
-  intervensum.level.prop[[i]] <- intervensum.level[[i]]/62
+  intervensum.level.prop[[i]] <- intervensum.level[[i]]/max(d1$reference)
 }
 
 names(intervensum) <- mgmtvars
 names(intervensum.prop) <- mgmtvars
+names(intervensum.level) <- mgmtvars
 names(intervensum.level.prop) <- mgmtvars
 
 # remove AE level from being plotted
@@ -318,22 +319,33 @@ text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention
 
 dev.off()
 
-### plot levels of different management types attempted
+### plot levels of different management types attempted (e.g. applied/reduced)
 level.prop.all <- as.data.frame(do.call(rbind, intervensum.level.prop))
 
 level.prop.all$level1 <- level.prop.all$basic
-level.prop.all$level2 <- ifelse(level.prop.all$basic==level.prop.all$higher, 0, level.prop.all$higher)
+level.prop.all$level2 <- level.prop.all$higher
+# level.prop.all$level2 <- ifelse(level.prop.all$basic==level.prop.all$higher, 0, level.prop.all$higher)
+
+level.prop.all <- level.prop.all[-which(rownames(level.prop.all) %in% c("AE","reserve.desig","nest.protect")),]
+
+level.all <- as.data.frame(do.call(rbind, intervensum.level))
+level.all <- level.all[-which(rownames(level.all) %in% c("AE","reserve.desig","nest.protect")),]
+
+level.sum <- apply(level.all,1,sum) # sum the number of studies which examine impact of different levels of each intervention (the same study could look at 2 levels of the same intervention, so totals will not equal above, which is the proportion of studies examining each intervention type; in fact, this is only the case for one study that looks at both basic and higher level AES effects)
+
+# level.prop.all <- level.prop.all[-which(rownames(level.prop.all) %in% "AE.level"),]
 
 (level.prop.all <- t(level.prop.all[,c("level1","level2")]))
+
 
 png(paste(outputwd, "summary_proportion of studies by intervention_level.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
 
 par(mar=c(6,5,2,1))
 x <- barplot(level.prop.all, las=1, col=c("grey90","grey30"), beside=FALSE, ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","AES level", "nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predation \n reduction","water \n management"))
+text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES level","mowing","grazing","fertiliser/ \n pesticides","predator \n control","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
-title(ylab="Proportion of total studies (n=62)", font=2, cex.lab=1.2, line=3)
-text(x, intervensum.prop[c(1,1,2:8)]+0.02, intervensum[c(1,1,2:8)]) # sample sizes for each intervention type
+title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+text(x, apply(level.prop.all,2,sum)+0.02, level.sum) # sample sizes for each intervention type
 
 dev.off()
 
