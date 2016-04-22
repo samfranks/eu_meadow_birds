@@ -98,10 +98,11 @@ options(digits=6)
 #=================================  LOAD DATA & MODELS  ===============================
 
 # load master dataset
-dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset.rds", sep="/"))
+dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset master dataset to desired columns only
+dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
 dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
 
 # load model data & models
@@ -122,6 +123,7 @@ if (metric) {
 }
 
 #=================================  LOAD DATA & MODELS  ===============================
+dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
 
 if (!metric) {
   if (!species) {
@@ -174,6 +176,9 @@ if (!metric) {
   }
 }
 
+# load models
+if (!species) mod <- readRDS(paste(workspacewd, "models_0a.rds", sep="/"))
+if (species) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
 if (metric) {
   
   # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
@@ -192,6 +197,9 @@ if (metric) {
   write.csv(format(partable, scientific=FALSE, digits=2),  "metric-specific parameter table.csv", row.names=FALSE)
   
 }
+# load models
+if (!species) mod <- readRDS(paste(workspacewd, "models_0a_blme.rds", sep="/"))
+if (species) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
 
 
 #=================================  PLOT MODEL OUTPUTS  ===============================
@@ -298,8 +306,50 @@ if (!metric) {
     } else {write.csv(plotfinal[,c("species","pred","lwr","upr","mgmtvar")], "species-specific probabilities and 84CIs.csv", row.names=FALSE)}
     
     
+    plotdat[[i]] <- unique(data.frame(pred, pred.CI, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]])))
+    fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
+    unique.fits <- unique(fits)
+    
+    plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
     
   }
+  
+  plotfinal <- do.call(rbind, plotdat)
+  
+  png("overall model results.png", res=300, height=12, width=20, units="in", pointsize=20)
+  par(mar=c(7,6,2,2))
+  
+  x <- c(1:nrow(plotfinal))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1)
+  axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+  text(x, par("usr")[3]-0.05, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","more water \n applied"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+  abline(h = 0.5, lty=3)
+  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  
+  dev.off()
+  
+  plotfinal <- do.call(rbind, plotdat)
+  
+  png("overall model results.png", res=300, height=12, width=24, units="in", pointsize=20)
+  par(mar=c(7,6,2,2))
+  
+  x <- c(1:nrow(plotfinal))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1)
+  axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+  # text(x, par("usr")[3]-0.05, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","more water \n applied"))
+  text(x, par("usr")[3]-0.05, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied","mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied", "fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+  abline(h = 0.5, lty=3)
+  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  
+  dev.off()
   
 }
 
