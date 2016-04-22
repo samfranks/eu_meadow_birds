@@ -11,7 +11,8 @@ set.seed(2)
 
 #=================================  SET LOGIC STATEMENTS  ====================
 
-species <- TRUE # plot the species-specific model results (0b)
+# default to plot when both are FALSE is results from overall analysis (0a)
+species <- FALSE # plot the species-specific model results (0b)
 metric <- FALSE # plot the metric-specific model results (0c)
 alphalevel <- 0.05
 
@@ -102,8 +103,7 @@ dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset master dataset to desired columns only
-dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
-dat <- subset(dat0, select=c("reference","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
+dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
 
 # load model data & models
 if (!metric) {
@@ -111,7 +111,7 @@ if (!metric) {
   if (species) moddat <- readRDS(paste(workspacewd, "model dataset_0b.rds", sep="/"))
   
   # load models
-  if (!species) mod <- readRDS(paste(workspacewd, "models_0a.rds", sep="/"))
+  if (!species) mod <- readRDS(paste(workspacewd, "models_0a_blme.rds", sep="/"))
   if (species) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
 }
 
@@ -122,11 +122,19 @@ if (metric) {
   mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
 }
 
-#=================================  LOAD DATA & MODELS  ===============================
-dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","sample.size","analysis2","success",mgmtvars))
+#=================================  OUTPUT PARAMETER TABLES  ===============================
 
 if (!metric) {
   if (!species) {
+    
+    #############################################
+    #############################################
+    
+    
+    # need to average over the literature types
+    
+    
+    
     
     # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
     coeftab <- lapply(mod, function(x) summary(x)$coefficients)
@@ -154,6 +162,10 @@ if (!metric) {
     # Write the parameter table
     write.csv(format(partable, scientific=FALSE, digits=2),  "overall parameter table.csv", row.names=FALSE)
     
+    
+    #############################################
+    #############################################
+    
   }
   
   if (species) {
@@ -176,9 +188,7 @@ if (!metric) {
   }
 }
 
-# load models
-if (!species) mod <- readRDS(paste(workspacewd, "models_0a.rds", sep="/"))
-if (species) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
+
 if (metric) {
   
   # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
@@ -197,9 +207,6 @@ if (metric) {
   write.csv(format(partable, scientific=FALSE, digits=2),  "metric-specific parameter table.csv", row.names=FALSE)
   
 }
-# load models
-if (!species) mod <- readRDS(paste(workspacewd, "models_0a_blme.rds", sep="/"))
-if (species) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
 
 
 #=================================  PLOT MODEL OUTPUTS  ===============================
@@ -220,7 +227,10 @@ if (!metric) {
       pred <- predict(mod[[i]], type="response", re.form=NA)
       pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
       
-      plotdat[[i]] <- unique(data.frame(pred, pred.CI, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]])))
+      fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
+      unique.fits <- unique(fits)
+      
+      plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
       
     }
     
