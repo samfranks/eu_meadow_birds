@@ -264,6 +264,26 @@ text(x, speciessum.prop+0.02, speciessum) # sample sizes for each species
 
 dev.off()
 
+
+#---------- Proportion of studies by habitat ----------
+
+d1.hab <- d1
+d1.hab$habitat <- factor(d1.hab$habitat, c("arable","pastoral","unenclosed","mixed arable/pastoral", "mixed pastoral/unenclosed"), ordered=TRUE)
+habsum <- table(unique(d1.hab[,c("reference","habitat")])$habitat)
+habsum.prop <- habsum/num.studies
+
+png(paste(outputwd, "summary_proportion of studies by habitat.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(habsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
+text(x, par("usr")[3]-0.04, srt = 0, xpd = TRUE, labels = c("arable","pastoral","unenclosed","mixed arable/ \npastoral","mixed pastoral/ \nunenclosed"))
+title(xlab="Habitat", font=2, cex.lab=1.2, line=4.5)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
+text(x, habsum.prop+0.02, habsum) # sample sizes for each habitat
+
+dev.off()
+
+
 #---------- Proportion of studies by overall metric ----------
 
 # create an ordered factor of metrics for this summary (particularly for productivity so it's nest, chick, nest+chick)
