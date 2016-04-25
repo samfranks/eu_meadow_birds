@@ -72,6 +72,7 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nes
 dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
 
 
+
 #------------  Recode management variables as factors for analysis and make 'none' the reference level -----------------
 
 for (i in 1:length(mgmtvars)) {
@@ -170,7 +171,9 @@ for (i in 1:length(mgmtvars)) {
   
   # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
   # calculate the dimensions of the covariance matrix for bglmer (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1; if lit.type is included as a variable, then add the number of levels of lit.type to the calculations for the dimensions of the covariance matrix
-  vcov.dim <- length(levels(mdat[,mgmtvars[i]])) + length(levels(mdat$lit.type)) - 1
+  # vcov.dim <- length(levels(mdat[,mgmtvars[i]])) + length(levels(mdat$lit.type)) - 1
+  
+  vcov.dim <- nrow(vcov(m.ind[[i]]))
   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
   
   
@@ -250,7 +253,8 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
 ### ANALYSIS ###
 
 # subset dataset to remove dunlin and ruff, not enough data for these species for any analysis that includes species as a covariate
-sppdat <- subset(dat, species!="dunlin" & species!="ruff")
+# sppdat <- subset(dat, species!="dunlin" & species!="ruff")
+sppdat <- dat
 sppdat <- droplevels(sppdat)
 
 # identify which categories have low numbers
@@ -273,32 +277,53 @@ for (i in 1:length(mgmtvars)) {
   table(mdat[,mgmtvars[i]], mdat$species, mdat$success)
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-  if (mgmtvars[i]=="reserve.desig") {
-    mdat <- subset(mdat, species!="black-tailed godwit" & species!="oystercatcher")
+  # dunlin and ruff will need to be removed from most categories due to lack of observations, but there may be some with sufficient, or ok if combined
+  if (mgmtvars[i]=="AE") {
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff")
   }
+  
+  if (mgmtvars[i]=="AE.level") {
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff")
+  }
+  
+  if (mgmtvars[i]=="reserve.desig") {
+    mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff", "dunlin/ruff", as.character(mdat$species)) # combine dunlin + ruff since only 1 obs of each
+  }
+  
   if (mgmtvars[i]=="mowing") {
+    mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff" | mdat$species=="curlew", "dunlin/ruff/curlew", as.character(mdat$species)) # combine dunlin + ruff + curlew
+    # mdat <- subset(mdat, species!="dunlin" & species!="ruff" & species!="curlew")
     mdat <- subset(mdat, mowing!="applied")
   }
+  
   if (mgmtvars[i]=="grazing") {
+    # mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff", "dunlin/ruff", as.character(mdat$species)) # combine dunlin + ruff since only 1 obs of each
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff")
     # mdat <- subset(mdat, grazing!="reduced")
-    mdat <- subset(mdat, species!="snipe" & species!="curlew")
+    # mdat <- subset(mdat, species!="snipe" & species!="curlew")
   }
+  
   if (mgmtvars[i]=="fertpest") {
-    mdat <- subset(mdat, fertpest!="applied")
-    mdat <- subset(mdat, species!="snipe" & species!="curlew")
+    mdat <- subset(mdat, fertpest!="applied") # remove applied level as causes non-convergence even for bglmer model
+    mdat <- subset(mdat, species!="snipe" & species!="curlew" & species!="dunlin" & species!="ruff")
   }
+  
   if (mgmtvars[i]=="nest.protect") {
-    mdat <- subset(mdat, species!="snipe")
+    mdat <- subset(mdat, species!="curlew" & species!="ruff") # 1 obs each; exclude rather than combine as interpretation for curlew/ruff combined doesn't make sense (too dissimilar in ecology)
   }
+  
   if (mgmtvars[i]=="predator.control") {
     mdat <- subset(mdat, predator.control!="reduced")
-    mdat <- subset(mdat, species!="oystercatcher" & species!="redshank")
+    # mdat <- subset(mdat, species!="dunlin" & species!="ruff")
   }
+  
   if (mgmtvars[i]=="water") {
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff")
+    
     mdat <- subset(mdat, water!="reduced")
     # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
     # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
-    mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
+    mdat$species <- ifelse(mdat$species=="curlew" | mdat$species=="snipe", "curlew/snipe", as.character(mdat$species))
   }
   
   mdat <- droplevels(mdat)
@@ -308,11 +333,11 @@ for (i in 1:length(mgmtvars)) {
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*species + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*species + lit.type + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ species +  (1|reference)")
+    modform <- as.formula("success ~ species + lit.type + (1|reference)")
   }
   
   # run a normal glmer model
@@ -390,24 +415,30 @@ for (i in 1:length(mgmtvars)) {
   table(mdat[,mgmtvars[i]], mdat$metric, mdat$success)
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-  if (mgmtvars[i]=="reserve.desig") {
-    mdat <- subset(mdat, metric!="productivity")
-  }
-  if (mgmtvars[i]=="mowing") {
-    mdat <- subset(mdat, mowing!="applied")
-  }
-  if (mgmtvars[i]=="grazing") {
-    mdat <- subset(mdat, metric!="occupancy")
-  }
+#   if (mgmtvars[i]=="reserve.desig") {
+#     mdat <- subset(mdat, metric!="productivity")
+#   }
+  
+#   if (mgmtvars[i]=="mowing") {
+#     mdat <- subset(mdat, mowing!="applied")
+#   }
+  
+#   if (mgmtvars[i]=="grazing") {
+#     mdat <- subset(mdat, metric!="occupancy")
+#   }
+  
   if (mgmtvars[i]=="fertpest") {
-    mdat <- subset(mdat, fertpest!="applied")
+    # mdat <- subset(mdat, fertpest!="applied")
     mdat <- subset(mdat, metric!="occupancy")
   }
+  
   if (mgmtvars[i]=="predator.control") {
     mdat <- subset(mdat, predator.control!="reduced")
   }
+  
   if (mgmtvars[i]=="water") {
-    mdat <- subset(mdat, water!="reduced")
+    # mdat <- subset(mdat, water!="reduced")
+    mdat <- subset(mdat, metric!="occupancy")
     # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
     # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
     # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
@@ -420,11 +451,11 @@ for (i in 1:length(mgmtvars)) {
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + lit.type + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ metric +  (1|reference)")
+    modform <- as.formula("success ~ metric + lit.type + (1|reference)")
   }
   
   # run a normal glmer model

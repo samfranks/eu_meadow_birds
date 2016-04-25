@@ -84,6 +84,13 @@ names(d0.2) <- c("reference","record","lit.type","country","region1","habitat","
 # management intervention variables
 mgmtvars <- c("AE","basic.AE","higher.AE","reserve","designation","mowing","grazing","fertilizer","pesticide","nest.protect.ag","nest.protect.predation","groundwater.drainage","surface.water","predator.control","other.mgmt")
 
+# exlude studies 2 and 36
+# 2: remove this reference (Kruk et al. 1997) as it doesn't really measure a population or demographic metric
+# 36: remove this reference (Kleijn et al. 2004) as it pools an assessment of conservation across multiple species
+d0.2 <- subset(d0.2, reference!=36) # remove this reference (Kruk et al. 1997) as it doesn't really measure a population or demographic metric
+d0.2 <- subset(d0.2, reference!=2) # remove this reference (Kleijn et al. 2004) as it pools an assessment of conservation across multiple species
+d0.2 <- droplevels(d0.2)
+
 d0.3 <- d0.2
 
 # recode manamgement vars as characters to be able to use string substitution find and replace to create generic applied, restricted, removed levels for all management types
@@ -199,12 +206,15 @@ saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset_full.rds", se
 
 #=================================  SUMMARY STATISTICS  ===============================
 
+# total number of studies in dataset
+num.studies <- length(unique(d1$reference))
+
 #---------- Proportion of studies by literature type (grey or primary) ----------
 
 # summarize proportions of studies of different lit types
 # create based on a unique dataset of reference id and lit.type
 litsum <- table(unique(d1[,c("reference","lit.type")])$lit.type)
-litsum.prop <- litsum/max(d1$reference)
+litsum.prop <- litsum/num.studies
 
 
 png(paste(outputwd, "summary_proportion of studies by lit type.png", sep="/"), res=300, height=12, width=12, units="in", pointsize=20)
@@ -213,7 +223,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(litsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
 text(x, par("usr")[3]-0.04, srt = 0, adj=1, xpd = TRUE, labels = c(names(litsum.prop)))
 title(xlab="Literature type", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, litsum.prop+0.02, litsum) # sample sizes for each lit type
 
 dev.off()
@@ -223,7 +233,7 @@ dev.off()
 # summarize proportions of studies from different countries
 # create based on a unique dataset of reference id and country
 countrysum <- table(unique(d1[,c("reference","country")])$country)
-countrysum.prop <- countrysum/max(d1$reference)
+countrysum.prop <- countrysum/num.studies
 
 
 png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
@@ -232,7 +242,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(countrysum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
 text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
 title(xlab="Country", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
 
 dev.off()
@@ -241,7 +251,7 @@ dev.off()
 #---------- Proportion of studies by species ----------
 
 speciessum <- table(unique(d1[,c("reference","species")])$species)
-speciessum.prop <- speciessum/max(d1$reference)
+speciessum.prop <- speciessum/num.studies
 
 png(paste(outputwd, "summary_proportion of studies by species.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
 
@@ -249,7 +259,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(speciessum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
 text(x, par("usr")[3]-0.03, srt = 30, adj=1, xpd = TRUE, labels = c( "black-tailed \n godwit",names(speciessum.prop)[-which(names(speciessum.prop) %in% "black-tailed godwit")]))
 title(xlab="Species", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, speciessum.prop+0.02, speciessum) # sample sizes for each species
 
 dev.off()
@@ -263,7 +273,7 @@ d1.metric <- d1
 d1.metric$overall.metric <- factor(d1.metric$overall.metric, c("abundance","abundance change","occupancy","occupancy change","productivity (nest level)","productivity (chick level)","productivity (nest + chick)","recruitment","survival"), ordered=TRUE)
 
 metricsum <- table(unique(d1.metric[,c("reference","overall.metric")])$overall.metric)
-metricsum.prop <- metricsum/max(d1$reference)
+metricsum.prop <- metricsum/num.studies
 
 png(paste(outputwd, "summary_proportion of studies by metric.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
 
@@ -271,7 +281,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(metricsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
 text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("abundance","abundance \n change","occupancy","occupancy \n change","productivity \n (nest-level)","productivity \n (chick-level)","productivity \n (nest + chick-level)", "recruitment","adult survival"), cex=0.8)
 title(xlab="Study metric", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, metricsum.prop+0.02, metricsum) # sample sizes for each metric
 
 dev.off()
@@ -294,9 +304,9 @@ for (i in 1:length(mgmtvars)) {
   x <- unique(d1[,c("reference",mgmtvars[i])]) # unique references and levels of the intervention
   y <- x[x[mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
   intervensum[i] <- length(unique(y$reference)) # the number of studies that evaluated the intervention
-  intervensum.prop[i] <- intervensum[i]/max(d1$reference)
+  intervensum.prop[i] <- intervensum[i]/num.studies
   intervensum.level[[i]] <- table(y[,mgmtvars[i]])
-  intervensum.level.prop[[i]] <- intervensum.level[[i]]/max(d1$reference)
+  intervensum.level.prop[[i]] <- intervensum.level[[i]]/num.studies
 }
 
 names(intervensum) <- mgmtvars
@@ -314,7 +324,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
 text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predator \n control","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
 
 dev.off()
@@ -344,7 +354,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(level.prop.all, las=1, col=c("grey90","grey30"), beside=FALSE, ylim=c(0,0.6), xaxt="n")
 text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES level","mowing","grazing","fertiliser/ \n pesticides","predator \n control","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, apply(level.prop.all,2,sum)+0.02, level.sum) # sample sizes for each intervention type
 
 dev.off()
@@ -370,7 +380,7 @@ for (i in 1:length(eval.mgmtvars)) {
 intervensum.all <- do.call(cbind, intervensum)
 colnames(intervensum.all) <- eval.mgmtvars
 
-intervensum.prop.all <- intervensum.all/max(d1$reference)
+intervensum.prop.all <- intervensum.all/num.studies
 
 # creates grey-scale colour vector for plotting, but randomly shuffled so darks don't end up next to each other
 set.seed(3)
@@ -383,7 +393,7 @@ par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop.all, beside=TRUE, las=1, col=colourvec, ylim=c(0,0.4), xaxt="n")
 text(apply(x,2,mean), par("usr")[3]-0.02, srt = 0, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predator \n control","water \n management"))
 title(xlab="Management intervention", font=2, cex.lab=1.2, line=3)
-title(ylab=paste("Proportion of total studies (n=", max(d1$reference), ")", sep=""), font=2, cex.lab=1.2, line=3)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1, pt.cex=1.5, bty="n")
 # text(x, intervensum.prop.all+0.02, intervensum.all) # sample sizes for each intervention type
 

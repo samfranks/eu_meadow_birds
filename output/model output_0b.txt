@@ -4,368 +4,410 @@
 $AE
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 23.659
+Prior dev  : 28.518
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   279.6    303.8   -132.8    265.6      230 
+   319.5    348.1   -151.8    303.5      254 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.422 -0.653 -0.389  0.716  4.801 
+-1.324 -0.639 -0.428  0.838  4.202 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.89     1.37    
-Number of obs: 237, groups:  reference, 24
+ reference (Intercept) 1.26     1.12    
+Number of obs: 262, groups:  reference, 31
 
 Fixed effects:
-                     Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -0.6109     0.6029   -1.01     0.31
-speciescurlew         -1.1922     0.8343   -1.43     0.15
-specieslapwing         0.0802     0.6206    0.13     0.90
-speciesoystercatcher  -1.2508     0.8699   -1.44     0.15
-speciesredshank        0.4505     0.6391    0.70     0.48
-speciessnipe          -0.1581     0.7053   -0.22     0.82
+                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)            -0.767      0.636   -1.21    0.228  
+speciescurlew          -1.576      0.766   -2.06    0.040 *
+specieslapwing         -0.253      0.517   -0.49    0.625  
+speciesoystercatcher   -1.351      0.731   -1.85    0.065 .
+speciesredshank        -0.047      0.524   -0.09    0.929  
+speciessnipe           -0.551      0.620   -0.89    0.374  
+lit.typeprimary         0.554      0.684    0.81    0.418  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) spcscr spcslp spcsys spcsrd
-speciescrlw -0.539                            
-specislpwng -0.753  0.601                     
-spcsystrctc -0.463  0.377  0.490              
-specsrdshnk -0.683  0.597  0.772  0.488       
-speciessnip -0.644  0.580  0.742  0.443  0.740
+            (Intr) spcscr spcslp spcsys spcsrd spcssn
+speciescrlw -0.245                                   
+specislpwng -0.361  0.519                            
+spcsystrctc -0.253  0.316  0.447                     
+specsrdshnk -0.388  0.510  0.707  0.440              
+speciessnip -0.311  0.494  0.669  0.385  0.661       
+lt.typprmry -0.699 -0.126 -0.208 -0.092 -0.116 -0.151
 
 $AE.level
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 48.981
+Prior dev  : 53.721
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ AE.level * species + (1 | reference)
+Formula: success ~ AE.level * species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   279.5    324.6   -126.8    253.5      224 
+   316.3    366.2   -144.1    288.3      248 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.608 -0.587 -0.348  0.638  3.635 
+-1.564 -0.574 -0.385  0.708  3.635 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.67     1.29    
-Number of obs: 237, groups:  reference, 24
+ reference (Intercept) 0.913    0.956   
+Number of obs: 262, groups:  reference, 31
 
 Fixed effects:
                                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                          -1.2758     0.7596   -1.68    0.093 .
-AE.levelhigher                        1.2077     0.8962    1.35    0.178  
-speciescurlew                        -0.6760     1.0048   -0.67    0.501  
-specieslapwing                       -0.1104     0.7936   -0.14    0.889  
-speciesoystercatcher                 -0.4694     0.9975   -0.47    0.638  
-speciesredshank                       0.7796     0.7850    0.99    0.321  
-speciessnipe                          0.0133     0.8930    0.02    0.988  
-AE.levelhigher:speciescurlew         -1.0583     1.3857   -0.76    0.445  
-AE.levelhigher:specieslapwing         0.4702     0.9987    0.47    0.638  
-AE.levelhigher:speciesoystercatcher  -2.3755     1.8330   -1.30    0.195  
-AE.levelhigher:speciesredshank       -0.6632     1.0046   -0.66    0.509  
-AE.levelhigher:speciessnipe          -0.3531     1.0944   -0.32    0.747  
+(Intercept)                           -1.405      0.709   -1.98    0.048 *
+AE.levelhigher                         1.550      0.746    2.08    0.038 *
+speciescurlew                         -0.882      0.926   -0.95    0.341  
+specieslapwing                        -0.220      0.671   -0.33    0.743  
+speciesoystercatcher                  -0.739      0.898   -0.82    0.410  
+speciesredshank                        0.465      0.657    0.71    0.479  
+speciessnipe                          -0.177      0.795   -0.22    0.824  
+lit.typeprimary                        0.281      0.649    0.43    0.664  
+AE.levelhigher:speciescurlew          -1.241      1.325   -0.94    0.349  
+AE.levelhigher:specieslapwing          0.275      0.876    0.31    0.754  
+AE.levelhigher:speciesoystercatcher   -1.168      1.326   -0.88    0.379  
+AE.levelhigher:speciesredshank        -0.887      0.878   -1.01    0.313  
+AE.levelhigher:speciessnipe           -0.557      1.000   -0.56    0.578  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn AE.lvlhghr:spcsc AE.lvlhghr:spcsl AE.lvlhghr:spcsy AE.lvlhghr:spcsr
-AE.levlhghr      -0.604                                                                                                              
-speciescrlw      -0.567  0.332                                                                                                       
-specislpwng      -0.767  0.468  0.553                                                                                                
-spcsystrctc      -0.491  0.276  0.361  0.474                                                                                         
-specsrdshnk      -0.729  0.457  0.555  0.718  0.479                                                                                  
-speciessnip      -0.669  0.418  0.524  0.665  0.409  0.673                                                                           
-AE.lvlhghr:spcsc  0.296 -0.503 -0.527 -0.232 -0.149 -0.219 -0.198                                                                    
-AE.lvlhghr:spcsl  0.465 -0.784 -0.265 -0.596 -0.243 -0.368 -0.327  0.424                                                             
-AE.lvlhghr:spcsy  0.134 -0.242 -0.079 -0.118 -0.332 -0.113 -0.089  0.149            0.230                                            
-AE.lvlhghr:spcsr  0.445 -0.762 -0.253 -0.366 -0.240 -0.562 -0.311  0.414            0.646            0.230                           
-AE.lvlhghr:spcss  0.433 -0.732 -0.249 -0.348 -0.207 -0.338 -0.592  0.392            0.600            0.199            0.586          
+                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn lt.typ AE.lvlhghr:spcsc AE.lvlhghr:spcsl AE.lvlhghr:spcsy AE.lvlhghr:spcsr
+AE.levlhghr      -0.507                                                                                                                     
+speciescrlw      -0.348  0.318                                                                                                              
+specislpwng      -0.506  0.481  0.484                                                                                                       
+spcsystrctc      -0.327  0.276  0.297  0.426                                                                                                
+specsrdshnk      -0.537  0.476  0.481  0.671  0.423                                                                                         
+speciessnip      -0.432  0.409  0.446  0.601  0.349  0.602                                                                                  
+lt.typprmry      -0.561 -0.044 -0.129 -0.191 -0.099 -0.111 -0.147                                                                           
+AE.lvlhghr:spcsc  0.222 -0.443 -0.535 -0.209 -0.129 -0.201 -0.169  0.015                                                                    
+AE.lvlhghr:spcsl  0.389 -0.748 -0.237 -0.607 -0.227 -0.363 -0.301  0.006  0.359                                                             
+AE.lvlhghr:spcsy  0.177 -0.366 -0.118 -0.192 -0.556 -0.184 -0.141  0.018  0.197            0.333                                            
+AE.lvlhghr:spcsr  0.380 -0.725 -0.227 -0.354 -0.223 -0.589 -0.285  0.000  0.347            0.589            0.329                           
+AE.lvlhghr:spcss  0.345 -0.671 -0.216 -0.323 -0.187 -0.319 -0.608  0.012  0.320            0.527            0.276            0.511          
 
 $reserve.desig
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 17.508
+Prior dev  : 34.469
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   153.3    167.1    -71.6    143.3      114 
+   216.2    243.8    -99.1    198.2      150 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.471 -0.660 -0.429  0.850  3.447 
+-1.435 -0.840 -0.246  0.864  4.059 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.22     1.1     
-Number of obs: 119, groups:  reference, 5
+ reference (Intercept) 0.467    0.683   
+Number of obs: 159, groups:  reference, 13
 
 Fixed effects:
-                Estimate Std. Error z value Pr(>|z|)   
-(Intercept)       -1.991      0.887   -2.25   0.0248 * 
-specieslapwing     1.612      0.792    2.03   0.0420 * 
-speciesredshank    2.382      0.791    3.01   0.0026 **
-speciessnipe       1.645      0.804    2.05   0.0406 * 
+                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)            0.2595     0.5727    0.45    0.650  
+speciescurlew         -2.4152     1.0850   -2.23    0.026 *
+speciesdunlin/ruff     1.8120     1.9376    0.94    0.350  
+specieslapwing        -0.1670     0.7076   -0.24    0.813  
+speciesoystercatcher   0.2108     0.8762    0.24    0.810  
+speciesredshank        0.0729     0.6862    0.11    0.915  
+speciessnipe          -0.3304     0.7663   -0.43    0.666  
+lit.typeprimary       -0.2106     0.6885   -0.31    0.760  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) spcslp spcsrd
-specislpwng -0.700              
-specsrdshnk -0.703  0.789       
-speciessnip -0.685  0.780  0.782
+            (Intr) spcscr spcsd/ spcslp spcsys spcsrd spcssn
+speciescrlw -0.302                                          
+spcsdnln/rf -0.164  0.049                                   
+specislpwng -0.514  0.497  0.083                            
+spcsystrctc -0.421  0.365  0.068  0.545                     
+specsrdshnk -0.536  0.496  0.086  0.784  0.549              
+speciessnip -0.466  0.488  0.076  0.770  0.522  0.769       
+lt.typprmry -0.319 -0.279  0.055 -0.411 -0.253 -0.391 -0.436
 
 $mowing
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 25.202
+Prior dev  : 31.434
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    82.7     99.8    -34.4     68.7       78 
+    83.3    102.1    -33.6     67.3       70 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.721 -0.393 -0.329 -0.197  3.705 
+-0.717 -0.461 -0.371 -0.225  3.304 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.989    0.994   
-Number of obs: 85, groups:  reference, 12
+ reference (Intercept) 0.58     0.762   
+Number of obs: 78, groups:  reference, 14
 
 Fixed effects:
-                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -1.279      0.633   -2.02    0.043 *
-speciescurlew          -2.159      1.790   -1.21    0.228  
-specieslapwing         -0.297      0.857   -0.35    0.729  
-speciesoystercatcher   -1.323      1.079   -1.23    0.220  
-speciesredshank        -0.695      0.927   -0.75    0.454  
-speciessnipe           -0.390      1.234   -0.32    0.752  
+                          Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                  2.416      1.310    1.84    0.065 .
+speciesdunlin/ruff/curlew   -1.099      1.273   -0.86    0.388  
+specieslapwing              -0.321      0.837   -0.38    0.701  
+speciesoystercatcher        -1.323      1.066   -1.24    0.214  
+speciesredshank             -0.708      0.910   -0.78    0.436  
+speciessnipe                -0.151      1.256   -0.12    0.905  
+lit.typeprimary             -3.452      1.342   -2.57    0.010 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) spcscr spcslp spcsys spcsrd
-speciescrlw -0.179                            
-specislpwng -0.542  0.143                     
-spcsystrctc -0.382  0.110  0.321              
-specsrdshnk -0.480  0.132  0.394  0.294       
-speciessnip -0.364  0.131  0.296  0.220  0.271
+            (Intr) spcs// spcslp spcsys spcsrd spcssn
+spcsdnln/r/ -0.360                                   
+specislpwng -0.101  0.169                            
+spcsystrctc -0.075  0.130  0.299                     
+specsrdshnk -0.092  0.155  0.369  0.273              
+speciessnip -0.079  0.156  0.253  0.187  0.232       
+lt.typprmry -0.908  0.245 -0.132 -0.092 -0.116 -0.068
 
 $grazing
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 32.286
+Prior dev  : 52.873
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ grazing * species + (1 | reference)
+Formula: success ~ grazing * species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   110.1    131.8    -46.0     92.1       74 
+   158.9    197.7    -65.5    130.9      104 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.813 -0.502 -0.376  0.585  2.143 
+-1.107 -0.555 -0.425  0.743  2.359 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.92     1.39    
-Number of obs: 83, groups:  reference, 21
+ reference (Intercept) 1.34     1.16    
+Number of obs: 118, groups:  reference, 26
 
 Fixed effects:
                                     Estimate Std. Error z value Pr(>|z|)
-(Intercept)                           -1.677      1.023   -1.64     0.10
-grazingreduced                         0.477      1.398    0.34     0.73
-specieslapwing                         1.076      1.055    1.02     0.31
-speciesoystercatcher                   0.298      1.182    0.25     0.80
-speciesredshank                        0.275      1.100    0.25     0.80
-grazingreduced:specieslapwing         -0.851      1.578   -0.54     0.59
-grazingreduced:speciesoystercatcher   -1.936      2.091   -0.93     0.35
-grazingreduced:speciesredshank        -0.202      1.741   -0.12     0.91
+(Intercept)                           0.0897     1.0068    0.09     0.93
+grazingreduced                       -0.0556     1.0582   -0.05     0.96
+speciescurlew                        -0.0856     1.3286   -0.06     0.95
+specieslapwing                        0.9811     0.8791    1.12     0.26
+speciesoystercatcher                  0.4374     0.9554    0.46     0.65
+speciesredshank                       0.1141     0.8817    0.13     0.90
+speciessnipe                         -0.1689     1.2472   -0.14     0.89
+lit.typeprimary                      -1.6158     1.0001   -1.62     0.11
+grazingreduced:speciescurlew         -1.6896     2.0787   -0.81     0.42
+grazingreduced:specieslapwing        -0.4115     1.2522   -0.33     0.74
+grazingreduced:speciesoystercatcher  -0.7383     1.4905   -0.50     0.62
+grazingreduced:speciesredshank       -0.5655     1.4470   -0.39     0.70
+grazingreduced:speciessnipe           0.1549     1.6493    0.09     0.93
 
 Correlation of Fixed Effects:
-                (Intr) grzngr spcslp spcsys spcsrd grzngrdcd:spcsl grzngrdcd:spcsy
-grazingrdcd     -0.365                                                            
-specislpwng     -0.830  0.247                                                     
-spcsystrctc     -0.655  0.225  0.612                                              
-specsrdshnk     -0.764  0.266  0.692  0.634                                       
-grzngrdcd:spcsl  0.181 -0.626 -0.287 -0.126 -0.144                                
-grzngrdcd:spcsy  0.060 -0.302 -0.047 -0.218 -0.071  0.305                         
-grzngrdcd:spcsr  0.128 -0.528 -0.091 -0.124 -0.296  0.497           0.304         
+                (Intr) grzngr spcscr spcslp spcsys spcsrd spcssn lt.typ grzngrdcd:spcsc grzngrdcd:spcsl grzngrdcd:spcsy grzngrdcd:spcsr
+grazingrdcd     -0.444                                                                                                                 
+speciescrlw     -0.182  0.106                                                                                                          
+specislpwng     -0.345  0.272  0.415                                                                                                   
+spcsystrctc     -0.341  0.240  0.335  0.549                                                                                            
+specsrdshnk     -0.397  0.296  0.358  0.616  0.558                                                                                     
+speciessnip     -0.224  0.098  0.252  0.384  0.319  0.356                                                                              
+lt.typprmry     -0.655  0.119 -0.181 -0.317 -0.160 -0.187 -0.115                                                                       
+grzngrdcd:spcsc  0.065 -0.198 -0.316 -0.060 -0.052 -0.056 -0.022 -0.015                                                                
+grzngrdcd:spcsl  0.194 -0.586 -0.098 -0.408 -0.185 -0.217 -0.077  0.025  0.177                                                         
+grzngrdcd:spcsy  0.126 -0.415 -0.059 -0.129 -0.431 -0.176 -0.045  0.005  0.142           0.380                                         
+grzngrdcd:spcsr  0.156 -0.459 -0.055 -0.138 -0.163 -0.392 -0.050 -0.006  0.144           0.403           0.354                         
+grzngrdcd:spcss  0.146 -0.356 -0.026 -0.060 -0.069 -0.083 -0.517 -0.095  0.136           0.299           0.239           0.255         
 
 $fertpest
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 12.821
+Prior dev  : 18.949
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    41.9     49.3    -16.0     31.9       27 
+    40.2     47.5    -14.1     28.2       19 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.901 -0.308 -0.191  0.268  1.671 
+-1.050 -0.539 -0.326  0.411  1.556 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 18.2     4.27    
-Number of obs: 32, groups:  reference, 11
+ reference (Intercept) 6.19     2.49    
+Number of obs: 25, groups:  reference, 11
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)             0.200      1.699    0.12     0.91
-specieslapwing         -0.239      1.493   -0.16     0.87
-speciesoystercatcher   -2.146      1.926   -1.11     0.27
-speciesredshank        -2.146      1.926   -1.11     0.27
+(Intercept)             1.363      1.963    0.70     0.49
+specieslapwing         -0.726      1.463   -0.50     0.62
+speciesoystercatcher   -2.341      1.912   -1.22     0.22
+speciesredshank        -2.341      1.912   -1.22     0.22
+lit.typeprimary        -0.477      2.120   -0.22     0.82
 
 Correlation of Fixed Effects:
-            (Intr) spcslp spcsys
-specislpwng -0.281              
-spcsystrctc -0.084  0.238       
-specsrdshnk -0.084  0.238  0.154
+            (Intr) spcslp spcsys spcsrd
+specislpwng -0.115                     
+spcsystrctc -0.034  0.272              
+specsrdshnk -0.034  0.272  0.181       
+lt.typprmry -0.746 -0.090 -0.011 -0.011
 
 $nest.protect
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 16.859
+Prior dev  : 29.138
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    72.9     83.1    -31.5     62.9       51 
+   119.5    139.2    -51.8    103.5       78 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.179 -0.649 -0.352  0.848  1.665 
+-1.115 -0.662 -0.437  0.936  2.191 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.09     1.05    
-Number of obs: 56, groups:  reference, 9
+ reference (Intercept) 0.73     0.854   
+Number of obs: 86, groups:  reference, 15
 
 Fixed effects:
-                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -1.601      0.857   -1.87    0.062 .
-specieslapwing          1.192      0.949    1.26    0.209  
-speciesoystercatcher   -1.493      1.996   -0.75    0.454  
-speciesredshank         1.217      1.074    1.13    0.257  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            -0.532      0.842   -0.63     0.53
+speciesdunlin           0.445      1.236    0.36     0.72
+specieslapwing          0.919      0.710    1.29     0.20
+speciesoystercatcher   -0.868      1.123   -0.77     0.44
+speciesredshank         0.913      0.817    1.12     0.26
+speciessnipe            0.268      1.315    0.20     0.84
+lit.typeprimary        -0.891      0.825   -1.08     0.28
 
 Correlation of Fixed Effects:
-            (Intr) spcslp spcsys
-specislpwng -0.790              
-spcsystrctc -0.209  0.198       
-specsrdshnk -0.663  0.635  0.198
+            (Intr) spcsdn spcslp spcsys spcsrd spcssn
+speciesdnln -0.209                                   
+specislpwng -0.516  0.336                            
+spcsystrctc -0.281  0.137  0.346                     
+specsrdshnk -0.384  0.246  0.567  0.336              
+speciessnip -0.244  0.110  0.280  0.198  0.269       
+lt.typprmry -0.675 -0.156 -0.071  0.011 -0.089  0.025
 
 $predator.control
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 9.948
+Prior dev  : 22.307
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    38.7     44.4    -15.3     30.7       27 
+    50.4     61.7    -18.2     36.4       30 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.012 -0.263 -0.165  0.357  1.278 
+-0.940 -0.271 -0.165  0.370  1.266 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 13.1     3.62    
-Number of obs: 31, groups:  reference, 9
+ reference (Intercept) 14.4     3.8     
+Number of obs: 37, groups:  reference, 10
 
 Fixed effects:
-               Estimate Std. Error z value Pr(>|z|)  
-(Intercept)      -1.428      1.972   -0.72    0.469  
-specieslapwing   -0.379      1.330   -0.28    0.776  
-speciessnipe     -3.622      1.898   -1.91    0.056 .
+                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)            0.0256     2.4241    0.01     0.99  
+specieslapwing         0.2242     1.2899    0.17     0.86  
+speciesoystercatcher  -1.9336     1.9660   -0.98     0.33  
+speciesredshank        0.1457     1.5695    0.09     0.93  
+speciessnipe          -3.4028     1.9425   -1.75     0.08 .
+lit.typeprimary       -1.8750     2.2248   -0.84     0.40  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) spcslp
-specislpwng -0.391       
-speciessnip -0.014  0.207
+            (Intr) spcslp spcsys spcsrd spcssn
+specislpwng -0.255                            
+spcsystrctc -0.049  0.176                     
+specsrdshnk -0.125  0.329  0.188              
+speciessnip  0.029  0.145  0.059  0.085       
+lt.typprmry -0.540 -0.132 -0.034 -0.080 -0.015
 
 $water
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 17.739
+Prior dev  : 28.053
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    85.6     97.8    -37.8     75.6       81 
+    98.7    115.9    -42.3     84.7       79 
 
 Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--1.2564 -0.4591 -0.2594 -0.0883  2.1782 
+   Min     1Q Median     3Q    Max 
+-2.457 -0.513 -0.356  0.657  1.948 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.18     1.09    
-Number of obs: 86, groups:  reference, 15
+ reference (Intercept) 0.543    0.737   
+Number of obs: 86, groups:  reference, 18
 
 Fixed effects:
-                Estimate Std. Error z value Pr(>|z|)  
-(Intercept)        0.117      0.668    0.18    0.861  
-specieslapwing    -1.156      0.845   -1.37    0.171  
-speciesOC/CU/SN   -3.795      1.491   -2.54    0.011 *
-speciesredshank   -0.954      0.908   -1.05    0.293  
+                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)             2.017      0.912    2.21    0.027 *
+speciescurlew/snipe    -3.509      1.560   -2.25    0.025 *
+specieslapwing         -0.990      0.758   -1.31    0.191  
+speciesoystercatcher   -2.190      1.110   -1.97    0.048 *
+speciesredshank        -0.852      0.805   -1.06    0.290  
+lit.typeprimary        -1.861      0.905   -2.06    0.040 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) spcslp sOC/CU
-specislpwng -0.677              
-spcOC/CU/SN -0.294  0.250       
-specsrdshnk -0.585  0.478  0.232
+            (Intr) spcsc/ spcslp spcsys spcsrd
+spcscrlw/sn -0.184                            
+specislpwng -0.313  0.209                     
+spcsystrctc -0.248  0.137  0.335              
+specsrdshnk -0.359  0.191  0.490  0.312       
+lt.typprmry -0.781  0.031 -0.153 -0.003 -0.035
 
 
 ########==========  0b) success of individual management types by species - lme4 models (convergence issues) ==========########
@@ -373,315 +415,349 @@ specsrdshnk -0.585  0.478  0.232
 $AE
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   279.2    303.5   -132.6    265.2      230 
+   319.2    347.8   -151.6    303.2      254 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.302 -0.671 -0.411  0.803  4.897 
+-1.276 -0.651 -0.427  0.887  4.212 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.26     1.12    
-Number of obs: 237, groups:  reference, 24
+ reference (Intercept) 0.916    0.957   
+Number of obs: 262, groups:  reference, 31
 
 Fixed effects:
-                     Estimate Std. Error z value Pr(>|z|)
-(Intercept)           -0.5800     0.6083   -0.95     0.34
-speciescurlew         -1.3231     0.8884   -1.49     0.14
-specieslapwing         0.0296     0.6499    0.04     0.96
-speciesoystercatcher  -1.4277     0.9346   -1.53     0.13
-speciesredshank        0.3630     0.6702    0.54     0.59
-speciessnipe          -0.2331     0.7408   -0.32     0.75
-
-Correlation of Fixed Effects:
-            (Intr) spcscr spcslp spcsys spcsrd
-speciescrlw -0.597                            
-specislpwng -0.812  0.631                     
-spcsystrctc -0.515  0.405  0.518              
-specsrdshnk -0.749  0.625  0.796  0.515       
-speciessnip -0.711  0.609  0.769  0.473  0.764
-
-$AE.level
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
- Family: binomial  ( logit )
-Formula: success ~ AE.level * species + (1 | reference)
-   Data: mdat
-Control: glmerControl(optimizer = "bobyqa")
-
-     AIC      BIC   logLik deviance df.resid 
-   277.9    323.0   -126.0    251.9      224 
-
-Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.509 -0.597 -0.360  0.663  3.192 
-
-Random effects:
- Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.1      1.05    
-Number of obs: 237, groups:  reference, 24
-
-Fixed effects:
-                                    Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                           -2.058      1.195   -1.72    0.085 .
-AE.levelhigher                         2.252      1.389    1.62    0.105  
-speciescurlew                          0.118      1.432    0.08    0.934  
-specieslapwing                         0.649      1.222    0.53    0.595  
-speciesoystercatcher                   0.373      1.368    0.27    0.785  
-speciesredshank                        1.516      1.213    1.25    0.211  
-speciessnipe                           0.782      1.317    0.59    0.553  
-AE.levelhigher:speciescurlew          -2.346      1.929   -1.22    0.224  
-AE.levelhigher:specieslapwing         -0.598      1.463   -0.41    0.683  
-AE.levelhigher:speciesoystercatcher  -16.196   1086.483   -0.02    0.988  
-AE.levelhigher:speciesredshank        -1.774      1.466   -1.21    0.226  
-AE.levelhigher:speciessnipe           -1.472      1.572   -0.94    0.349  
+                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)            -0.727      0.621   -1.17    0.242  
+speciescurlew          -1.739      0.806   -2.16    0.031 *
+specieslapwing         -0.327      0.530   -0.62    0.538  
+speciesoystercatcher   -1.502      0.765   -1.96    0.050 *
+speciesredshank        -0.138      0.537   -0.26    0.797  
+speciessnipe           -0.646      0.638   -1.01    0.311  
+lit.typeprimary         0.575      0.659    0.87    0.383  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn AE.lvlhghr:spcsc AE.lvlhghr:spcsl AE.lvlhghr:spcsy AE.lvlhghr:spcsr
-AE.levlhghr      -0.854                                                                                                              
-speciescrlw      -0.799  0.692                                                                                                       
-specislpwng      -0.919  0.794  0.781                                                                                                
-spcsystrctc      -0.768  0.661  0.653  0.749                                                                                         
-specsrdshnk      -0.904  0.783  0.781  0.888  0.750                                                                                  
-speciessnip      -0.866  0.753  0.756  0.852  0.701  0.854                                                                           
-AE.lvlhghr:spcsc  0.611 -0.712 -0.726 -0.571 -0.484 -0.564 -0.540                                                                    
-AE.lvlhghr:spcsl  0.782 -0.913 -0.641 -0.829 -0.625 -0.730 -0.695  0.662                                                             
-AE.lvlhghr:spcsy  0.001 -0.001 -0.001 -0.001 -0.001 -0.001 -0.001  0.001            0.001                                            
-AE.lvlhghr:spcsr  0.769 -0.898 -0.630 -0.725 -0.621 -0.810 -0.682  0.654            0.840            0.001                           
-AE.lvlhghr:spcss  0.749 -0.876 -0.616 -0.703 -0.588 -0.696 -0.810  0.635            0.809            0.001            0.798          
+            (Intr) spcscr spcslp spcsys spcsrd spcssn
+speciescrlw -0.268                                   
+specislpwng -0.388  0.535                            
+spcsystrctc -0.277  0.331  0.466                     
+specsrdshnk -0.422  0.525  0.725  0.457              
+speciessnip -0.338  0.509  0.688  0.404  0.677       
+lt.typprmry -0.684 -0.140 -0.227 -0.102 -0.128 -0.172
+
+$AE.level
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ AE.level * species + lit.type + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   315.7    365.7   -143.9    287.7      248 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.494 -0.582 -0.380  0.715  3.395 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.636    0.797   
+Number of obs: 262, groups:  reference, 31
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                          -1.6782     0.8053   -2.08    0.037 *
+AE.levelhigher                        1.9943     0.9334    2.14    0.033 *
+speciescurlew                        -0.5818     1.0750   -0.54    0.588  
+specieslapwing                        0.0601     0.7982    0.08    0.940  
+speciesoystercatcher                 -0.4469     1.0294   -0.43    0.664  
+speciesredshank                       0.7345     0.7852    0.94    0.350  
+speciessnipe                          0.1132     0.9294    0.12    0.903  
+lit.typeprimary                       0.2766     0.6208    0.45    0.656  
+AE.levelhigher:speciescurlew         -1.9179     1.6197   -1.18    0.236  
+AE.levelhigher:specieslapwing        -0.1967     1.0533   -0.19    0.852  
+AE.levelhigher:speciesoystercatcher  -1.8521     1.5991   -1.16    0.247  
+AE.levelhigher:speciesredshank       -1.3793     1.0583   -1.30    0.192  
+AE.levelhigher:speciessnipe          -1.0628     1.1962   -0.89    0.374  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn lt.typ AE.lvlhghr:spcsc AE.lvlhghr:spcsl AE.lvlhghr:spcsy AE.lvlhghr:spcsr
+AE.levlhghr      -0.660                                                                                                                     
+speciescrlw      -0.505  0.498                                                                                                              
+specislpwng      -0.653  0.641  0.608                                                                                                       
+spcsystrctc      -0.484  0.464  0.433  0.565                                                                                                
+specsrdshnk      -0.679  0.641  0.605  0.772  0.561                                                                                         
+speciessnip      -0.583  0.574  0.566  0.709  0.491  0.707                                                                                  
+lt.typprmry      -0.460 -0.039 -0.133 -0.183 -0.112 -0.113 -0.150                                                                           
+AE.lvlhghr:spcsc  0.379 -0.566 -0.629 -0.373 -0.278 -0.369 -0.330  0.021                                                                    
+AE.lvlhghr:spcsl  0.564 -0.837 -0.423 -0.717 -0.412 -0.549 -0.486  0.013  0.495                                                             
+AE.lvlhghr:spcsy  0.333 -0.505 -0.267 -0.354 -0.640 -0.349 -0.300  0.031  0.318            0.469                                            
+AE.lvlhghr:spcsr  0.554 -0.819 -0.412 -0.536 -0.406 -0.704 -0.470  0.007  0.484            0.716            0.464                           
+AE.lvlhghr:spcss  0.518 -0.770 -0.394 -0.504 -0.367 -0.503 -0.709  0.017  0.455            0.663            0.415            0.649          
+
+$reserve.desig
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ species + lit.type + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   215.1    242.8    -98.6    197.1      150 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.310 -0.882 -0.222  0.874  4.507 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.226    0.475   
+Number of obs: 159, groups:  reference, 13
+
+Fixed effects:
+                      Estimate Std. Error z value Pr(>|z|)  
+(Intercept)           2.21e-01   5.57e-01    0.40    0.691  
+speciescurlew        -2.77e+00   1.28e+00   -2.16    0.031 *
+speciesdunlin/ruff    1.62e+01   2.78e+03    0.01    0.995  
+specieslapwing       -2.54e-01   7.62e-01   -0.33    0.739  
+speciesoystercatcher  1.70e-01   9.22e-01    0.18    0.853  
+speciesredshank      -9.88e-03   7.38e-01   -0.01    0.989  
+speciessnipe         -4.20e-01   8.26e-01   -0.51    0.611  
+lit.typeprimary      -7.44e-02   6.32e-01   -0.12    0.906  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) spcscr spcsd/ spcslp spcsys spcsrd spcssn
+speciescrlw -0.356                                          
+spcsdnln/rf  0.000  0.000                                   
+specislpwng -0.603  0.517  0.000                            
+spcsystrctc -0.507  0.395  0.000  0.609                     
+specsrdshnk -0.625  0.516  0.000  0.821  0.612              
+speciessnip -0.552  0.510  0.000  0.809  0.589  0.807       
+lt.typprmry -0.168 -0.340  0.000 -0.506 -0.337 -0.484 -0.537
 convergence code: 0
 unable to evaluate scaled gradient
 Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
 
 
-$reserve.desig
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
- Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
-   Data: mdat
-Control: glmerControl(optimizer = "bobyqa")
-
-     AIC      BIC   logLik deviance df.resid 
-   151.9    165.8    -71.0    141.9      114 
-
-Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.414 -0.691 -0.301  0.848  4.769 
-
-Random effects:
- Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.435    0.659   
-Number of obs: 119, groups:  reference, 5
-
-Fixed effects:
-                Estimate Std. Error z value Pr(>|z|)   
-(Intercept)        -2.67       1.11   -2.40   0.0163 * 
-specieslapwing      2.34       1.11    2.11   0.0348 * 
-speciesredshank     3.09       1.11    2.79   0.0053 **
-speciessnipe        2.39       1.12    2.13   0.0328 * 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Correlation of Fixed Effects:
-            (Intr) spcslp spcsrd
-specislpwng -0.897              
-specsrdshnk -0.899  0.895       
-speciessnip -0.890  0.891  0.891
-
 $mowing
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    81.1     98.2    -33.5     67.1       78 
+    79.4     98.2    -31.7     63.4       70 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.647 -0.453 -0.369 -0.229  3.847 
+-0.657 -0.482 -0.390  0.000  3.604 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.154    0.393   
-Number of obs: 85, groups:  reference, 12
+ reference (Intercept) 0.0088   0.0938  
+Number of obs: 78, groups:  reference, 14
 
 Fixed effects:
-                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -0.997      0.514   -1.94    0.053 .
-speciescurlew         -18.498   1448.155   -0.01    0.990  
-specieslapwing         -0.604      0.816   -0.74    0.459  
-speciesoystercatcher   -1.716      1.151   -1.49    0.136  
-speciesredshank        -1.015      0.911   -1.11    0.265  
-speciessnipe           -0.675      1.240   -0.55    0.586  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                           Estimate Std. Error z value Pr(>|z|)
+(Intercept)                  38.299  14985.380    0.00     1.00
+speciesdunlin/ruff/curlew   -18.959   9961.900    0.00     1.00
+specieslapwing               -0.617      0.806   -0.76     0.44
+speciesoystercatcher         -1.716      1.149   -1.49     0.14
+speciesredshank              -1.023      0.904   -1.13     0.26
+speciessnipe                 -0.260      1.257   -0.21     0.84
+lit.typeprimary             -39.146  14985.380    0.00     1.00
 
 Correlation of Fixed Effects:
-            (Intr) spcscr spcslp spcsys spcsrd
-speciescrlw -0.001                            
-specislpwng -0.595  0.001                     
-spcsystrctc -0.413  0.001  0.273              
-specsrdshnk -0.529  0.001  0.347  0.244       
-speciessnip -0.387  0.001  0.251  0.181  0.227
+            (Intr) spcs// spcslp spcsys spcsrd spcssn
+spcsdnln/r/ -0.665                                   
+specislpwng  0.000  0.000                            
+spcsystrctc  0.000  0.000  0.258                     
+specsrdshnk  0.000  0.000  0.328  0.231              
+speciessnip  0.000  0.000  0.237  0.166  0.211       
+lt.typprmry -1.000  0.665  0.000  0.000  0.000  0.000
 convergence code: 0
- Hessian is numerically singular: parameters are not uniquely determined
+unable to evaluate scaled gradient
+Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
 
 
 $grazing
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ grazing * species + (1 | reference)
+Formula: success ~ grazing * species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   106.2    128.0    -44.1     88.2       74 
+   157.3    196.1    -64.7    129.3      104 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.000 -0.600 -0.503  0.948  1.974 
+-1.173 -0.601 -0.432  0.821  2.609 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.539    0.734   
-Number of obs: 83, groups:  reference, 21
+ reference (Intercept) 0.453    0.673   
+Number of obs: 118, groups:  reference, 26
 
 Fixed effects:
-                                    Estimate Std. Error z value Pr(>|z|)
-(Intercept)                            -18.4     4376.0       0        1
-grazingreduced                          18.4     4376.0       0        1
-specieslapwing                          17.8     4376.0       0        1
-speciesoystercatcher                    17.4     4376.0       0        1
-speciesredshank                         17.2     4376.0       0        1
-grazingreduced:specieslapwing          -18.8     4376.0       0        1
-grazingreduced:speciesoystercatcher    -36.1     7569.8       0        1
-grazingreduced:speciesredshank         -18.4     4376.0       0        1
+                                    Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                           -0.372      1.025   -0.36    0.716  
+grazingreduced                         0.859      1.288    0.67    0.505  
+speciescurlew                          0.523      1.555    0.34    0.736  
+specieslapwing                         1.320      1.060    1.25    0.213  
+speciesoystercatcher                   1.002      1.159    0.86    0.388  
+speciesredshank                        0.628      1.083    0.58    0.562  
+speciessnipe                           0.120      1.530    0.08    0.937  
+lit.typeprimary                       -1.510      0.795   -1.90    0.058 .
+grazingreduced:speciescurlew         -17.242   3218.727    0.00    0.996  
+grazingreduced:specieslapwing         -1.377      1.552   -0.89    0.375  
+grazingreduced:speciesoystercatcher   -2.046      1.872   -1.09    0.275  
+grazingreduced:speciesredshank        -1.801      1.808   -1.00    0.319  
+grazingreduced:speciessnipe           -0.676      2.140   -0.32    0.752  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-                (Intr) grzngr spcslp spcsys spcsrd grzngrdcd:spcsl grzngrdcd:spcsy
-grazingrdcd     -1.000                                                            
-specislpwng     -1.000  1.000                                                     
-spcsystrctc     -1.000  1.000  1.000                                              
-specsrdshnk     -1.000  1.000  1.000  1.000                                       
-grzngrdcd:spcsl  1.000 -1.000 -1.000 -1.000 -1.000                                
-grzngrdcd:spcsy  0.578 -0.578 -0.578 -0.578 -0.578  0.578                         
-grzngrdcd:spcsr  1.000 -1.000 -1.000 -1.000 -1.000  1.000           0.578         
+                (Intr) grzngr spcscr spcslp spcsys spcsrd spcssn lt.typ grzngrdcd:spcsc grzngrdcd:spcsl grzngrdcd:spcsy grzngrdcd:spcsr
+grazingrdcd     -0.646                                                                                                                 
+speciescrlw     -0.445  0.431                                                                                                          
+specislpwng     -0.645  0.623  0.592                                                                                                   
+spcsystrctc     -0.593  0.559  0.536  0.752                                                                                            
+specsrdshnk     -0.645  0.604  0.564  0.802  0.730                                                                                     
+speciessnip     -0.477  0.415  0.390  0.536  0.488  0.524                                                                              
+lt.typprmry     -0.419 -0.023 -0.216 -0.309 -0.245 -0.256 -0.099                                                                       
+grzngrdcd:spcsc  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000                                                                
+grzngrdcd:spcsl  0.477 -0.799 -0.385 -0.655 -0.491 -0.525 -0.357  0.122  0.000                                                         
+grzngrdcd:spcsy  0.366 -0.646 -0.333 -0.466 -0.620 -0.453 -0.303  0.155  0.000           0.581                                         
+grzngrdcd:spcsr  0.391 -0.674 -0.335 -0.477 -0.434 -0.596 -0.312  0.141  0.000           0.599           0.514                         
+grzngrdcd:spcss  0.394 -0.576 -0.252 -0.344 -0.319 -0.342 -0.702 -0.054  0.000           0.492           0.406           0.422         
 convergence code: 0
 unable to evaluate scaled gradient
- Hessian is numerically singular: parameters are not uniquely determined
+Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
 
 
 $fertpest
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    38.1     45.4    -14.0     28.1       27 
+    34.8     42.1    -11.4     22.8       19 
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--1.2422 -0.6157 -0.0001  0.6494  1.5659 
+-1.5811 -0.7559 -0.0001  0.6325  1.3229 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.883    0.939   
-Number of obs: 32, groups:  reference, 11
+ reference (Intercept) 0        0       
+Number of obs: 25, groups:  reference, 11
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)             0.340      0.795    0.43     0.67
-specieslapwing         -1.097      1.013   -1.08     0.28
-speciesoystercatcher  -19.585   8001.546    0.00     1.00
-speciesredshank       -19.434   7421.678    0.00     1.00
+(Intercept)             19.57    2117.44    0.01     0.99
+specieslapwing          -1.48       1.05   -1.41     0.16
+speciesoystercatcher   -20.43    2151.32   -0.01     0.99
+speciesredshank        -20.43    1472.91   -0.01     0.99
+lit.typeprimary        -18.65    2117.44   -0.01     0.99
 
 Correlation of Fixed Effects:
-            (Intr) spcslp spcsys
-specislpwng -0.706              
-spcsystrctc  0.000  0.000       
-specsrdshnk  0.000  0.000  0.000
+            (Intr) spcslp spcsys spcsrd
+specislpwng  0.000                     
+spcsystrctc -0.254  0.000              
+specsrdshnk  0.046  0.000 -0.183       
+lt.typprmry -1.000  0.000  0.254 -0.046
 convergence code: 0
-unable to evaluate scaled gradient
  Hessian is numerically singular: parameters are not uniquely determined
 
 
 $nest.protect
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    71.6     81.7    -30.8     61.6       51 
+   118.2    137.9    -51.1    102.2       78 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.924 -0.748 -0.414  1.082  2.026 
+-1.192 -0.786 -0.482  1.267  2.417 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.18     0.424   
-Number of obs: 56, groups:  reference, 9
+ reference (Intercept) 0        0       
+Number of obs: 86, groups:  reference, 15
 
 Fixed effects:
-                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -1.631      0.818   -1.99    0.046 *
-specieslapwing          1.265      0.914    1.38    0.167  
-speciesoystercatcher  -16.793   4508.213    0.00    0.997  
-speciesredshank         1.132      1.035    1.09    0.274  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            -0.627      0.674   -0.93     0.35
+speciesdunlin           0.768      1.064    0.72     0.47
+specieslapwing          0.979      0.681    1.44     0.15
+speciesoystercatcher   -1.138      1.215   -0.94     0.35
+speciesredshank         0.824      0.792    1.04     0.30
+speciessnipe            0.184      1.386    0.13     0.89
+lit.typeprimary        -0.834      0.556   -1.50     0.13
 
 Correlation of Fixed Effects:
-            (Intr) spcslp spcsys
-specislpwng -0.882              
-spcsystrctc  0.000  0.000       
-specsrdshnk -0.765  0.698  0.000
-convergence code: 0
-unable to evaluate scaled gradient
- Hessian is numerically singular: parameters are not uniquely determined
-
+            (Intr) spcsdn spcslp spcsys spcsrd spcssn
+speciesdnln -0.368                                   
+specislpwng -0.672  0.489                            
+spcsystrctc -0.453  0.244  0.397                     
+specsrdshnk -0.596  0.413  0.633  0.344              
+speciessnip -0.433  0.200  0.339  0.212  0.297       
+lt.typprmry -0.509 -0.200 -0.121  0.083 -0.068  0.142
 
 $predator.control
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    36.9     42.6    -14.5     28.9       27 
+    46.6     57.8    -16.3     32.6       30 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.168 -0.383  0.000  0.410  1.378 
+-1.216 -0.334  0.000  0.313  1.314 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 4.38     2.09    
-Number of obs: 31, groups:  reference, 9
+ reference (Intercept) 5.39     2.32    
+Number of obs: 37, groups:  reference, 10
 
 Fixed effects:
-               Estimate Std. Error z value Pr(>|z|)
-(Intercept)      -0.375      1.212   -0.31     0.76
-specieslapwing   -0.951      1.310   -0.73     0.47
-speciessnipe    -20.721   8619.005    0.00     1.00
+                      Estimate Std. Error z value Pr(>|z|)
+(Intercept)             21.080  24927.313    0.00     1.00
+specieslapwing          -0.832      1.354   -0.62     0.54
+speciesoystercatcher   -20.711  18281.075    0.00     1.00
+speciesredshank         -0.716      1.752   -0.41     0.68
+speciessnipe           -20.884   9216.846    0.00     1.00
+lit.typeprimary        -21.690  24927.313    0.00     1.00
 
 Correlation of Fixed Effects:
-            (Intr) spcslp
-specislpwng -0.638       
-speciessnip  0.000  0.000
+            (Intr) spcslp spcsys spcsrd spcssn
+specislpwng  0.000                            
+spcsystrctc  0.000  0.000                     
+specsrdshnk  0.000  0.419  0.000              
+speciessnip  0.000  0.000  0.000  0.000       
+lt.typprmry -1.000  0.000  0.000  0.000  0.000
 convergence code: 0
 unable to evaluate scaled gradient
  Hessian is numerically singular: parameters are not uniquely determined
@@ -690,36 +766,40 @@ unable to evaluate scaled gradient
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ species + (1 | reference)
+Formula: success ~ species + lit.type + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    83.4     95.7    -36.7     73.4       81 
+    95.5    112.7    -40.8     81.5       79 
 
 Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--1.2333 -0.5650 -0.2383 -0.0001  1.9510 
+   Min     1Q Median     3Q    Max 
+-3.782 -0.588 -0.280  0.563  1.700 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.156    0.395   
-Number of obs: 86, groups:  reference, 15
+ reference (Intercept) 0        0       
+Number of obs: 86, groups:  reference, 18
 
 Fixed effects:
-                Estimate Std. Error z value Pr(>|z|)  
-(Intercept)        0.315      0.565    0.56    0.578  
-specieslapwing    -1.509      0.715   -2.11    0.035 *
-speciesOC/CU/SN  -19.630   3498.462   -0.01    0.996  
-speciesredshank   -1.223      0.825   -1.48    0.138  
+                     Estimate Std. Error z value Pr(>|z|)   
+(Intercept)             2.660      0.999    2.66   0.0078 **
+speciescurlew/snipe   -20.392   5026.478    0.00   0.9968   
+specieslapwing         -1.511      0.684   -2.21   0.0272 * 
+speciesoystercatcher   -2.994      1.277   -2.34   0.0191 * 
+speciesredshank        -1.293      0.808   -1.60   0.1093   
+lit.typeprimary        -2.211      0.914   -2.42   0.0156 * 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) spcslp sOC/CU
-specislpwng -0.780              
-spcOC/CU/SN  0.000  0.000       
-specsrdshnk -0.665  0.531  0.000
+            (Intr) spcsc/ spcslp spcsys spcsrd
+spcscrlw/sn  0.000                            
+specislpwng -0.417  0.000                     
+spcsystrctc -0.374  0.000  0.354              
+specsrdshnk -0.453  0.000  0.569  0.318       
+lt.typprmry -0.826  0.000 -0.056  0.153  0.073
 convergence code: 0
 unable to evaluate scaled gradient
 Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
@@ -762,22 +842,22 @@ $AE
 NULL
 
 $AE.level
-[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
-
-$reserve.desig
 NULL
 
+$reserve.desig
+[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
+
 $mowing
-[1] " Hessian is numerically singular: parameters are not uniquely determined"
+[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 2 negative eigenvalues"
 
 $grazing
-[1] "unable to evaluate scaled gradient"                                       " Hessian is numerically singular: parameters are not uniquely determined"
+[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
 
 $fertpest
-[1] "unable to evaluate scaled gradient"                                       " Hessian is numerically singular: parameters are not uniquely determined"
+[1] " Hessian is numerically singular: parameters are not uniquely determined"
 
 $nest.protect
-[1] "unable to evaluate scaled gradient"                                       " Hessian is numerically singular: parameters are not uniquely determined"
+NULL
 
 $predator.control
 [1] "unable to evaluate scaled gradient"                                       " Hessian is numerically singular: parameters are not uniquely determined"
