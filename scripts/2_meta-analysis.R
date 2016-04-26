@@ -88,6 +88,9 @@ for (i in 1:length(mgmtvars)) {
 
 # 0a) success of individual management types overall
 # 0b) success of individual management types by species
+# 0c) success of individual management types by metric
+# 0d) success of individual management types by habitat
+
 # 1a) success of AES and nature reserves
 # 1b) success of specific management interventions
 # 2a) success of AES and nature reserves by species
@@ -415,17 +418,17 @@ for (i in 1:length(mgmtvars)) {
   table(mdat[,mgmtvars[i]], mdat$metric, mdat$success)
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-#   if (mgmtvars[i]=="reserve.desig") {
-#     mdat <- subset(mdat, metric!="productivity")
-#   }
+  #   if (mgmtvars[i]=="reserve.desig") {
+  #     mdat <- subset(mdat, metric!="productivity")
+  #   }
   
-#   if (mgmtvars[i]=="mowing") {
-#     mdat <- subset(mdat, mowing!="applied")
-#   }
+  #   if (mgmtvars[i]=="mowing") {
+  #     mdat <- subset(mdat, mowing!="applied")
+  #   }
   
-#   if (mgmtvars[i]=="grazing") {
-#     mdat <- subset(mdat, metric!="occupancy")
-#   }
+  #   if (mgmtvars[i]=="grazing") {
+  #     mdat <- subset(mdat, metric!="occupancy")
+  #   }
   
   if (mgmtvars[i]=="fertpest") {
     # mdat <- subset(mdat, fertpest!="applied")
@@ -508,6 +511,146 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0c.rds", sep="/"))
 #######################################################
 #######################################################
 #######################################################        End of analysis for 18 March report delivery
+#######################################################
+#######################################################
+
+
+#------------------------------ 0d) success of individual management types by habitat -------------------------
+
+### NOTES on Analysis 0d ###
+
+# the effect of habitat type on intervention success won't be very applicable to certain habitat types (e.g. no mowing done in arable habitats, pastoral only), so look at only a select few management types used across habitats to gauge intervention effectiveness in different habitats
+# management types: AE, AE.level, reserve.desig, nest.protect, water
+# reserve.desig model run without literature type because not enough observations in the different literature types to produce convergence (model with lit.type was rank deficient)
+
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+
+
+# identify which categories have low numbers
+out <- list()
+for(i in 1:length(mgmtvars)) {
+  out[[i]] <- table(dat$habitat, dat[,mgmtvars[i]])
+}
+names(out) <- mgmtvars
+out
+
+mgmtvars <- c("AE","AE.level","reserve.desig","nest.protect","water")
+
+### ANALYSIS ###
+
+# identify which categories have low numbers
+out <- list()
+for(i in 1:length(mgmtvars)) {
+  out[[i]] <- table(dat$habitat, dat[,mgmtvars[i]])
+}
+names(out) <- mgmtvars
+out
+
+# set up list to output models and model datasets to
+m.ind.sp <- list()
+m.ind.sp.blme <- list()
+usedat <- list() # data subset used to run a model
+
+for (i in 1:length(mgmtvars)) {
+  
+  
+  mgmtvars[i]
+  mdat <- dat[dat[,mgmtvars[i]]!="none",]
+  table(mdat[,mgmtvars[i]], mdat$habitat, mdat$success)
+  
+  # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+  if (mgmtvars[i]=="AE.level") {
+    mdat <- subset(mdat, habitat!="unenclosed")
+  }
+  
+#   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+#   if (mgmtvars[i]=="reserve.desig") {
+#     mdat <- subset(mdat, !(grepl("arable", mdat$habitat)) & habitat!="mixed pastoral/unenclosed")
+#     mdat <- subset(mdat, habitat=="pastoral")
+#   }
+  
+
+  if (mgmtvars[i]=="water") {
+    mdat <- subset(mdat, water!="reduced")
+    # mdat <- subset(mdat, metric!="occupancy")
+    # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
+    # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
+    # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
+  }
+  
+  mdat <- droplevels(mdat)
+  usedat[[i]] <- mdat
+  
+  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$habitat, mdat$success))
+  
+
+  
+  # create different formulas to use depending on whether management variable is 1 or 2 levels
+  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*habitat + lit.type + (1|reference)", sep=""))
+  }
+  
+  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+    modform <- as.formula("success ~ habitat + lit.type + (1|reference)")
+  }
+  
+  # if model produces rank deficiency because of missing observations from certain habitat types for certain literature types, use below formula
+  if (mgmtvars[i] %in% c("reserve.desig")) {
+    modform <- as.formula("success ~ habitat + (1|reference)")
+  }
+  
+  # run a normal glmer model
+  m.ind.sp[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  
+  # if ANY checkzeros==0, then there are categories which are missing any observations whatsoever, so will have problems with complete separation and/or convergence
+  # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
+  # calculate the dimensions of the covariance matrix for bglmer, based on the dimensions of the covariance matrix from the regular glmer model
+  
+  # if (any(checkzeros==0)) {
+  vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
+  m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  # }
+  
+
+  
+}
+
+names(m.ind.sp) <- mgmtvars
+names(m.ind.sp.blme) <- mgmtvars
+names(usedat) <- mgmtvars
+
+warningmessages.lme4 <- lapply(m.ind.sp, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.lme4
+
+warningmessages.blme <- lapply(m.ind.sp.blme, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.blme
+
+
+setwd(outputwd)
+sink(paste("model output_0d.txt", sep=" "))
+cat("\n########==========  0d) success of individual management types (subset only) by habitat - BLME models (good) ==========########\n", sep="\n")
+print(lapply(m.ind.sp.blme, summary))
+
+cat("\n########==========  0d) success of individual management types (subset only) by habitat - lme4 models (also good) ==========########\n", sep="\n")
+print(lapply(m.ind.sp, summary))
+
+cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
+print(warningmessages.blme)
+
+cat("\n########==========  Warning messages lme4 models (also good) ==========########\n", sep="\n")
+print(warningmessages.lme4)
+sink()
+
+### Save individual interventions models
+saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_0d_blme.rds", sep="/"))
+saveRDS(m.ind.sp, file=paste(workspacewd, "models_0d_lme4.rds", sep="/"))
+
+### Save dataset for 0b models
+saveRDS(usedat, file=paste(workspacewd, "model dataset_0d.rds", sep="/"))
+
+#######################################################
+#######################################################
+#######################################################
 #######################################################
 #######################################################
 

@@ -13,7 +13,8 @@ set.seed(2)
 
 # default to plot when both are FALSE is results from overall analysis (0a)
 species <- FALSE # plot the species-specific model results (0b)
-metric <- TRUE # plot the metric-specific model results (0c)
+metric <- FALSE # plot the metric-specific model results (0c)
+habitat <- TRUE # plot the habitat-specific model results (0d)
 alphalevel <- 0.05
 
 #=================================  LOAD PACKAGES =================================
@@ -105,28 +106,27 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nes
 # subset master dataset to desired columns only
 dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
 
-# load model data & models: use blme models for all 0a-c analyses
-if (!metric) {
-  if (!species) moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/"))
-  if (species) moddat <- readRDS(paste(workspacewd, "model dataset_0b.rds", sep="/"))
-  
-  # load models
-  if (!species) mod <- readRDS(paste(workspacewd, "models_0a_blme.rds", sep="/"))
-  if (species) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
-}
+# load model data & models: use blme models for all 0a-d analyses
 
-if (metric) {
-  
-  # load models & model data
-  moddat <- readRDS(paste(workspacewd, "model dataset_0c.rds", sep="/"))
-  mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
-}
+if (!species & !habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/"))
+if (species & !habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0b.rds", sep="/"))
+if (!species & !habitat & metric) moddat <- readRDS(paste(workspacewd, "model dataset_0c.rds", sep="/"))
+if (!species & habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0d.rds", sep="/"))
+
+
+# load models
+if (!species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0a_blme.rds", sep="/"))
+if (species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
+if (!species & !habitat & metric) mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
+if (!species & habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0d_blme.rds", sep="/"))
+
+
 
 #=================================  OUTPUT PARAMETER TABLES  ===============================
 
 if (!metric) {
   if (!species) {
- 
+    
     # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
     coeftab <- lapply(mod, function(x) summary(x)$coefficients)
     coeftab <- lapply(coeftab, function(x) {
@@ -138,40 +138,40 @@ if (!metric) {
     coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
     coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
     rownames(coeftab3) <- c(1:nrow(coeftab3))
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
     partable <- coeftab3
     
-#     # create a variable with the names of the different management interventions and their levels (if present)
-#     mgmtvarlevels <- list()
-#     for (i in 1:length(mgmtvars)) {
-#       mgmtvarlevels[[i]] <- paste(mgmtvars[i], levels(moddat[[i]][,mgmtvars[i]]))
-#     }
-#     mgmtvarlevels <- unlist(mgmtvarlevels)
-#     
-#     # calculate sample sizes of the datasets
-#     n <- lapply(moddat, nrow)
-#     n <- unlist(n)
-#     
-#     # bind the two together to create a named parameter table with coefficients and their SEs against the relevant intervention
-#     partable <- cbind(mgmtvarlevels,coeftab3)
+    #     # create a variable with the names of the different management interventions and their levels (if present)
+    #     mgmtvarlevels <- list()
+    #     for (i in 1:length(mgmtvars)) {
+    #       mgmtvarlevels[[i]] <- paste(mgmtvars[i], levels(moddat[[i]][,mgmtvars[i]]))
+    #     }
+    #     mgmtvarlevels <- unlist(mgmtvarlevels)
+    #     
+    #     # calculate sample sizes of the datasets
+    #     n <- lapply(moddat, nrow)
+    #     n <- unlist(n)
+    #     
+    #     # bind the two together to create a named parameter table with coefficients and their SEs against the relevant intervention
+    #     partable <- cbind(mgmtvarlevels,coeftab3)
     partable <- partable[,c(6,5,1,2,4)] # omit z value column
     names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
     
     # Write the parameter table
     write.csv(format(partable, scientific=FALSE, digits=2),  "0a_overall parameter table.csv", row.names=FALSE)
     
- 
+    
   }
   
   if (species) {
@@ -187,18 +187,18 @@ if (!metric) {
     coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
     coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
     rownames(coeftab3) <- c(1:nrow(coeftab3))
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
-#     coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
+    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
     partable <- coeftab3
     
     #     # create a variable with the names of the different management interventions and their levels (if present)
@@ -237,18 +237,18 @@ if (metric) {
   coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
   coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
   rownames(coeftab3) <- c(1:nrow(coeftab3))
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
-#   coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
+  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
   partable <- coeftab3
   
   #     # create a variable with the names of the different management interventions and their levels (if present)
@@ -350,7 +350,7 @@ if (!metric) {
     
     plotfinal$rowid <- 1:nrow(plotfinal)
     
-
+    
     ###-------- Output plot 0b_A (AES to mowing) --------###
     
     if (alphalevel==0.05) {
@@ -440,7 +440,7 @@ if (metric) {
     
     plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, metric=unique.fits$metric), mean)
     
-
+    
   }
   
   plotfinal <- do.call(rbind, plotdat)
