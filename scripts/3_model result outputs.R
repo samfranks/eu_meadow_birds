@@ -124,8 +124,11 @@ if (!species & habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0d_b
 
 #=================================  OUTPUT PARAMETER TABLES  ===============================
 
-if (!metric) {
-  if (!species) {
+setwd(outputwd)
+
+#------------------------------ 0a) success of individual management types -------------------------
+
+if (!species & !metric & !habitat) {
     
     # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
     coeftab <- lapply(mod, function(x) summary(x)$coefficients)
@@ -138,43 +141,19 @@ if (!metric) {
     coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
     coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
     rownames(coeftab3) <- c(1:nrow(coeftab3))
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
     partable <- coeftab3
-    
-    #     # create a variable with the names of the different management interventions and their levels (if present)
-    #     mgmtvarlevels <- list()
-    #     for (i in 1:length(mgmtvars)) {
-    #       mgmtvarlevels[[i]] <- paste(mgmtvars[i], levels(moddat[[i]][,mgmtvars[i]]))
-    #     }
-    #     mgmtvarlevels <- unlist(mgmtvarlevels)
-    #     
-    #     # calculate sample sizes of the datasets
-    #     n <- lapply(moddat, nrow)
-    #     n <- unlist(n)
-    #     
-    #     # bind the two together to create a named parameter table with coefficients and their SEs against the relevant intervention
-    #     partable <- cbind(mgmtvarlevels,coeftab3)
     partable <- partable[,c(6,5,1,2,4)] # omit z value column
     names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
     
     # Write the parameter table
     write.csv(format(partable, scientific=FALSE, digits=2),  "0a_overall parameter table.csv", row.names=FALSE)
-    
-    
-  }
   
-  if (species) {
+}
+
+#------------------------------ 0b) success of individual management types by species -------------------------
+
+  
+  if (species & !metric & !habitat) {
     
     # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
     coeftab <- lapply(mod, function(x) summary(x)$coefficients)
@@ -187,33 +166,8 @@ if (!metric) {
     coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
     coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
     rownames(coeftab3) <- c(1:nrow(coeftab3))
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
-    #     coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
-    partable <- coeftab3
     
-    #     # create a variable with the names of the different management interventions and their levels (if present)
-    #     mgmtvarlevels <- list()
-    #     for (i in 1:length(mgmtvars)) {
-    #       mgmtvarlevels[[i]] <- paste(mgmtvars[i], levels(moddat[[i]][,mgmtvars[i]]))
-    #     }
-    #     mgmtvarlevels <- unlist(mgmtvarlevels)
-    #     
-    #     # calculate sample sizes of the datasets
-    #     n <- lapply(moddat, nrow)
-    #     n <- unlist(n)
-    #     
-    #     # bind the two together to create a named parameter table with coefficients and their SEs against the relevant intervention
-    #     partable <- cbind(mgmtvarlevels,coeftab3)
+    partable <- coeftab3
     partable <- partable[,c(6,5,1,2,4)] # omit z value column
     names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
     
@@ -221,10 +175,11 @@ if (!metric) {
     write.csv(format(partable, scientific=FALSE, digits=2),  "0b_species-specific parameter table.csv", row.names=FALSE)
     
   }
-}
+
+#------------------------------ 0c) success of individual management types by metric -------------------------
 
 
-if (metric) {
+if (!species & metric & !habitat) {
   
   # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
   coeftab <- lapply(mod, function(x) summary(x)$coefficients)
@@ -237,38 +192,39 @@ if (metric) {
   coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
   coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
   rownames(coeftab3) <- c(1:nrow(coeftab3))
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="lit.typeprimary", "primary literature", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="(Intercept)", paste(coeftab3$mgmtvar, "grey literature", sep=", "), coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.level, grey literature","AE.level basic, grey literature", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="mowing, grey literature","mowing applied, grey literature", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="grazing, grey literature","grazing applied, grey literature", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpest, grey literature","fertpest applied, grey literature", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="water, grey literature","water applied, grey literature", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="AE.levelhigher","AE.level higher", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="mowingreduced","mowing reduced", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="grazingreduced","grazing reduced", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="fertpestreduced","fertpest reduced", coeftab3$parameter)
-  #   coeftab3$parameter <- ifelse(coeftab3$parameter=="waterreduced","water reduced", coeftab3$parameter)
-  partable <- coeftab3
   
-  #     # create a variable with the names of the different management interventions and their levels (if present)
-  #     mgmtvarlevels <- list()
-  #     for (i in 1:length(mgmtvars)) {
-  #       mgmtvarlevels[[i]] <- paste(mgmtvars[i], levels(moddat[[i]][,mgmtvars[i]]))
-  #     }
-  #     mgmtvarlevels <- unlist(mgmtvarlevels)
-  #     
-  #     # calculate sample sizes of the datasets
-  #     n <- lapply(moddat, nrow)
-  #     n <- unlist(n)
-  #     
-  #     # bind the two together to create a named parameter table with coefficients and their SEs against the relevant intervention
-  #     partable <- cbind(mgmtvarlevels,coeftab3)
+  partable <- coeftab3
   partable <- partable[,c(6,5,1,2,4)] # omit z value column
   names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
   
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0c_metric-specific parameter table.csv", row.names=FALSE)
+  
+}
+
+#------------------------------ 0d) success of individual management types by habitat -------------------------
+
+
+if (!species & !metric & habitat) {
+  
+  # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
+  coeftab <- lapply(mod, function(x) summary(x)$coefficients)
+  coeftab <- lapply(coeftab, function(x) {
+    out <- as.data.frame(x)
+    out$parameter <- rownames(out)
+    rownames(out) <- 1:nrow(out)
+    return(out) })
+  coeftab2 <- do.call(rbind, coeftab)
+  coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
+  coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
+  rownames(coeftab3) <- c(1:nrow(coeftab3))
+  
+  partable <- coeftab3
+  partable <- partable[,c(6,5,1,2,4)] # omit z value column
+  names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+  
+  # Write the parameter table
+  write.csv(format(partable, scientific=FALSE, digits=2),  "0d_habitat-specific parameter table.csv", row.names=FALSE)
   
 }
 
@@ -278,10 +234,9 @@ if (metric) {
 # set the wd to output to
 setwd(outputwd)
 
-if (!metric) {
-  
-  if (!species) {
-    
+#------------------------------ 0a) success of individual management types -------------------------
+
+if (!species & !metric & !habitat) {
     
     plotdat <- list()
     
@@ -322,7 +277,9 @@ if (!metric) {
     
   }
   
-  if (species) {
+#------------------------------ 0b) success of individual management types by species -------------------------
+
+  if (species & !metric & !habitat) {
     
     plotdat <- list()
     
@@ -423,9 +380,10 @@ if (!metric) {
     } else {write.csv(plotfinal[,c("species","pred","lwr","upr","mgmtvar")], "0b_species-specific probabilities and 84CIs.csv", row.names=FALSE)}
     
   }
-}
 
-if (metric) {
+#------------------------------ 0c) success of individual management types by metric -------------------------
+
+if (!species & metric & !habitat) {
   
   plotdat <- list()
   
@@ -486,6 +444,74 @@ if (metric) {
     write.csv(plotfinal[,c("metric","pred","lwr","upr","mgmtvar")], "0c_metric-specific probabilities and CIs.csv", row.names=FALSE)
   } else {write.csv(plotfinal[,c("metric","pred","lwr","upr","mgmtvar")], "0c_metric-specific probabilities and 84CIs.csv", row.names=FALSE)}
   
+  
+}
+
+#------------------------------ 0d) success of individual management types by habitat -------------------------
+
+if (!species & !metric & habitat) {
+  
+  mgmtvars <- c("AE","AE.level","reserve.desig","nest.protect","water")
+  
+  
+  plotdat <- list()
+  
+  for (i in 1:length(mod)) {
+    
+    # dataset to predict over is the same as the original dataset
+    pred <- predict(mod[[i]], type="response", re.form=NA)
+    pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
+    
+    fits <- data.frame(pred, pred.CI, habitat=moddat[[i]]$habitat, lit.type=moddat[[i]][,"lit.type"], mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
+    unique.fits <- unique(fits)
+    
+    plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, habitat=unique.fits$habita), mean)
+    
+    
+  }
+  
+  plotfinal <- do.call(rbind, plotdat)
+  
+  pch <- data.frame(habitat=levels(plotfinal$habitat), pch=c(21,22,23,24,25), col=sample(grey(seq(from=0,to=1,length.out = 5)), 5))
+  plotfinal <- merge(plotfinal,pch, by="habitat")
+  
+  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$habitat),]
+  
+  plotfinal$rowid <- 1:nrow(plotfinal)
+  
+  xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
+  xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
+  xloc.divide <- xloc.divide[-length(xloc.divide)]
+  
+  ###-------- Output plot --------###
+  
+  if (alphalevel==0.05) {
+    png("0d_habitat-specific model results.png", res=300, height=12, width=25, units="in", pointsize=20)
+  } else {png("0d_habitat-specific model results_84CIs.png", res=300, height=12, width=25, units="in", pointsize=20)}
+  
+  par(mar=c(7,6,3,2))
+  
+  x <- c(1:nrow(plotfinal))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
+  axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
+  abline(v=xloc.divide, lty=3, lwd=1.5)
+  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation*","nest protection \napplied","more water \napplied"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  abline(h=0.5, lty=3, lwd=2)
+  
+  
+  legend(min(plotfinal$rowid)-0.7,1.1, legend=pch$habitat, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+  
+  dev.off()
+  
+  ###-------- Output table of predicted probabilities +/- CIs --------###
+  if (alphalevel==0.05) {
+    write.csv(plotfinal[,c("habitat","pred","lwr","upr","mgmtvar")], "0d_habitat-specific probabilities and CIs.csv", row.names=FALSE)
+  } else {write.csv(plotfinal[,c("habitat","pred","lwr","upr","mgmtvar")], "0d_habitat-specific probabilities and 84CIs.csv", row.names=FALSE)}
   
   
 }

@@ -4,7 +4,7 @@
 $AE
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 25.226
+Prior dev  : 20.935
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
@@ -13,35 +13,33 @@ Formula: success ~ habitat + lit.type + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   321.4    346.4   -153.7    307.4      255 
+   309.6    330.8   -148.8    297.6      248 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.254 -0.742 -0.467  0.815  2.521 
+-1.276 -0.753 -0.454  0.804  2.443 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.958    0.979   
-Number of obs: 262, groups:  reference, 31
+ reference (Intercept) 1.1      1.05    
+Number of obs: 254, groups:  reference, 30
 
 Fixed effects:
                                  Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                         0.044      0.973    0.04    0.964  
-habitatmixed arable/pastoral       -0.416      1.099   -0.38    0.705  
-habitatmixed pastoral/unenclosed   -2.591      1.339   -1.94    0.053 .
-habitatpastoral                     0.180      0.737    0.24    0.807  
-habitatunenclosed                  -1.049      1.445   -0.73    0.468  
-lit.typeprimary                    -0.730      0.825   -0.88    0.376  
+(Intercept)                         0.152      1.044    0.15    0.884  
+habitatmixed arable/pastoral       -0.425      1.141   -0.37    0.710  
+habitatmixed pastoral/unenclosed   -2.703      1.390   -1.94    0.052 .
+habitatpastoral                     0.129      0.770    0.17    0.866  
+lit.typeprimary                    -0.789      0.873   -0.90    0.366  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
-            (Intr) harbl/ hpstr/ hbttps hbttnn
-hbttmxarbl/ -0.318                            
-hbttmpstrl/ -0.637  0.195                     
-habittpstrl -0.616  0.496  0.393              
-habttnnclsd -0.570  0.185  0.361  0.351       
-lt.typprmry -0.727 -0.079  0.460  0.003  0.416
+            (Intr) harbl/ hpstr/ hbttps
+hbttmxarbl/ -0.318                     
+hbttmpstrl/ -0.655  0.200              
+habittpstrl -0.627  0.490  0.411       
+lt.typprmry -0.743 -0.060  0.484  0.040
 
 $AE.level
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -78,7 +76,7 @@ AE.levelhigher:habitatmixed arable/pastoral       -2.791      1.683   -1.66    0
 AE.levelhigher:habitatmixed pastoral/unenclosed    0.993      1.905    0.52    0.602  
 AE.levelhigher:habitatpastoral                    -1.215      1.130   -1.07    0.282  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) AE.lvl harbl/ hpstr/ hbttps lt.typ AE.:a/ AE.:p/
@@ -186,13 +184,13 @@ Number of obs: 88, groups:  reference, 18
 
 Fixed effects:
                                  Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                         1.235      1.362    0.91    0.365  
+(Intercept)                         1.235      1.363    0.91    0.365  
 habitatmixed pastoral/unenclosed    2.105      1.361    1.55    0.122  
 habitatpastoral                     1.089      0.828    1.31    0.189  
 habitatunenclosed                  -0.335      1.377   -0.24    0.808  
 lit.typeprimary                    -2.822      1.278   -2.21    0.027 *
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) hpstr/ hbttps hbttnn
@@ -212,35 +210,33 @@ Formula: success ~ habitat + lit.type + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   320.7    345.7   -153.3    306.7      255 
+   309.0    330.2   -148.5    297.0      248 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.307 -0.752 -0.470  0.841  3.182 
+-1.310 -0.752 -0.469  0.841  3.095 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.651    0.807   
-Number of obs: 262, groups:  reference, 31
+ reference (Intercept) 0.758    0.87    
+Number of obs: 254, groups:  reference, 30
 
 Fixed effects:
                                  Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                         0.673      1.114    0.60    0.546  
-habitatmixed arable/pastoral       -0.759      1.090   -0.70    0.486  
-habitatmixed pastoral/unenclosed   -3.522      1.609   -2.19    0.029 *
-habitatpastoral                    -0.106      0.766   -0.14    0.890  
-habitatunenclosed                  -1.857      1.620   -1.15    0.252  
-lit.typeprimary                    -1.143      0.864   -1.32    0.186  
+(Intercept)                         0.694      1.153    0.60    0.547  
+habitatmixed arable/pastoral       -0.738      1.133   -0.65    0.515  
+habitatmixed pastoral/unenclosed   -3.568      1.652   -2.16    0.031 *
+habitatpastoral                    -0.114      0.789   -0.14    0.885  
+lit.typeprimary                    -1.152      0.898   -1.28    0.199  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
-            (Intr) harbl/ hpstr/ hbttps hbttnn
-hbttmxarbl/ -0.389                            
-hbttmpstrl/ -0.699  0.263                     
-habittpstrl -0.690  0.574  0.481              
-habttnnclsd -0.690  0.265  0.483  0.476       
-lt.typprmry -0.778 -0.005  0.542  0.152  0.536
+            (Intr) harbl/ hpstr/ hbttps
+hbttmxarbl/ -0.380                     
+hbttmpstrl/ -0.706  0.257              
+habittpstrl -0.688  0.564  0.484       
+lt.typprmry -0.781 -0.006  0.550  0.156
 
 $AE.level
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
@@ -266,14 +262,14 @@ Fixed effects:
 (Intercept)                                       -1.257      1.399   -0.90    0.369  
 AE.levelhigher                                     3.623      1.675    2.16    0.031 *
 habitatmixed arable/pastoral                       2.213      1.882    1.18    0.240  
-habitatmixed pastoral/unenclosed                 -16.325   1757.061   -0.01    0.993  
+habitatmixed pastoral/unenclosed                 -16.330   1761.287   -0.01    0.993  
 habitatpastoral                                    1.109      1.214    0.91    0.361  
 lit.typeprimary                                   -0.898      0.761   -1.18    0.238  
 AE.levelhigher:habitatmixed arable/pastoral       -5.339      2.361   -2.26    0.024 *
-AE.levelhigher:habitatmixed pastoral/unenclosed   13.959   1757.061    0.01    0.994  
+AE.levelhigher:habitatmixed pastoral/unenclosed   13.963   1761.288    0.01    0.994  
 AE.levelhigher:habitatpastoral                    -2.573      1.713   -1.50    0.133  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) AE.lvl harbl/ hpstr/ hbttps lt.typ AE.:a/ AE.:p/
@@ -315,7 +311,7 @@ Fixed effects:
 habitatpastoral     -1.368      0.797   -1.72    0.086 .
 habitatunenclosed   -1.357      0.914   -1.48    0.138  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) hbttps
@@ -375,13 +371,13 @@ Number of obs: 88, groups:  reference, 18
 
 Fixed effects:
                                  Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                        17.824    836.093    0.02    0.983  
+(Intercept)                        17.824   6868.636    0.00    0.998  
 habitatmixed pastoral/unenclosed    2.603      1.337    1.95    0.052 .
 habitatpastoral                     1.371      0.633    2.17    0.030 *
-habitatunenclosed                 -16.977    836.094   -0.02    0.984  
-lit.typeprimary                   -19.734    836.093   -0.02    0.981  
+habitatunenclosed                 -16.977   6868.636    0.00    0.998  
+lit.typeprimary                   -19.734   6868.636    0.00    0.998  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) hpstr/ hbttps hbttnn
@@ -390,6 +386,7 @@ habittpstrl  0.000  0.339
 habttnnclsd -1.000  0.000  0.000       
 lt.typprmry -1.000  0.000  0.000  1.000
 convergence code: 0
+unable to evaluate scaled gradient
  Hessian is numerically singular: parameters are not uniquely determined
 
 
@@ -418,7 +415,8 @@ $AE
 NULL
 
 $AE.level
-[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
+[1] "unable to evaluate scaled gradient"                                       
+[2] "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
 
 $reserve.desig
 NULL
@@ -427,5 +425,6 @@ $nest.protect
 NULL
 
 $water
-[1] " Hessian is numerically singular: parameters are not uniquely determined"
+[1] "unable to evaluate scaled gradient"                                      
+[2] " Hessian is numerically singular: parameters are not uniquely determined"
 

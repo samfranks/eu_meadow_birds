@@ -559,6 +559,9 @@ for (i in 1:length(mgmtvars)) {
   table(mdat[,mgmtvars[i]], mdat$habitat, mdat$success)
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+  if (mgmtvars[i]=="AE") {
+    mdat <- subset(mdat, habitat!="unenclosed")
+  }
   if (mgmtvars[i]=="AE.level") {
     mdat <- subset(mdat, habitat!="unenclosed")
   }
@@ -594,7 +597,7 @@ for (i in 1:length(mgmtvars)) {
     modform <- as.formula("success ~ habitat + lit.type + (1|reference)")
   }
   
-  # if model produces rank deficiency because of missing observations from certain habitat types for certain literature types, use below formula
+  # if model produces rank deficiency because of missing observations from certain habitat types for certain literature types, use below formula - only the case for nature reserves management type
   if (mgmtvars[i] %in% c("reserve.desig")) {
     modform <- as.formula("success ~ habitat + (1|reference)")
   }
