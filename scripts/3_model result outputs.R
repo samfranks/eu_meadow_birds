@@ -1,6 +1,6 @@
 #######################################################################
 #
-#     EU meadow birds meta-analysis - OUTPUTTING MODEL RESULTS (graphs and tables)
+#     Step 3: EU meadow birds meta-analysis - output Step 2 model results
 #
 #######################################################################
 

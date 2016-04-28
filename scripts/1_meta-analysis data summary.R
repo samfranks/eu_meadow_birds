@@ -1,6 +1,6 @@
 #######################################################
 #
-#     EU meadow birds meta-analysis
+#     Step 1: EU meadow birds meta-analysis - DATA SUMMARY
 #
 #######################################################
 
