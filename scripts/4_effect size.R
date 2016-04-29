@@ -14,7 +14,7 @@
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -109,6 +109,9 @@ dat$new.stan.metric <- ifelse(grepl("chick survival", dat$stan.metric), "chick s
 
 #------------------------------ Test effect of nuisance variables on success for the full dataset -------------------------
 
+# metrics to test - other metrics have sample sizes which are too small
+metrics <- c("abundance","multiplicative yearly slope","nest survival (Mayfield)")
+
 ###----  Nuisance variables, all metrics pooled ----###
 
 nui.dat <- unique(dat[,c("reference","study.length","sample.size","analysis2","lit.type","stan.effect.size")])
@@ -121,8 +124,6 @@ summary(m.nui1)
 
 ###----  Nuisance variables, individual metric subsets ----###
 
-# metrics to test - other metrics have sample sizes which are too small
-metrics <- c("abundance","multiplicative yearly slope","nest survival (Mayfield)")
 nui.dat <- unique(dat[,c("reference","study.length","sample.size","analysis2","lit.type","stan.effect.size","new.stan.metric")])
 
 m.nui2 <- list()
