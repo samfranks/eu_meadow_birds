@@ -69,7 +69,7 @@ dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset dataset for analysis to desired columns only
-dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
+dat <- subset(dat0, select=c("reference","lit.type","score","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
 
 
 

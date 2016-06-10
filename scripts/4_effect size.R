@@ -14,7 +14,7 @@
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme","multcomp")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -69,7 +69,7 @@ dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset dataset for analysis to desired columns only
-dat1 <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","metric","specific.metric","stan.metric","sample.size","analysis2","success","stan.calc","stan.metric.before","stan.metric.after","stan.effect.size","sig","effect.dir",mgmtvars))
+dat1 <- subset(dat0, select=c("reference","lit.type","score","country","study.length","habitat","species","overall.metric","metric","specific.metric","stan.metric","sample.size","analysis2","success","stan.calc","stan.metric.before","stan.metric.after","stan.effect.size","sig","effect.dir",mgmtvars))
 
 # subset dataset to include records with effect sizes measured (whatever the significance of the effect)
 dat2 <- subset(dat1, stan.effect.size!="" & stan.effect.size!="#DIV/0!")
@@ -148,7 +148,9 @@ lapply(m.nui2, summary)
 # abundance change: no significant effects of any nuisance variables
 # nest survival: significant effect of lit.type (negative effect of primary literature)
 
-#---------------------   Effect size in relation to management intervention --------------------
+# tried to include 'score' as an additional variable but creates singularities in the model
+
+#---------------------   Effect size on abundance, abundance change, nest survival metrics in relation to management intervention --------------------
 
 
 mod <- list()
@@ -159,21 +161,45 @@ for (i in 1:length(metrics)) {
   print(metrics[i])
   mdat <- subset(dat, new.stan.metric==metrics[i])
   
-  # check for sample sizes of different management treatment groups, remove small ones
-  checksample <- table(mdat$mgmt)
-  removelevels <- names(checksample)[checksample < 5]
-  mdat <- subset(mdat, !grepl(paste(removelevels,collapse="|"), mdat$mgmt))
+#   # check for sample sizes of different management treatment groups, remove small ones
+#   checksample <- table(mdat$mgmt)
+#   removelevels <- names(checksample)[checksample < 5]
+  
+  # DFs for predator control (applied and reduced), water reduced are very small because they are each only tested in a single study so the model can't estimate the effect of those things, separately from the effect of the random effect study (checked this with Ali)
+  # not gaining anything useful from this so remove the predator control interventions
+  if (metrics[i]=="abundance") mdat <- subset(mdat, !grepl(paste(c("predator.control applied", "predator.control reduced", "water reduced"),collapse="|"), mdat$mgmt))
+    # removelevels <- c("predator.control applied", "predator.control reduced", "water reduced")
+  
+  # if (length(removelevels>0)) mdat <- subset(mdat, !grepl(paste(removelevels,collapse="|"), mdat$mgmt)) else mdat <- mdat
   mdat <- droplevels(mdat)
   moddat[[i]] <- mdat
   
   print(nrow(mdat))
   print(table(mdat$mgmt))
+  print(table(mdat$mgmt,mdat$reference))
   
   mod[[i]] <- lme(stan.effect.size ~ mgmt, random = ~1|reference, data=mdat)
   print(summary(mod[[i]]))
   
 }
-m <- lme(stan.effect)
+
+####    Effect size on nest/chick survival measures pooled    ####
+# run effect size for all productivity measures pooled, but with factor variable controlling for type of productivity measure if interventions have different effects on nests vs chicks etc
+mdat <- subset(dat, metric=="productivity" & new.stan.metric!="proportion pairs with chicks")
+mod.prod <- lme(stan.effect.size ~ mgmt + new.stan.metric, random= ~1|reference, data=mdat)
+summary(mod.prod)
+
+#---------------------   Test for all contrasts in effect sizes between intervention types  --------------------
 
 # for making pairwise comparisons between the different treatment groups, use glht() in multcomp package - nice description of how given here: http://mindingthebrain.blogspot.co.uk/2013/04/multiple-pairwise-comparisons-for.html
 
+# currently, parameter tables give the difference for each management's estimate with the reference level (AE applied)
+# we want tests comparing all of the effects of the different management types against each other - which ones are significantly better than others (not just which are sig different than the reference level)?
+
+### Abundance ###
+
+interaction(mdat$mgmt, sep = "x")
+
+contrast.matrix <- rbind(
+  ""
+)
