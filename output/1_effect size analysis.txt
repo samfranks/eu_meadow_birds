@@ -1,0 +1,303 @@
+
+########==========  1a) effect size of high-level management on abundance, abundance change, and nest survival 
+
+$abundance
+Linear mixed-effects model fit by REML
+ Data: mdat 
+      AIC     BIC   logLik
+  308.471 333.816 -143.236
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev:     1.52277  1.19616
+
+Fixed effects: stan.effect.size ~ AE.level + reserve.desig + species 
+                         Value Std.Error DF   t-value p-value
+(Intercept)           0.827356  0.608596 58  1.359451  0.1793
+AE.levelbasic        -0.974056  0.481078 58 -2.024735  0.0475
+AE.levelhigher       -0.585530  0.725452 58 -0.807125  0.4229
+reserve.desigapplied  0.237577  0.456974 58  0.519892  0.6051
+speciescurlew         1.016463  0.773141 58  1.314720  0.1938
+specieslapwing        0.423291  0.413693 58  1.023200  0.3105
+speciesoystercatcher -0.284470  0.520875 58 -0.546137  0.5871
+speciesredshank       0.503884  0.450457 58  1.118605  0.2679
+speciessnipe          0.574649  0.675814 58  0.850306  0.3987
+ Correlation: 
+                     (Intr) AE.lvlb AE.lvlh rsrv.d spcscr spcslp spcsys spcsrd
+AE.levelbasic        -0.402                                                   
+AE.levelhigher       -0.374  0.440                                            
+reserve.desigapplied -0.202  0.081   0.110                                    
+speciescurlew        -0.406  0.013   0.055   0.054                            
+specieslapwing       -0.474  0.010  -0.016  -0.028  0.426                     
+speciesoystercatcher -0.364 -0.013  -0.001   0.017  0.334  0.489              
+speciesredshank      -0.476  0.019   0.004   0.024  0.367  0.602  0.480       
+speciessnipe         -0.455  0.109   0.065   0.106  0.361  0.475  0.339  0.498
+
+Standardized Within-Group Residuals:
+       Min         Q1        Med         Q3        Max 
+-2.1845068 -0.4857123 -0.0283468  0.3716272  3.6185326 
+
+Number of Observations: 83
+Number of Groups: 17 
+
+$`multiplicative yearly slope`
+Linear mixed-effects model fit by REML
+ Data: mdat 
+       AIC      BIC  logLik
+  -104.878 -86.5784 63.4388
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept)  Residual
+StdDev:   0.0341554 0.0348828
+
+Fixed effects: stan.effect.size ~ AE.level + reserve.desig + species 
+                          Value Std.Error DF   t-value p-value
+(Intercept)           0.0572406 0.0262735 35  2.178643  0.0362
+AE.levelbasic        -0.0162257 0.0171654 35 -0.945259  0.3510
+AE.levelhigher        0.0230675 0.0141995 35  1.624525  0.1132
+reserve.desigapplied  0.0244135 0.0136080 35  1.794053  0.0814
+speciescurlew        -0.0408445 0.0340218 35 -1.200539  0.2380
+specieslapwing       -0.0198044 0.0215909 35 -0.917257  0.3653
+speciesoystercatcher -0.0560793 0.0237059 35 -2.365630  0.0237
+speciesredshank       0.0059099 0.0215909 35  0.273721  0.7859
+speciessnipe         -0.0298582 0.0237496 35 -1.257204  0.2170
+ Correlation: 
+                     (Intr) AE.lvlb AE.lvlh rsrv.d spcscr spcslp spcsys spcsrd
+AE.levelbasic        -0.281                                                   
+AE.levelhigher       -0.306  0.526                                            
+reserve.desigapplied -0.236  0.291   0.338                                    
+speciescurlew        -0.458 -0.050  -0.031   0.011                            
+specieslapwing       -0.626 -0.040  -0.015  -0.007  0.534                     
+speciesoystercatcher -0.521 -0.006  -0.014   0.003  0.436  0.625              
+speciesredshank      -0.626 -0.040  -0.015  -0.007  0.534  0.814  0.625       
+speciessnipe         -0.605  0.010   0.022   0.039  0.498  0.778  0.566  0.778
+
+Standardized Within-Group Residuals:
+      Min        Q1       Med        Q3       Max 
+-1.760014 -0.623125  0.122194  0.631242  1.842567 
+
+Number of Observations: 48
+Number of Groups: 5 
+
+$`nest survival (Mayfield)`
+Linear mixed-effects model fit by REML
+ Data: mdat 
+      AIC     BIC  logLik
+  188.158 201.867 -86.079
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev:     0.68932  1.64296
+
+Fixed effects: stan.effect.size ~ AE.level + species 
+                        Value Std.Error DF  t-value p-value
+(Intercept)          0.444417  0.755487 23 0.588251  0.5621
+AE.levelhigher       0.151830  0.943743 23 0.160880  0.8736
+specieslapwing       0.330827  0.800418 23 0.413318  0.6832
+speciesoystercatcher 1.398230  1.119841 23 1.248596  0.2244
+speciesredshank      0.784030  1.015856 23 0.771792  0.4481
+speciessnipe         1.535676  1.900784 23 0.807917  0.4274
+ Correlation: 
+                     (Intr) AE.lvl spcslp spcsys spcsrd
+AE.levelhigher       -0.483                            
+specieslapwing       -0.882  0.357                     
+speciesoystercatcher -0.606  0.285  0.557              
+speciesredshank      -0.686  0.322  0.636  0.477       
+speciessnipe         -0.390  0.184  0.358  0.242  0.306
+
+Standardized Within-Group Residuals:
+      Min        Q1       Med        Q3       Max 
+-1.469799 -0.468685 -0.106689  0.118869  3.375111 
+
+Number of Observations: 47
+Number of Groups: 19 
+
+
+########==========  1b) effect size of specific management on abundance, abundance change, and nest survival ==========########
+
+$abundance
+Linear mixed-effects model fit by REML
+ Data: mdat 
+     AIC     BIC   logLik
+  288.69 318.286 -131.345
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev:     1.88258 0.995241
+
+Fixed effects: stan.effect.size ~ mowing + grazing + nest.protect + water +      species 
+                        Value Std.Error DF  t-value p-value
+(Intercept)           0.50892  0.619723 56  0.82120  0.4150
+mowingreduced        -0.34943  0.619671 56 -0.56390  0.5751
+grazingapplied       -0.78504  0.949284 56 -0.82698  0.4118
+grazingreduced       -5.51721  1.230314 56 -4.48439  0.0000
+nest.protectapplied   0.19383  0.658215 56  0.29448  0.7695
+waterapplied          1.22795  0.636665 56  1.92873  0.0588
+speciescurlew         1.05338  0.668221 56  1.57639  0.1206
+specieslapwing        0.43493  0.346033 56  1.25690  0.2140
+speciesoystercatcher -0.34881  0.435210 56 -0.80146  0.4263
+speciesredshank       0.56001  0.378300 56  1.48034  0.1444
+speciessnipe          1.16856  0.575909 56  2.02907  0.0472
+ Correlation: 
+                     (Intr) mwngrd grzngp grzngr nst.pr wtrppl spcscr spcslp spcsys
+mowingreduced        -0.190                                                        
+grazingapplied       -0.347  0.080                                                 
+grazingreduced        0.156 -0.466 -0.064                                          
+nest.protectapplied  -0.129  0.421  0.054 -0.200                                   
+waterapplied         -0.178 -0.055  0.073 -0.483 -0.012                            
+speciescurlew        -0.349 -0.029  0.069 -0.019 -0.001  0.045                     
+specieslapwing       -0.411  0.012  0.019 -0.017  0.011  0.021  0.429              
+speciesoystercatcher -0.312 -0.005  0.031 -0.003 -0.002  0.004  0.334  0.490       
+speciesredshank      -0.385  0.011 -0.020 -0.016  0.009  0.014  0.354  0.599  0.477
+speciessnipe         -0.350  0.022  0.046 -0.133  0.018  0.033  0.360  0.478  0.336
+                     spcsrd
+mowingreduced              
+grazingapplied             
+grazingreduced             
+nest.protectapplied        
+waterapplied               
+speciescurlew              
+specieslapwing             
+speciesoystercatcher       
+speciesredshank            
+speciessnipe          0.493
+
+Standardized Within-Group Residuals:
+       Min         Q1        Med         Q3        Max 
+-1.6623026 -0.5044307  0.0121936  0.3823526  3.4973374 
+
+Number of Observations: 83
+Number of Groups: 17 
+
+$`multiplicative yearly slope`
+   Length     Class      Mode 
+        1 character character 
+
+$`nest survival (Mayfield)`
+   Length     Class      Mode 
+        1 character character 
+
+
+########==========  1c) effect size of high-level management on pooled productivity measures (nest survival, chick survival, fledglings/pair) ==========########
+
+Linear mixed-effects model fit by REML
+ Data: mdat.prod.high 
+      AIC     BIC   logLik
+  278.345 299.934 -129.172
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev:    0.699757  1.50402
+
+Fixed effects: stan.effect.size ~ AE.level + species + new.stan.metric 
+                                                Value Std.Error DF   t-value
+(Intercept)                                  0.627396  0.682458 42  0.919318
+AE.levelhigher                               0.272588  0.679984 42  0.400874
+specieslapwing                               0.798906  0.577574 42  1.383209
+speciesoystercatcher                         1.740651  0.967735 42  1.798687
+speciesredshank                              1.116136  0.860100 42  1.297682
+speciessnipe                                 1.877483  1.711556 42  1.096945
+new.stan.metricfledglings per breeding pair -0.728965  0.778659 42 -0.936180
+new.stan.metricnest survival (Mayfield)     -0.559256  0.625842 42 -0.893605
+                                            p-value
+(Intercept)                                  0.3632
+AE.levelhigher                               0.6905
+specieslapwing                               0.1739
+speciesoystercatcher                         0.0793
+speciesredshank                              0.2015
+speciessnipe                                 0.2789
+new.stan.metricfledglings per breeding pair  0.3545
+new.stan.metricnest survival (Mayfield)      0.3766
+ Correlation: 
+                                            (Intr) AE.lvl spcslp spcsys spcsrd
+AE.levelhigher                              -0.378                            
+specieslapwing                              -0.566  0.352                     
+speciesoystercatcher                        -0.286  0.244  0.463              
+speciesredshank                             -0.333  0.281  0.542  0.397       
+speciessnipe                                -0.178  0.152  0.289  0.178  0.247
+new.stan.metricfledglings per breeding pair -0.411 -0.160 -0.215 -0.137 -0.158
+new.stan.metricnest survival (Mayfield)     -0.604 -0.031 -0.154 -0.176 -0.200
+                                            spcssn n..pbp
+AE.levelhigher                                           
+specieslapwing                                           
+speciesoystercatcher                                     
+speciesredshank                                          
+speciessnipe                                             
+new.stan.metricfledglings per breeding pair -0.085       
+new.stan.metricnest survival (Mayfield)     -0.110  0.693
+
+Standardized Within-Group Residuals:
+      Min        Q1       Med        Q3       Max 
+-1.668915 -0.521372 -0.206100  0.235693  3.623579 
+
+Number of Observations: 72
+Number of Groups: 23 
+
+########==========  1d) effect size of specific management on pooled productivity measures (nest survival, chick survival, fledglings/pair) ==========########
+
+Linear mixed-effects model fit by REML
+ Data: mdat.prod.spec 
+      AIC     BIC   logLik
+  255.342 279.646 -115.671
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev: 0.000259236  1.61097
+
+Fixed effects: stan.effect.size ~ mowing + grazing + nest.protect + species +      new.stan.metric 
+                                                Value Std.Error DF   t-value
+(Intercept)                                  1.552677  0.860237 35  1.804940
+mowingreduced                               -0.355075  0.885243 35 -0.401105
+grazingapplied                              -0.777245  0.587360 35 -1.323286
+nest.protectapplied                          0.679110  0.500272 35  1.357482
+specieslapwing                               0.540875  0.732130 35  0.738768
+speciesoystercatcher                         1.951832  1.102260 35  1.770755
+speciesredshank                              0.938880  0.993121 35  0.945384
+speciessnipe                                 1.391155  1.780301 35  0.781415
+new.stan.metricfledglings per breeding pair -1.352499  0.834621 35 -1.620495
+new.stan.metricnest survival (Mayfield)     -1.382941  0.692153 35 -1.998027
+                                            p-value
+(Intercept)                                  0.0797
+mowingreduced                                0.6908
+grazingapplied                               0.1943
+nest.protectapplied                          0.1833
+specieslapwing                               0.4650
+speciesoystercatcher                         0.0853
+speciesredshank                              0.3509
+speciessnipe                                 0.4398
+new.stan.metricfledglings per breeding pair  0.1141
+new.stan.metricnest survival (Mayfield)      0.0535
+ Correlation: 
+                                            (Intr) mwngrd grzngp nst.pr spcslp
+mowingreduced                               -0.487                            
+grazingapplied                              -0.323  0.147                     
+nest.protectapplied                         -0.358  0.128  0.468              
+specieslapwing                              -0.566  0.574 -0.020 -0.003       
+speciesoystercatcher                        -0.286  0.387 -0.199 -0.103  0.603
+speciesredshank                             -0.321  0.437 -0.102 -0.190  0.666
+speciessnipe                                -0.180  0.246 -0.024 -0.127  0.370
+new.stan.metricfledglings per breeding pair -0.460 -0.034  0.152  0.239 -0.290
+new.stan.metricnest survival (Mayfield)     -0.521 -0.120  0.125  0.048 -0.247
+                                            spcsys spcsrd spcssn n..pbp
+mowingreduced                                                          
+grazingapplied                                                         
+nest.protectapplied                                                    
+specieslapwing                                                         
+speciesoystercatcher                                                   
+speciesredshank                              0.495                     
+speciessnipe                                 0.270  0.316              
+new.stan.metricfledglings per breeding pair -0.194 -0.226 -0.129       
+new.stan.metricnest survival (Mayfield)     -0.265 -0.278 -0.151  0.730
+
+Standardized Within-Group Residuals:
+      Min        Q1       Med        Q3       Max 
+-1.671454 -0.523932 -0.139770  0.264288  3.376428 
+
+Number of Observations: 66
+Number of Groups: 22 

@@ -170,7 +170,8 @@ lapply(m.nui2, summary)
 
 #---------------------   Effect size on abundance, abundance change, nest survival metrics in relation to management intervention --------------------
 
-mod <- list()
+mod.high <- list()
+mod.spec <- list()
 moddat <- list()
 
 for (i in 1:length(metrics)) {
@@ -181,142 +182,112 @@ for (i in 1:length(metrics)) {
   #   # check for sample sizes of different management treatment groups, remove small ones
   #   checksample <- table(mdat$mgmt)
   #   removelevels <- names(checksample)[checksample < 5]
+  out <- list()
+  for(j in 1:length(mgmtvars)) {
+    out[[j]] <- table(dat[,mgmtvars[j]], dat$reference)
+  }
+  names(out) <- mgmtvars
+  out
   
-  # DFs for predator control (applied and reduced), water reduced are very small because they are each only tested in a single study so the model can't estimate the effect of those interventions, separately from the effect of the random effect study (checked this with Ali)
-  # not gaining anything useful from this so remove these interventions
+  # DFs for predator control (applied and reduced), fertpest, and water reduced are very small because they are each only tested in a single study so the model can't estimate the effect of those interventions, separately from the effect of the random effect study (checked this with Ali)
+  # not gaining anything useful from this so remove these interventions and/or levels from the model
   if (metrics[i]=="abundance") {
-    mdat <- subset(mdat, predator.control!="applied" & predator.control!="reduced" & fertpest!="reduced" & water!="reduced")
+    mdat <- subset(mdat, water!="reduced")
     mdat <- subset(mdat, stan.effect.size < 16) # remove large outlier
   }
-  if (metrics[i]=="multiplicative yearly slope") mdat <- subset(mdat, stan.effect.size > -0.4) # remove large outlier
-  if (metrics[i]=="nest survival (Mayfield)") mdat <- subset(mdat, species!="curlew" & species!="dunlin") # control for too few studies assessing curlew or dunlin
+  if (metrics[i]=="multiplicative yearly slope") {
+    mdat <- subset(mdat, stan.effect.size > -0.4) # remove large outlier
+    mdat <- subset(mdat, mowing!="reduced")
+  }
+  if (metrics[i]=="nest survival (Mayfield)") mdat <- subset(mdat, species!="curlew" & species!="dunlin" & AE.level!="basic") # control for too few studies assessing curlew or dunlin
   
   # removelevels <- c("predator.control applied", "predator.control reduced", "water reduced")
   
   # if (length(removelevels>0)) mdat <- subset(mdat, !grepl(paste(removelevels,collapse="|"), mdat$mgmt)) else mdat <- mdat
+  
   mdat <- droplevels(mdat)
   moddat[[i]] <- mdat
   
   print(nrow(mdat))
 
-  if (metrics[i]=="abundance") mod[[i]] <- lme(stan.effect.size ~ AE.level + reserve.desig + mowing + grazing +  nest.protect + water + species, random = ~1|reference, data=mdat) # no predator control, fertpest records that aren't none in abundance model
-  print(summary(mod[[i]]))
-  
-  # see http://stats.stackexchange.com/questions/101020/how-to-interpret-multiple-factors-in-model-output-in-r for interpreting parameter estimates when there are multiple factors in a model
-  # The (intercept) indicates the value of the reference category. You have two categorical variables, so you have two reference categories. Your reference categories are LandUseHigh and an unspecified level of Type_LU (which I assume you know). So the value of the Estimate in the (intercept) row is the predicted mean for those study units in both of those categories when all the continuous covariates are equal to 00. Again, because you don't have an interaction term, the value of LandUseHigh when Type_LU is conserva, private, or state is the sum of the estimate for the intercept plus the estimate for the appropriate level of Type_LU.
-  
-  # the reference level for all mgmt variables is 'none', so the model provides estimates of either applied or applied/reduced for each mgmt type relative to the baseline, which is all mgmt vars='none' and black-tailed godwit
-  
-}
-
-
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
-
-
-#------------  Reshape data from wide to long, bringing interventions under one column -----------------
-
-dat.wide <- dat
-
-# remove levels of 'none' - we only want to assess effect size for use
-dat <- gather(dat.wide, key=intervention, value=mgmtlevel, AE:water)
-dat <- subset(dat, mgmtlevel!="none")
-
-# combine interventions and their levels into a single variable
-dat$mgmt <- paste(dat$intervention, dat$mgmtlevel)
-
-#=================================  ANALYSIS  ===============================
-
-# can combine standardised abundance metrics - effect sizes comparable
-# combine chick survival standardised metrics - effect sizes comparable
-
-dat$new.stan.metric <- ifelse(grepl("chick survival", dat$stan.metric), "chick survival", ifelse(grepl("number of", dat$stan.metric), "abundance", as.character(dat$stan.metric)))
-
-#------------------------------ Test effect of nuisance variables on success for the full dataset -------------------------
-
-# metrics to test - other metrics have sample sizes which are too small
-metrics <- c("abundance","multiplicative yearly slope","nest survival (Mayfield)")
-
-###----  Nuisance variables, all metrics pooled ----###
-
-nui.dat <- unique(dat[,c("reference","study.length","sample.size","analysis2","lit.type","stan.effect.size")])
-
-# use unique dataset only to test effect sizes (replication because of multiples of same study, same effect sizes, but with different interventions used)
-m.nui1 <- lme(stan.effect.size ~ study.length + sample.size + analysis2 + lit.type, random = ~1|reference, data=nui.dat)
-summary(m.nui1)
-
-# no significant effects of any variable on whole dataset (metrics pooled)
-
-###----  Nuisance variables, individual metric subsets ----###
-
-nui.dat <- unique(dat[,c("reference","study.length","sample.size","analysis2","lit.type","stan.effect.size","new.stan.metric")])
-
-m.nui2 <- list()
-m.nui2.dat <- list()
-
-for (i in 1:length(metrics)) {
-  
-  print(metrics[i])
-  mdat <- subset(nui.dat, new.stan.metric==metrics[i])
-  mdat <- droplevels(mdat)
-  m.nui2.dat[[i]] <- mdat
-
-  print(nrow(mdat))
-  
-  m.nui2[[i]] <- lme(stan.effect.size ~ study.length + sample.size + analysis2 + lit.type, random = ~ 1|reference, data=mdat)
-  }
-
-names(m.nui2) <- metrics
-lapply(m.nui2, summary)
-
-# abundance: no significant effects of any nuisance variables
-# abundance change: no significant effects of any nuisance variables
-# nest survival: significant effect of lit.type (negative effect of primary literature)
-
-# tried to include 'score' as an additional variable but creates singularities in the model
-
-#---------------------   Effect size on abundance, abundance change, nest survival metrics in relation to management intervention --------------------
-
-
-mod <- list()
-moddat <- list()
-
-for (i in 1:length(metrics)) {
-  
-  print(metrics[i])
-  mdat <- subset(dat, new.stan.metric==metrics[i])
-  
-#   # check for sample sizes of different management treatment groups, remove small ones
-#   checksample <- table(mdat$mgmt)
-#   removelevels <- names(checksample)[checksample < 5]
-  
-  # DFs for predator control (applied and reduced), water reduced are very small because they are each only tested in a single study so the model can't estimate the effect of those interventions, separately from the effect of the random effect study (checked this with Ali)
-  # not gaining anything useful from this so remove these interventions
   if (metrics[i]=="abundance") {
-    mdat <- subset(mdat, mgmt!="predator.control applied" & mgmt!="predator.control reduced" & mgmt!="water reduced")
-    mdat <- subset(mdat, stan.effect.size < 16) # remove large outlier
+    
+    mod.high[[i]] <- lme(stan.effect.size ~ AE.level + reserve.desig + species, random = ~1|reference, data=mdat) # no predator control, fertpest records that aren't none in abundance model
+    mod.spec[[i]] <- lme(stan.effect.size ~ mowing + grazing + nest.protect + water + species, random = ~1|reference, data=mdat) # no predator control, fertpest records that aren't none in abundance dataset
+    
+  print(summary(mod.high[[i]]))
+  print(summary(mod.spec[[i]]))
+  
   }
-  if (metrics[i]=="multiplicative yearly slope") mdat <- subset(mdat, stan.effect.size > -0.4) # remove large outlier
-  if (metrics[i]=="nest survival (Mayfield)") mdat <- subset(mdat, species!="curlew" & species!="dunlin") # control for too few studies assessing curlew or dunlin
   
-    # removelevels <- c("predator.control applied", "predator.control reduced", "water reduced")
+  if (metrics[i]=="multiplicative yearly slope") {
+    
+    mod.high[[i]] <- lme(stan.effect.size ~ AE.level + reserve.desig + species, random = ~1|reference, data=mdat) # no predator control, fertpest records that aren't none in abundance model
+    print(summary(mod.high[[i]]))
+    
+    mod.spec[[i]] <- c("for specific intervention model, adding more than one intervention creates singularities or leads to having studies which only test a single intervention and no other, creating weird DF estimation")
+
+  }
   
-  # if (length(removelevels>0)) mdat <- subset(mdat, !grepl(paste(removelevels,collapse="|"), mdat$mgmt)) else mdat <- mdat
-  mdat <- droplevels(mdat)
-  mdat$mgmt <- as.factor(mdat$mgmt)
-  moddat[[i]] <- mdat
-  
-  print(nrow(mdat))
-  print(table(mdat$mgmt))
-  print(table(mdat$mgmt,mdat$reference))
-  
-  mod[[i]] <- lme(stan.effect.size ~ mgmt + species, random = ~1|reference, data=mdat)
-  print(summary(mod[[i]]))
-  
+  if (metrics[i]=="nest survival (Mayfield)") {
+    
+    mod.high[[i]] <- lme(stan.effect.size ~ AE.level + species, random = ~1|reference, data=mdat)
+    print(summary(mod.high[[i]]))
+    
+    # mod.high[[i]] <- c("for high-level model, only enough data to robustly estimate parameter for AE higher; small DFs for AE basic and reserves")
+    
+    mod.spec[[i]] <- c("for specific intervention model, adding more than one intervention creates singularities or leads to having studies which only test a single intervention and no other, creating weird DF estimation")
+    
+  }
+
 }
+
+names(mod.high) <- metrics
+names(mod.spec) <- metrics
+names(moddat) <- metrics
+
+#---------------------   Effect size on nest/chick survival measures pooled --------------------
+
+# run effect size for all productivity measures pooled (apart from proportion pairs with chicks since it's a very different metric), but with factor variable controlling for type of productivity measure if interventions have different effects on nests vs chicks etc
+
+mdat.prod.high <- subset(dat, metric=="productivity" & new.stan.metric!="proportion pairs with chicks" & stan.effect.size < 30 & species!="curlew" & species!="dunlin" & AE.level!="basic")
+
+mod.prod.high <- lme(stan.effect.size ~ AE.level + species + new.stan.metric, random= ~1|reference, data=mdat.prod.high)
+summary(mod.prod.high)
+
+mdat.prod.spec <- subset(dat, metric=="productivity" & new.stan.metric!="proportion pairs with chicks" & stan.effect.size < 30 & species!="curlew" & species!="dunlin" & mowing!="applied" & grazing!="reduced")
+mod.prod.spec <- lme(stan.effect.size ~ mowing + grazing + nest.protect + species + new.stan.metric, random= ~1|reference, data=mdat.prod.spec)
+summary(mod.prod.spec)
+
+
+#---------------------   Output model results  --------------------
+
+setwd(outputwd)
+sink(paste("1_effect size analysis.txt", sep=" "))
+
+cat("\n########==========  1a) effect size of high-level management on abundance, abundance change, and nest survival \n", sep="\n")
+print(lapply(mod.high, summary))
+
+cat("\n########==========  1b) effect size of specific management on abundance, abundance change, and nest survival ==========########\n", sep="\n")
+print(lapply(mod.spec, summary))
+
+cat("\n########==========  1c) effect size of high-level management on pooled productivity measures (nest survival, chick survival, fledglings/pair) ==========########\n", sep="\n")
+print(summary(mod.prod.high))
+
+cat("\n########==========  1d) effect size of specific management on pooled productivity measures (nest survival, chick survival, fledglings/pair) ==========########\n", sep="\n")
+print(summary(mod.prod.spec))
+sink()
+
+### Save individual interventions models
+saveRDS(mod.high, file=paste(workspacewd, "models_1a.rds", sep="/"))
+saveRDS(mod.spec, file=paste(workspacewd, "models_1b.rds", sep="/"))
+saveRDS(mod.prod.high, file=paste(workspacewd, "models_1c.rds", sep="/"))
+saveRDS(mod.prod.spec, file=paste(workspacewd, "models_1d.rds", sep="/"))
+
+### Save dataset for 0a models
+saveRDS(moddat, file=paste(workspacewd, "model dataset_1a-b.rds", sep="/"))
+saveRDS(moddat.high, file=paste(workspacewd, "model dataset_1c.rds", sep="/"))
+saveRDS(moddat.spec, file=paste(workspacewd, "model dataset_1d.rds", sep="/"))
 
 ### Notes on model asumptions and outputs
 # 3 very obvious outliers for abundance change analysis, all from the same study (#62 on snipe) - exclude these as very obvious outlier residuals
@@ -325,47 +296,153 @@ for (i in 1:length(metrics)) {
 # heterogeneity of residuals for nest survival is generally ok apart from extra large variance for fitted values ~ 2.05, but no clear pattern
 # heterogeneity of residuals for abundance generally ok apart from extra large variance for fitted values ~ 3.8, but no obvious pattern
 
-####    Effect size on nest/chick survival measures pooled    ####
-# run effect size for all productivity measures pooled (apart from proportion pairs with chicks since it's a very different metric), but with factor variable controlling for type of productivity measure if interventions have different effects on nests vs chicks etc
-mdat.prod <- subset(dat, metric=="productivity" & new.stan.metric!="proportion pairs with chicks" & stan.effect.size < 30)
-mod.prod <- lme(stan.effect.size ~ mgmt + new.stan.metric, random= ~1|reference, data=mdat.prod)
-summary(mod.prod)
 
 ### Notes on model asumptions and outputs
 # very obvious outliers for productivity analysis with effect size > 30 - exclude from analysis
 # normality not bad, bit of a long right tail
 # heterogeneity also not bad, bit of a large variance spread for some fitted values ~ 2.2
+  
+  
+  # see http://stats.stackexchange.com/questions/101020/how-to-interpret-multiple-factors-in-model-output-in-r for interpreting parameter estimates when there are multiple factors in a model
+  # The (intercept) indicates the value of the reference category. You have two categorical variables, so you have two reference categories. Your reference categories are LandUseHigh and an unspecified level of Type_LU (which I assume you know). So the value of the Estimate in the (intercept) row is the predicted mean for those study units in both of those categories when all the continuous covariates are equal to 00. Again, because you don't have an interaction term, the value of LandUseHigh when Type_LU is conserva, private, or state is the sum of the estimate for the intercept plus the estimate for the appropriate level of Type_LU.
+  
+  # the reference level for all mgmt variables is 'none', so the model provides estimates of either applied or applied/reduced for each mgmt type relative to the baseline, which is all mgmt vars='none' and black-tailed godwit
+  
 
-#---------------------   Test for all contrasts in effect sizes between intervention types  --------------------
+#=================================  PLOT MODEL OUTPUTS  ===============================
 
-# for making pairwise comparisons between the different treatment groups, use glht() in multcomp package - nice description of how given here: http://mindingthebrain.blogspot.co.uk/2013/04/multiple-pairwise-comparisons-for.html
+# Ben Bolker: R-sig-mixed-models post 20 Feb 2010 https://stat.ethz.ch/pipermail/r-sig-mixed-models/2010q1/003336.html
+# and GLMM wiki FAQs
+# Ben Bolker: Do note (as commented in the FAQ) that this only accounts for the uncertainty of the fixed effects conditional on the estimates of the random-effect variances and BLUPs/conditional modes
 
-# currently, parameter tables give the difference for each management's estimate with the reference level (AE applied)
-# we want tests comparing all of the effects of the different management types against each other - which ones are significantly better than others (not just which are sig different than the reference level)?
+# fm1 <- lme(distance ~ age*Sex, random = ~ 1 + age | Subject,
+#            data = Orthodont)
+# plot(Orthodont)
+# 
+# newdat <- expand.grid(age=c(8,10,12,14), Sex=c("Male","Female"))
+# newdat$pred <- predict(fm1, newdat, level = 0)
+# 
+# Designmat <- model.matrix(eval(eval(fm1$call$fixed)[-2]), newdat[-3])
+# predvar <- diag(Designmat %*% fm1$varFix %*% t(Designmat))
+# newdat$SE <- sqrt(predvar) # for confidence intervals
+# newdat$SE2 <- sqrt(predvar+fm1$sigma^2) # for prediction intervals, add the residual variance
+# 
+# library(ggplot2)
+# pd <- position_dodge(width=0.4)
+# ggplot(newdat,aes(x=age,y=pred,colour=Sex))+
+#   geom_point(position=pd)+
+#   geom_linerange(aes(ymin=pred-2*SE,ymax=pred+2*SE),
+#                  position=pd)
+# 
+# ## prediction intervals
+# ggplot(newdat,aes(x=age,y=pred,colour=Sex))+
+#   geom_point(position=pd)+
+#   geom_linerange(aes(ymin=pred-2*SE2,ymax=pred+2*SE2),
+#                  position=pd)
 
-### Abundance ###
 
-contrast.matrix <- rbind(
-  `mgmtAE.level basic vs. mgmtAE.level higher` = c(0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-  `Time:Diet1 vs. Time:Diet3` = c(0, 0, 0, 0, 0, 0, 1, 0),
-  `Time:Diet1 vs. Time:Diet4` = c(0, 0, 0, 0, 0, 0, 0, 1),
-  `Time:Diet2 vs. Time:Diet3` = c(0, 0, 0, 0, 0, -1, 1, 0),
-  `Time:Diet2 vs. Time:Diet4` = c(0, 0, 0, 0, 0, -1, 0, 1),
-  `Time:Diet3 vs. Time:Diet4` = c(0, 0, 0, 0, 0, 0, -1, 1))
+plotdat <- list()
+
+for (i in 1:length(mod.high)) {
+  
+  # random effects not needed for new prediction
+  
+  plotmod <- mod.high[[i]] # model to plot results
+  origdat <- moddat[[i]] # original dataset
+  
+  newdat <- origdat[,c("stan.effect.size", "species", mgmtvars)] # create new dataset with species
+  
+  newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+  
+  # new dataset contains all of the unique combinations of the different management interventions, replicated across the range of observed effect sizes for the dataset, replicated across species
+  unique.mgmtvars <- unique(origdat[,mgmtvars]) # unique combination of mgmtvars appearing in the original dataset
+  seq.effect.size <- seq(min(origdat$stan.effect.size), max(origdat$stan.effect.size), 0.1) # sequence of the range of effect sizes
+  x <- unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), each=length(seq.effect.size)),] # replicate each row of unique mgmtvars to the length of the effect size sequence
+  effect.mgmt <- data.frame(stan.effect.size=rep(seq.effect.size, times=nrow(unique.mgmtvars)), x) # merge effect sizes sequence and mgmtvars, now a unique combination of everything
+  newdat <- data.frame(effect.mgmt[rep(seq_len(nrow(effect.mgmt)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(effect.mgmt))) # replicate the whole dataset for each species
+  
+  newdat$pred <- predict(plotmod, level=0, newdat)
+  
+  Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
+  predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
+  newdat$SE <- sqrt(predvar)
+  newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
+  
+  aggregate(newdat[,c("pred","SE")], by=list(newdat[,mgmtvars]), mean)
+  
+  fits <- data.fra
+  
+  fits <- data.frame(pred=pred$fit, se.fit=pred$se.fit, lci=(pred$fit - (1.96*pred$se.fit)), uci=(pred$fit + (1.96*pred$se.fit)))
+  
+  
+  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
+  unique.fits <- unique(fits)
+  
+  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
+  
+}
+
+plotfinal <- do.call(rbind, plotdat)
+
+###-------- Output plot --------###
+png("0a_overall model results.png", res=300, height=12, width=20, units="in", pointsize=20)
+par(mar=c(7,6,2,2))
+
+x <- c(1:nrow(plotfinal))
+
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
+axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","more water \n applied"))
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+abline(h=0.5, lty=3, lwd=2)
+
+dev.off()
+
+###-------- Output table of predicted probabilities +/- CIs --------###
+write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs.csv", row.names=FALSE)
 
 
-amod <- lm(breaks ~ tension, data = warpbreaks)
-### set up all-pair comparisons for factor `tension'
-### using a symbolic description (`type' argument
-### to `contrMat()')
-com1 <- glht(amod, linfct = mcp(tension = "Tukey"))
-### alternatively, describe differences symbolically
-com2 <- glht(amod, linfct = mcp(tension = c("M - L = 0",
-                                    "H - L = 0",
-                                    "H - M = 0")))
 
 
-x <- glht(mod[[1]], linfct = mcp(mgmt = "Tukey"))
+easyPredCI <- function(model,newdata,alpha=0.05) {
+  ## baseline prediction, on the linear predictor (logit) scale:
+  
+  model <- mod[[i]]
+  newdata <- moddat[[i]]
+  
+  pred0 <- predict(model,newdata=newdata)
+  
+  pred <- predict(model, level=0, newdata=newdata)
+  
+  ## fixed-effects model matrix for new data
+  X <- model.matrix(formula(model,fixed.only=TRUE)[-2],
+                    newdata)
+  beta <- fixef(model) ## fixed-effects coefficients
+  V <- vcov(model)     ## variance-covariance matrix of beta
+  pred.se <- sqrt(diag(X %*% V %*% t(X))) ## std errors of predictions
+  ## inverse-link (logistic) function: could also use plogis()
+  linkinv <- model@resp$family$linkinv
+  ## construct 95% Normal CIs on the link scale and
+  ##  transform back to the response (probability) scale:
+  crit <- -qnorm(alpha/2)
+  linkinv(cbind(lwr=pred0-crit*pred.se,
+                upr=pred0+crit*pred.se))
+}
+cpred1.CI <- easyPredCI(cmod_lme4_L,pframe)
+
+
+
+
+
+############################################################################################################################
+############################################################################################################################
+############################################################################################################################
+############################################################################################################################
+############################################################################################################################
+
 
 #=================================  PLOT MODEL OUTPUTS  ===============================
 
