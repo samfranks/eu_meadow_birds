@@ -22,34 +22,6 @@ if(length(new.packages)) install.packages(new.packages)
 
 lapply(list.of.packages, library, character.only=TRUE)
 
-#=================================  LOAD FUNCTIONS =================================
-
-### Ben Bolker's function for calculating CIs on predictions from a merMod object and plotting the results from his RPubs GLMM worked examples
-# http://rpubs.com/bbolker/glmmchapter
-# by specifying re.form=NA we're saying that we want the population-level prediction, i.e. setting the random effects to zero and getting a prediction for an average (or unknown) group
-# Computing confidence intervals on the predicted values is relatively easy if we're willing to completely ignore the random effects, and the uncertainty of the random effects
-# this easy method produces similar width CIs to using the bootMer function in lme4, perhaps slightly wider CIs in some cases
-
-# can change to alpha=0.16, approximately equal to 84% CIs
-easyPredCI.lme <- function(model,newdata,alpha=alphalevel) {
-  
-  ## baseline prediction, on the linear predictor (logit) scale:
-  pred0 <- predict(model,re.form=NA,newdata=newdata)
-  ## fixed-effects model matrix for new data
-  X <- model.matrix(formula(model,fixed.only=TRUE)[-2],
-                    newdata)
-  beta <- fixef(model) ## fixed-effects coefficients
-  V <- vcov(model)     ## variance-covariance matrix of beta
-  pred.se <- sqrt(diag(X %*% V %*% t(X))) ## std errors of predictions
-  ## inverse-link (logistic) function: could also use plogis()
-  linkinv <- model@resp$family$linkinv
-  ## construct 95% Normal CIs on the link scale and
-  ##  transform back to the response (probability) scale:
-  crit <- -qnorm(alpha/2)
-  linkinv(cbind(lwr=pred0-crit*pred.se,
-                upr=pred0+crit*pred.se))
-  
-}
 
 #=================================  SET DIRECTORY STRUCTURE  ================================
 
@@ -209,15 +181,15 @@ for (i in 1:length(metrics)) {
   moddat[[i]] <- mdat
   
   print(nrow(mdat))
-
+  
   if (metrics[i]=="abundance") {
     
     mod.high[[i]] <- lme(stan.effect.size ~ AE.level + reserve.desig + species, random = ~1|reference, data=mdat) # no predator control, fertpest records that aren't none in abundance model
     mod.spec[[i]] <- lme(stan.effect.size ~ mowing + grazing + nest.protect + water + species, random = ~1|reference, data=mdat) # no predator control, fertpest records that aren't none in abundance dataset
     
-  print(summary(mod.high[[i]]))
-  print(summary(mod.spec[[i]]))
-  
+    print(summary(mod.high[[i]]))
+    print(summary(mod.spec[[i]]))
+    
   }
   
   if (metrics[i]=="multiplicative yearly slope") {
@@ -226,7 +198,7 @@ for (i in 1:length(metrics)) {
     print(summary(mod.high[[i]]))
     
     mod.spec[[i]] <- c("for specific intervention model, adding more than one intervention creates singularities or leads to having studies which only test a single intervention and no other, creating weird DF estimation")
-
+    
   }
   
   if (metrics[i]=="nest survival (Mayfield)") {
@@ -239,23 +211,34 @@ for (i in 1:length(metrics)) {
     mod.spec[[i]] <- c("for specific intervention model, adding more than one intervention creates singularities or leads to having studies which only test a single intervention and no other, creating weird DF estimation")
     
   }
-
+  
 }
 
 names(mod.high) <- metrics
 names(mod.spec) <- metrics
 names(moddat) <- metrics
 
+mod.high
+
+x <- glht(mod.high[[2]], linfct = mcp(AE.level = "Tukey"))
+summary(x)
+
 #---------------------   Effect size on nest/chick survival measures pooled --------------------
 
 # run effect size for all productivity measures pooled (apart from proportion pairs with chicks since it's a very different metric), but with factor variable controlling for type of productivity measure if interventions have different effects on nests vs chicks etc
 
 mdat.prod.high <- subset(dat, metric=="productivity" & new.stan.metric!="proportion pairs with chicks" & stan.effect.size < 30 & species!="curlew" & species!="dunlin" & AE.level!="basic")
+mdat.prod.high <- droplevels(mdat.prod.high)
+mdat.prod.high$new.stan.metric <- as.factor(mdat.prod.high$new.stan.metric)
 
+# DF for reserve.desig too small even when in the model without AE.level
 mod.prod.high <- lme(stan.effect.size ~ AE.level + species + new.stan.metric, random= ~1|reference, data=mdat.prod.high)
 summary(mod.prod.high)
 
 mdat.prod.spec <- subset(dat, metric=="productivity" & new.stan.metric!="proportion pairs with chicks" & stan.effect.size < 30 & species!="curlew" & species!="dunlin" & mowing!="applied" & grazing!="reduced")
+mdat.prod.spec <- droplevels(mdat.prod.spec)
+mdat.prod.spec$new.stan.metric <- as.factor(mdat.prod.spec$new.stan.metric)
+
 mod.prod.spec <- lme(stan.effect.size ~ mowing + grazing + nest.protect + species + new.stan.metric, random= ~1|reference, data=mdat.prod.spec)
 summary(mod.prod.spec)
 
@@ -284,10 +267,10 @@ saveRDS(mod.spec, file=paste(workspacewd, "models_1b.rds", sep="/"))
 saveRDS(mod.prod.high, file=paste(workspacewd, "models_1c.rds", sep="/"))
 saveRDS(mod.prod.spec, file=paste(workspacewd, "models_1d.rds", sep="/"))
 
-### Save dataset for 0a models
+### Save dataset for models
 saveRDS(moddat, file=paste(workspacewd, "model dataset_1a-b.rds", sep="/"))
-saveRDS(moddat.high, file=paste(workspacewd, "model dataset_1c.rds", sep="/"))
-saveRDS(moddat.spec, file=paste(workspacewd, "model dataset_1d.rds", sep="/"))
+saveRDS(mdat.prod.high, file=paste(workspacewd, "model dataset_1c.rds", sep="/"))
+saveRDS(mdat.prod.spec, file=paste(workspacewd, "model dataset_1d.rds", sep="/"))
 
 ### Notes on model asumptions and outputs
 # 3 very obvious outliers for abundance change analysis, all from the same study (#62 on snipe) - exclude these as very obvious outlier residuals
@@ -301,15 +284,30 @@ saveRDS(moddat.spec, file=paste(workspacewd, "model dataset_1d.rds", sep="/"))
 # very obvious outliers for productivity analysis with effect size > 30 - exclude from analysis
 # normality not bad, bit of a long right tail
 # heterogeneity also not bad, bit of a large variance spread for some fitted values ~ 2.2
-  
-  
-  # see http://stats.stackexchange.com/questions/101020/how-to-interpret-multiple-factors-in-model-output-in-r for interpreting parameter estimates when there are multiple factors in a model
-  # The (intercept) indicates the value of the reference category. You have two categorical variables, so you have two reference categories. Your reference categories are LandUseHigh and an unspecified level of Type_LU (which I assume you know). So the value of the Estimate in the (intercept) row is the predicted mean for those study units in both of those categories when all the continuous covariates are equal to 00. Again, because you don't have an interaction term, the value of LandUseHigh when Type_LU is conserva, private, or state is the sum of the estimate for the intercept plus the estimate for the appropriate level of Type_LU.
-  
-  # the reference level for all mgmt variables is 'none', so the model provides estimates of either applied or applied/reduced for each mgmt type relative to the baseline, which is all mgmt vars='none' and black-tailed godwit
-  
+
+
+# see http://stats.stackexchange.com/questions/101020/how-to-interpret-multiple-factors-in-model-output-in-r for interpreting parameter estimates when there are multiple factors in a model
+# The (intercept) indicates the value of the reference category. You have two categorical variables, so you have two reference categories. Your reference categories are LandUseHigh and an unspecified level of Type_LU (which I assume you know). So the value of the Estimate in the (intercept) row is the predicted mean for those study units in both of those categories when all the continuous covariates are equal to 00. Again, because you don't have an interaction term, the value of LandUseHigh when Type_LU is conserva, private, or state is the sum of the estimate for the intercept plus the estimate for the appropriate level of Type_LU.
+
+# the reference level for all mgmt variables is 'none', so the model provides estimates of either applied or applied/reduced for each mgmt type relative to the baseline, which is all mgmt vars='none' and black-tailed godwit
+
 
 #=================================  PLOT MODEL OUTPUTS  ===============================
+
+setwd(outputwd)
+
+
+### Read individual interventions models
+mod.high <- readRDS(file=paste(workspacewd, "models_1a.rds", sep="/"))
+mod.spec <- readRDS(file=paste(workspacewd, "models_1b.rds", sep="/"))
+mod.prod.high <- readRDS(file=paste(workspacewd, "models_1c.rds", sep="/"))
+mod.prod.spec <- readRDS(file=paste(workspacewd, "models_1d.rds", sep="/"))
+
+### Read dataset
+moddat <- readRDS(file=paste(workspacewd, "model dataset_1a-b.rds", sep="/"))
+mdat.prod.high <- readRDS(file=paste(workspacewd, "model dataset_1c.rds", sep="/"))
+mdat.prod.spec <- readRDS(file=paste(workspacewd, "model dataset_1d.rds", sep="/"))
+
 
 # Ben Bolker: R-sig-mixed-models post 20 Feb 2010 https://stat.ethz.ch/pipermail/r-sig-mixed-models/2010q1/003336.html
 # and GLMM wiki FAQs
@@ -341,6 +339,9 @@ saveRDS(moddat.spec, file=paste(workspacewd, "model dataset_1d.rds", sep="/"))
 #                  position=pd)
 
 
+#----------   PLOTS OF 1a) EFFECTS OF HIGH-LEVEL INTERVENTIONS   ---------------
+
+####     Abundance, abundance change, nest survival    ####
 plotdat <- list()
 
 for (i in 1:length(mod.high)) {
@@ -350,211 +351,222 @@ for (i in 1:length(mod.high)) {
   plotmod <- mod.high[[i]] # model to plot results
   origdat <- moddat[[i]] # original dataset
   
-  newdat <- origdat[,c("stan.effect.size", "species", mgmtvars)] # create new dataset with species
+  unique.mgmtvars <- unique(origdat[,mgmtvars]) # unique combination of mgmtvars appearing in the original dataset
   
   newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
   
-  # new dataset contains all of the unique combinations of the different management interventions, replicated across the range of observed effect sizes for the dataset, replicated across species
-  unique.mgmtvars <- unique(origdat[,mgmtvars]) # unique combination of mgmtvars appearing in the original dataset
-  seq.effect.size <- seq(min(origdat$stan.effect.size), max(origdat$stan.effect.size), 0.1) # sequence of the range of effect sizes
-  x <- unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), each=length(seq.effect.size)),] # replicate each row of unique mgmtvars to the length of the effect size sequence
-  effect.mgmt <- data.frame(stan.effect.size=rep(seq.effect.size, times=nrow(unique.mgmtvars)), x) # merge effect sizes sequence and mgmtvars, now a unique combination of everything
-  newdat <- data.frame(effect.mgmt[rep(seq_len(nrow(effect.mgmt)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(effect.mgmt))) # replicate the whole dataset for each species
-  
-  newdat$pred <- predict(plotmod, level=0, newdat)
+  newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
   
   Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
   predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
   newdat$SE <- sqrt(predvar)
+  newdat$lwr <- newdat$pred - (1.96*newdat$SE)
+  newdat$upr <- newdat$pred + (1.96*newdat$SE)
   newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
   
-  aggregate(newdat[,c("pred","SE")], by=list(newdat[,mgmtvars]), mean)
+  fits <- newdat[,c("AE.level","reserve.desig","species","pred","SE","lwr","upr")]
+  fits <- unique(fits)
   
-  fits <- data.fra
+  sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.level=fits$AE.level, reserve.desig=fits$reserve.desig), mean)
   
-  fits <- data.frame(pred=pred$fit, se.fit=pred$se.fit, lci=(pred$fit - (1.96*pred$se.fit)), uci=(pred$fit + (1.96*pred$se.fit)))
+  # nest survival model doesn't include reserve.desig variable, so aggregate across reserve.desig as well as species
+  if (metrics[i]=="nest survival (Mayfield)") {
+    fits <- newdat[,c("AE.level","species","pred","SE","lwr","upr")]
+    fits <- unique(fits)
+    sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.level=fits$AE.level), mean)
+  }
   
+  plotdat[[i]] <- data.frame(sum.fits, metric=names(mod.high)[i])  
   
-  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
   
 }
 
-plotfinal <- do.call(rbind, plotdat)
+####  Pooled productivity measures effect size predictions  ####
+
+plotmod <- mod.prod.high # model to plot results
+origdat <- mdat.prod.high # original dataset
+
+unique.mgmtvars <- unique(origdat[,mgmtvars]) # unique combination of mgmtvars appearing in the original dataset
+
+newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+
+# need to replicate across the different productivity measures as well
+newdat <- data.frame(newdat[rep(seq_len(nrow(newdat)), times=3),], new.stan.metric=rep(levels(as.factor(origdat$new.stan.metric)), each=nrow(newdat)))
+
+newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
+
+Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
+predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
+newdat$SE <- sqrt(predvar)
+newdat$lwr <- newdat$pred - (1.96*newdat$SE)
+newdat$upr <- newdat$pred + (1.96*newdat$SE)
+newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
+
+fits <- newdat[,c("AE.level","species","new.stan.metric","pred","SE","lwr","upr")]
+fits <- unique(fits)
+
+sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.level=fits$AE.level), mean)
+
+plotdat[[4]] <- data.frame(sum.fits, metric="pooled productivity")
+
+
 
 ###-------- Output plot --------###
-png("0a_overall model results.png", res=300, height=12, width=20, units="in", pointsize=20)
-par(mar=c(7,6,2,2))
+png("1a_high level intervention effect size.png", res=300, height=12, width=15, units="in", pointsize=20)
 
-x <- c(1:nrow(plotfinal))
+par(mfrow=c(2,2))
 
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
-axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","more water \n applied"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
-title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
-abline(h=0.5, lty=3, lwd=2)
+for (i in 1:length(metrics)) {
+  
+  par(mar=c(6,5,2,2))
+  
+  plotsub <- plotdat[[i]]
+  
+  x <- c(1:nrow(plotsub))
+  
+  if (metrics[i]=="abundance") {
+    
+    plotsub$pch <- c(0,1,2,15,16,17)
+    
+    plot(plotsub$pred~x, pch=plotsub$pch, cex=1.5, ylim=c(min(plotsub$lwr)*1.1,max(plotsub$upr)*1.1), xaxt="n", xlab="", ylab="Predicted effect size", las=1, bty="n")
+    arrows(x, plotsub$pred, x, plotsub$lwr, angle=90, length=0.05)
+    arrows(x, plotsub$pred, x, plotsub$upr, angle=90, length=0.05)
+    abline(h=0, lty=3, lwd=2)
+    # axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+    axis(1, x, labels=rep("",nrow(plotsub)), tick=TRUE)
+    text(x, par("usr")[3]*1.1, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=0.8)
+    text(c(2,5), par("usr")[3]*1.6, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/ \n designation", "nature reserve/ \n designation"), font=2)
+    title(metrics[i])
+  }
+  
+  if (metrics[i]=="multiplicative yearly slope") {
+    
+    plotsub$pch <- c(0,1,2,15,16,17)
+    
+    plot(plotsub$pred~x, pch=plotsub$pch, cex=1.5, ylim=c(min(plotsub$lwr)*1.5,max(plotsub$upr)*1.2), xaxt="n", xlab="", ylab="Predicted effect size", las=1, bty="n")
+    arrows(x, plotsub$pred, x, plotsub$lwr, angle=90, length=0.05)
+    arrows(x, plotsub$pred, x, plotsub$upr, angle=90, length=0.05)
+    abline(h=0, lty=3, lwd=2)
+    #     axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE)
+    axis(1, x, labels=rep("",nrow(plotsub)), tick=TRUE)
+    text(x, par("usr")[3]*1.15, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=0.8)
+    text(c(2,5), par("usr")[3]*1.8, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/ \n designation", "nature reserve/ \n designation"), font=2)
+    title(metrics[i])
+  }
+  
+  if (metrics[i]=="nest survival (Mayfield)") {
+    
+    x <- c(2:3)
+    
+    plotsub$pch <- c(0,2)
+    
+    plot(plotsub$pred~x, pch=plotsub$pch, cex=1.5, ylim=c(min(plotsub$lwr)*1.3,max(plotsub$upr)*1.2), xlim=c(1.5,3.5), xaxt="n", xlab="", ylab="Predicted effect size", las=1, bty="n")
+    arrows(x, plotsub$pred, x, plotsub$lwr, angle=90, length=0.05)
+    arrows(x, plotsub$pred, x, plotsub$upr, angle=90, length=0.05)
+    abline(h=0, lty=3, lwd=2)
+    #     axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE)
+    axis(1, x, labels=rep("",nrow(plotsub)), tick=TRUE)
+    text(x, par("usr")[3]*1.15, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","higher-level \n AES"), cex=0.8)
+    title(metrics[i])
+  }
+}
+
+### Plot pooled productivity ###
+
+par(mar=c(6,5,2,2))
+
+plotsub <- plotdat[[4]]
+
+x <- c(1:nrow(plotsub))
+x <- c(2:3)
+
+plotsub$pch <- c(0,2)
+
+plot(plotsub$pred~x, pch=plotsub$pch, cex=1.5, ylim=c(min(plotsub$lwr)*1.3,max(plotsub$upr)*1.2), xlim=c(1.5,3.5), xaxt="n", xlab="", ylab="Predicted effect size", las=1, bty="n")
+arrows(x, plotsub$pred, x, plotsub$lwr, angle=90, length=0.05)
+arrows(x, plotsub$pred, x, plotsub$upr, angle=90, length=0.05)
+abline(h=0, lty=3, lwd=2)
+#     axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE)
+axis(1, x, labels=rep("",nrow(plotsub)), tick=TRUE)
+text(x, par("usr")[3]*1.15, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","higher-level \n AES"), cex=0.8)
+title("pooled productivity metrics")
+
 
 dev.off()
 
-###-------- Output table of predicted probabilities +/- CIs --------###
-write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs.csv", row.names=FALSE)
 
 
+#----------   PLOTS OF 1b) EFFECTS OF SPECIFIC INTERVENTIONS   ---------------
 
+####     Abundance only   ####
 
-easyPredCI <- function(model,newdata,alpha=0.05) {
-  ## baseline prediction, on the linear predictor (logit) scale:
-  
-  model <- mod[[i]]
-  newdata <- moddat[[i]]
-  
-  pred0 <- predict(model,newdata=newdata)
-  
-  pred <- predict(model, level=0, newdata=newdata)
-  
-  ## fixed-effects model matrix for new data
-  X <- model.matrix(formula(model,fixed.only=TRUE)[-2],
-                    newdata)
-  beta <- fixef(model) ## fixed-effects coefficients
-  V <- vcov(model)     ## variance-covariance matrix of beta
-  pred.se <- sqrt(diag(X %*% V %*% t(X))) ## std errors of predictions
-  ## inverse-link (logistic) function: could also use plogis()
-  linkinv <- model@resp$family$linkinv
-  ## construct 95% Normal CIs on the link scale and
-  ##  transform back to the response (probability) scale:
-  crit <- -qnorm(alpha/2)
-  linkinv(cbind(lwr=pred0-crit*pred.se,
-                upr=pred0+crit*pred.se))
-}
-cpred1.CI <- easyPredCI(cmod_lme4_L,pframe)
+plotdat.spec <- list()
 
-
-
-
-
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
-############################################################################################################################
-
-
-#=================================  PLOT MODEL OUTPUTS  ===============================
-
-# Ben Bolker: R-sig-mixed-models post 20 Feb 2010 https://stat.ethz.ch/pipermail/r-sig-mixed-models/2010q1/003336.html
-# and GLMM wiki FAQs
-# Ben Bolker: Do note (as commented in the FAQ) that this only accounts for the uncertainty of the fixed effects conditional on the estimates of the random-effect variances and BLUPs/conditional modes
-
-fm1 <- lme(distance ~ age*Sex, random = ~ 1 + age | Subject,
-           data = Orthodont)
-plot(Orthodont)
-
-newdat <- expand.grid(age=c(8,10,12,14), Sex=c("Male","Female"))
-newdat$pred <- predict(fm1, newdat, level = 0)
-
-Designmat <- model.matrix(eval(eval(fm1$call$fixed)[-2]), newdat[-3])
-predvar <- diag(Designmat %*% fm1$varFix %*% t(Designmat))
-newdat$SE <- sqrt(predvar) # for confidence intervals
-newdat$SE2 <- sqrt(predvar+fm1$sigma^2) # for prediction intervals, add the residual variance
-
-library(ggplot2)
-pd <- position_dodge(width=0.4)
-ggplot(newdat,aes(x=age,y=pred,colour=Sex))+
-  geom_point(position=pd)+
-  geom_linerange(aes(ymin=pred-2*SE,ymax=pred+2*SE),
-                 position=pd)
-
-## prediction intervals
-ggplot(newdat,aes(x=age,y=pred,colour=Sex))+
-  geom_point(position=pd)+
-  geom_linerange(aes(ymin=pred-2*SE2,ymax=pred+2*SE2),
-                 position=pd)
-
-
-plotdat <- list()
-
-for (i in 1:length(mod)) {
+for (i in 1:1) {
   
   # random effects not needed for new prediction
   
-  plotmod <- mod[[i]] # model to plot results
+  plotmod <- mod.spec[[i]] # model to plot results
   origdat <- moddat[[i]] # original dataset
   
-  newdat <- with(origdat, data.frame(stan.effect.size, mgmt, species)) # create new dataset with species 
+  unique.mgmtvars <- unique(origdat[,mgmtvars]) # unique combination of mgmtvars appearing in the original dataset
   
-  newdat 
+  newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
   
-  newdat$pred <- predict(plotmod, level=0, newdat)
+  newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
   
   Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
   predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
   newdat$SE <- sqrt(predvar)
+  newdat$lwr <- newdat$pred - (1.96*newdat$SE)
+  newdat$upr <- newdat$pred + (1.96*newdat$SE)
   newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
   
-  fits <- data.frame(pred=pred$fit, se.fit=pred$se.fit, lci=(pred$fit - (1.96*pred$se.fit)), uci=(pred$fit + (1.96*pred$se.fit)))
+  fits <- newdat[,c("mowing","grazing","nest.protect","water","species","pred","SE","lwr","upr")]
+  fits <- unique(fits)
   
+  sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(mowing=fits$mowing, grazing=fits$grazing, nest.protect=fits$nest.protect, water=fits$water), mean)
   
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
+  # ordered from worst to best combinations of interventions
+  sum.fits <- sum.fits[order(sum.fits$pred),]
   
-  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
-  unique.fits <- unique(fits)
+  # sum.fits <- sum.fits[order(sum.fits$mowing, sum.fits$grazing, sum.fits$nest.protect, sum.fits$water),]
   
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
+  plotdat.spec[[i]] <- data.frame(sum.fits, metric=names(mod.spec)[i])  
+  
   
 }
 
-plotfinal <- do.call(rbind, plotdat)
+
 
 ###-------- Output plot --------###
-png("0a_overall model results.png", res=300, height=12, width=20, units="in", pointsize=20)
-par(mar=c(7,6,2,2))
+png("1b_specific intervention effect size.png", res=300, height=12, width=18, units="in", pointsize=20)
 
-x <- c(1:nrow(plotfinal))
-
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
-axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","more water \n applied"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
-title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
-abline(h=0.5, lty=3, lwd=2)
+for (i in 1:length(plotdat.spec)) {
+  
+  par(mar=c(6,5,2,2))
+  
+  plotsub <- plotdat.spec[[i]]
+  
+  x <- c(1:nrow(plotsub))
+  
+  plot(plotsub$pred~x, pch=16, cex=1.5, ylim=c(min(plotsub$lwr)*1.1,max(plotsub$upr)*1.1), xaxt="n", xlab="", ylab="Predicted effect size", las=1, bty="n")
+  arrows(x, plotsub$pred, x, plotsub$lwr, angle=90, length=0.05)
+  arrows(x, plotsub$pred, x, plotsub$upr, angle=90, length=0.05)
+  abline(h=0, lty=3, lwd=2)
+  # axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+  axis(1, x, labels=rep("",nrow(plotsub)), tick=TRUE)
+  text(x, par("usr")[3]*1.1, srt = 0, pos=1, xpd = TRUE, cex=0.8,
+       labels=c("mowing reduced +\ngrazing reduced +\nwater applied",
+                "grazing applied",
+                "mowing reduced",
+                "mowing reduced +\nnest protection",
+                "no interventions",
+                "nest protection",
+                "mowing reduced +\nwater applied",
+                "water applied"))
+  title("abundance")
+}
 
 dev.off()
 
-###-------- Output table of predicted probabilities +/- CIs --------###
-write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs.csv", row.names=FALSE)
-
-
-
-
-easyPredCI <- function(model,newdata,alpha=0.05) {
-  ## baseline prediction, on the linear predictor (logit) scale:
-  
-  model <- mod[[i]]
-  newdata <- moddat[[i]]
-  
-  pred0 <- predict(model,newdata=newdata)
-  
-  pred <- predict(model, level=0, newdata=newdata)
-  
-  ## fixed-effects model matrix for new data
-  X <- model.matrix(formula(model,fixed.only=TRUE)[-2],
-                    newdata)
-  beta <- fixef(model) ## fixed-effects coefficients
-  V <- vcov(model)     ## variance-covariance matrix of beta
-  pred.se <- sqrt(diag(X %*% V %*% t(X))) ## std errors of predictions
-  ## inverse-link (logistic) function: could also use plogis()
-  linkinv <- model@resp$family$linkinv
-  ## construct 95% Normal CIs on the link scale and
-  ##  transform back to the response (probability) scale:
-  crit <- -qnorm(alpha/2)
-  linkinv(cbind(lwr=pred0-crit*pred.se,
-                upr=pred0+crit*pred.se))
-}
-cpred1.CI <- easyPredCI(cmod_lme4_L,pframe)
