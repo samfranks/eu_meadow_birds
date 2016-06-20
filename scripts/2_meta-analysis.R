@@ -69,7 +69,7 @@ dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
 # subset dataset for analysis to desired columns only
-dat <- subset(dat0, select=c("reference","lit.type","score","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
+dat <- subset(dat0, select=c("reference","lit.type","score","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success","failure","outcome",mgmtvars))
 
 
 
@@ -111,12 +111,18 @@ for (i in 1:length(mgmtvars)) {
 
 #------------------------------ Test effect of nuisance variables on success for the full dataset -------------------------
 
-m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.nui1)
 
-# only significant effect of a nuisance variable is literature type
+# significance is given by Wald Z tests (default for summary.glmer())
+# only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
 # primary literature study is more likely to be unsuccessful than successful
 # include lit.type in subsequent analyses
+# controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
+
+#             good   medium     poor
+# grey    0.224299 0.485981 0.289720
+# primary 0.405350 0.465021 0.129630
 
 #------------------------------ 0a) success of individual management types -------------------------
 
@@ -130,13 +136,13 @@ out
 
 # set up list to output models and model datasets to
 m.ind <- list()
-m.ind.blme <- list()
 usedat <- list() # data subset used to run a model
 
 for (i in 1:length(mgmtvars)) {
   
   print(mgmtvars[i])
   mdat <- dat[dat[,mgmtvars[i]]!="none",]
+  mdat <- subset(mdat, species!="ruff") # subset out ruff because there are too few studies
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
   #   if (mgmtvars[i]=="mowing") {
@@ -145,9 +151,9 @@ for (i in 1:length(mgmtvars)) {
   #   if (mgmtvars[i]=="fertpest") {
   #     mdat <- subset(mdat, fertpest!="applied")
   #   }
-  if (mgmtvars[i]=="predator.control") {
-    mdat <- subset(mdat, predator.control!="reduced")
-  }
+  #   if (mgmtvars[i]=="predator.control") {
+  #     mdat <- subset(mdat, predator.control!="reduced")
+  #   }
   #   if (mgmtvars[i]=="water") {
   #     mdat <- subset(mdat, water!="reduced")
   #   }
@@ -157,40 +163,29 @@ for (i in 1:length(mgmtvars)) {
   
   (checkzeros <- table(mdat[,mgmtvars[i]], mdat$success))
   
+  table(mdat[,mgmtvars[i]], mdat$species,mdat$success)
+  
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + lit.type + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ 1 + lit.type + (1|reference)")
+    modform <- as.formula("success ~ 1 + (1|reference) + (1|species)")
   }
   
   # run a normal glmer model
   m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
-  # vars with warnings using glmer: mowing, fertpest, predator.control
-  
-  # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
-  # calculate the dimensions of the covariance matrix for bglmer (diagonal matrix number of fixed effects) based on the number of levels present of all factor variables in the model - 1; if lit.type is included as a variable, then add the number of levels of lit.type to the calculations for the dimensions of the covariance matrix
-  # vcov.dim <- length(levels(mdat[,mgmtvars[i]])) + length(levels(mdat$lit.type)) - 1
-  
-  vcov.dim <- nrow(vcov(m.ind[[i]]))
-  m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
-  
   
 }
 
 names(m.ind) <- mgmtvars
-names(m.ind.blme) <- mgmtvars
 names(usedat) <- mgmtvars
 
 warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
 warningmessages.lme4
-
-warningmessages.blme <- lapply(m.ind.blme, function(x) slot(x, "optinfo")$conv$lme4$messages)
-warningmessages.blme
 
 # ### lme4 convergence troubleshooting
 # # check singularity
@@ -209,22 +204,15 @@ warningmessages.blme
 setwd(outputwd)
 sink(paste("model output_0a.txt", sep=" "))
 
-cat("\n########==========  0a) success of individual management types - BLME models (good) ==========########\n", sep="\n")
-print(lapply(m.ind.blme, summary))
-
-cat("\n########==========  0a) success of individual management types - lme4 models (convergence issues) ==========########\n", sep="\n")
+cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
 print(lapply(m.ind, summary))
 
-cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
-print(warningmessages.blme)
-
-cat("\n########==========  Warning messages lme4 models (convergence issues) ==========########\n", sep="\n")
+cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
 print(warningmessages.lme4)
 sink()
 
 ### Save individual interventions models
 saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4.rds", sep="/"))
-saveRDS(m.ind.blme, file=paste(workspacewd, "models_0a_blme.rds", sep="/"))
 
 ### Save dataset for 0a models
 saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
@@ -255,10 +243,7 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
 
 ### ANALYSIS ###
 
-# subset dataset to remove dunlin and ruff, not enough data for these species for any analysis that includes species as a covariate
-# sppdat <- subset(dat, species!="dunlin" & species!="ruff")
 sppdat <- dat
-sppdat <- droplevels(sppdat)
 
 # identify which categories have low numbers
 out <- list()
@@ -290,7 +275,9 @@ for (i in 1:length(mgmtvars)) {
   }
   
   if (mgmtvars[i]=="reserve.desig") {
-    mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff", "dunlin/ruff", as.character(mdat$species)) # combine dunlin + ruff since only 1 obs of each
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff")
+    
+    # mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff", "dunlin/ruff", as.character(mdat$species)) # combine dunlin + ruff since only 1 obs of each
   }
   
   if (mgmtvars[i]=="mowing") {
@@ -308,7 +295,8 @@ for (i in 1:length(mgmtvars)) {
   
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, fertpest!="applied") # remove applied level as causes non-convergence even for bglmer model
-    mdat <- subset(mdat, species!="snipe" & species!="curlew" & species!="dunlin" & species!="ruff")
+    mdat <- subset(mdat, species=="black-tailed godwit" | species=="lapwing")
+    # mdat <- subset(mdat, species!="snipe" & species!="curlew" & species!="dunlin" & species!="ruff")
   }
   
   if (mgmtvars[i]=="nest.protect") {
@@ -336,11 +324,11 @@ for (i in 1:length(mgmtvars)) {
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*species + lit.type + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*species + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ species + lit.type + (1|reference)")
+    modform <- as.formula("success ~ species + (1|reference)")
   }
   
   # run a normal glmer model
@@ -416,15 +404,16 @@ for (i in 1:length(mgmtvars)) {
   mgmtvars[i]
   mdat <- metricdat[metricdat[,mgmtvars[i]]!="none",]
   table(mdat[,mgmtvars[i]], mdat$metric, mdat$success)
+  mdat <- subset(mdat, species!="ruff" & species!="dunlin")
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
   #   if (mgmtvars[i]=="reserve.desig") {
   #     mdat <- subset(mdat, metric!="productivity")
   #   }
   
-  #   if (mgmtvars[i]=="mowing") {
-  #     mdat <- subset(mdat, mowing!="applied")
-  #   }
+  if (mgmtvars[i]=="mowing") {
+    mdat <- subset(mdat, mowing!="applied")
+  }
   
   #   if (mgmtvars[i]=="grazing") {
   #     mdat <- subset(mdat, metric!="occupancy")
@@ -454,11 +443,11 @@ for (i in 1:length(mgmtvars)) {
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + lit.type + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference) + (1|species)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ metric + lit.type + (1|reference)")
+    modform <- as.formula("success ~ metric + (1|reference) + (1|species)")
   }
   
   # run a normal glmer model
@@ -566,13 +555,13 @@ for (i in 1:length(mgmtvars)) {
     mdat <- subset(mdat, habitat!="unenclosed")
   }
   
-#   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-#   if (mgmtvars[i]=="reserve.desig") {
-#     mdat <- subset(mdat, !(grepl("arable", mdat$habitat)) & habitat!="mixed pastoral/unenclosed")
-#     mdat <- subset(mdat, habitat=="pastoral")
-#   }
+  #   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+  #   if (mgmtvars[i]=="reserve.desig") {
+  #     mdat <- subset(mdat, !(grepl("arable", mdat$habitat)) & habitat!="mixed pastoral/unenclosed")
+  #     mdat <- subset(mdat, habitat=="pastoral")
+  #   }
   
-
+  
   if (mgmtvars[i]=="water") {
     mdat <- subset(mdat, water!="reduced")
     # mdat <- subset(mdat, metric!="occupancy")
@@ -586,7 +575,7 @@ for (i in 1:length(mgmtvars)) {
   
   (checkzeros <- table(mdat[,mgmtvars[i]], mdat$habitat, mdat$success))
   
-
+  
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
@@ -614,7 +603,7 @@ for (i in 1:length(mgmtvars)) {
   m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
   # }
   
-
+  
   
 }
 

@@ -145,16 +145,14 @@ d0.4 <- d0.3
 # success variable defined as 1 = significant positive effect, 0 = neutral or negative effect
 d0.4$success <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, 0) # success variable
 
+# failure variable defined as 1 = significant negative effect, 0 = neutral or positive effect
+d0.4$failure <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", 1, 0) # failure variable
 
+# outcome variable: -1 = significant negative, 0 = no effect, 1 = significant positive
+d0.4$outcome <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", -1, 0)) # success variable) # success variable
 
 # group fertilizer and pesticides into single variable
-d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied", 
-                        "applied",
-                        ifelse(d0.4$fertilizer=="restricted" | d0.4$pesticide=="restricted", 
-                               "restricted", 
-                               ifelse(d0.4$fertilizer=="removed" | d0.4$pesticide=="removed", 
-                                      "removed", "none"))
-                        )
+d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied", "applied", ifelse(d0.4$fertilizer=="restricted" | d0.4$pesticide=="restricted", "restricted", ifelse(d0.4$fertilizer=="removed" | d0.4$pesticide=="removed", "removed", "none")))
 # group groundwater.drainage and surface.water into single variable meaning 'more water'
 # restricted/removed groundwater drainage equates to more water (same as applying surface water)
 # combinations of drainage/surface water in dataset
@@ -202,7 +200,7 @@ d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
 
 ### Save definitive dataset
 saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
-
+write.table(d1, file=paste(datawd, "meadow birds analysis dataset_full.txt", sep="/"), row.names=FALSE, quote=FALSE, sep="\t")
 
 #=================================  SUMMARY STATISTICS  ===============================
 
