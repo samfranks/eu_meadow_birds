@@ -4,391 +4,593 @@
 $AE
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 20.935
+Prior dev  : 11.58
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + lit.type + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   309.6    330.8   -148.8    297.6      248 
+   322.5    336.8   -157.3    314.5      258 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.276 -0.753 -0.454  0.804  2.443 
+-1.318 -0.750 -0.455  0.788  2.569 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.1      1.05    
-Number of obs: 254, groups:  reference, 30
+ reference (Intercept) 1.49     1.22    
+Number of obs: 262, groups:  reference, 31
 
 Fixed effects:
-                                 Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                         0.152      1.044    0.15    0.884  
-habitatmixed arable/pastoral       -0.425      1.141   -0.37    0.710  
-habitatmixed pastoral/unenclosed   -2.703      1.390   -1.94    0.052 .
-habitatpastoral                     0.129      0.770    0.17    0.866  
-lit.typeprimary                    -0.789      0.873   -0.90    0.366  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)           -0.6228     0.6339   -0.98     0.33
+newhabitatpastoral    -0.0534     0.7169   -0.08     0.94
+newhabitatunenclosed  -0.4768     1.4225   -0.34     0.74
 
 Correlation of Fixed Effects:
-            (Intr) harbl/ hpstr/ hbttps
-hbttmxarbl/ -0.318                     
-hbttmpstrl/ -0.655  0.200              
-habittpstrl -0.627  0.490  0.411       
-lt.typprmry -0.743 -0.060  0.484  0.040
+            (Intr) nwhbttp
+nwhbttpstrl -0.871        
+nwhbttnncls -0.355  0.309 
 
 $AE.level
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 39.922
+Prior dev  : 16.188
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ AE.level * habitat + lit.type + (1 | reference)
+Formula: success ~ AE.level * newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   300.1    335.5   -140.0    280.1      244 
+   302.5    320.2   -146.3    292.5      249 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.376 -0.597 -0.414  0.727  2.416 
+-1.456 -0.573 -0.391  0.785  2.658 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.583    0.763   
+ reference (Intercept) 1.21     1.1     
 Number of obs: 254, groups:  reference, 30
 
 Fixed effects:
-                                                Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                                       -0.852      1.056   -0.81    0.419  
-AE.levelhigher                                     2.309      1.086    2.13    0.033 *
-habitatmixed arable/pastoral                       0.647      1.457    0.44    0.657  
-habitatmixed pastoral/unenclosed                  -2.762      1.559   -1.77    0.076 .
-habitatpastoral                                    0.535      0.868    0.62    0.537  
-lit.typeprimary                                   -0.723      0.772   -0.94    0.350  
-AE.levelhigher:habitatmixed arable/pastoral       -2.791      1.683   -1.66    0.097 .
-AE.levelhigher:habitatmixed pastoral/unenclosed    0.993      1.905    0.52    0.602  
-AE.levelhigher:habitatpastoral                    -1.215      1.130   -1.07    0.282  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                                  Estimate Std. Error z value Pr(>|z|)
+(Intercept)                        -1.2824     0.8402   -1.53     0.13
+AE.levelhigher                      1.1446     1.0800    1.06     0.29
+newhabitatpastoral                  0.0476     0.9016    0.05     0.96
+AE.levelhigher:newhabitatpastoral   0.1148     1.1259    0.10     0.92
 
 Correlation of Fixed Effects:
-            (Intr) AE.lvl harbl/ hpstr/ hbttps lt.typ AE.:a/ AE.:p/
-AE.levlhghr -0.384                                                 
-hbttmxarbl/ -0.251  0.103                                          
-hbttmpstrl/ -0.501  0.103  0.126                                   
-habittpstrl -0.704  0.496  0.338  0.329                            
-lt.typprmry -0.634 -0.056 -0.046  0.349 -0.014                     
-AE.lvlhg:a/  0.117 -0.428 -0.692 -0.022 -0.150  0.015              
-AE.lvlhg:p/  0.057 -0.335 -0.017 -0.454 -0.123  0.074  0.147       
-AE.lvlhghr:  0.343 -0.944 -0.098 -0.087 -0.529  0.078  0.407  0.318
+            (Intr) AE.lvl nwhbtt
+AE.levlhghr -0.658              
+nwhbttpstrl -0.909  0.587       
+AE.lvlhghr:  0.613 -0.938 -0.613
 
 $reserve.desig
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
-Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 13.621
+Fixef prior: normal(sd = c(3, 3), corr = 0, common.scale = FALSE)
+Prior dev  : 8.845
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   217.6    229.9   -104.8    209.6      155 
+   218.6    227.8   -106.3    212.6      156 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.660 -0.722 -0.695  1.068  1.439 
+-1.558 -0.713 -0.701  1.046  1.426 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.477    0.691   
+ reference (Intercept) 0.602    0.776   
 Number of obs: 159, groups:  reference, 13
 
 Fixed effects:
-                  Estimate Std. Error z value Pr(>|z|)
-(Intercept)          0.982      0.687    1.43     0.15
-habitatpastoral     -1.176      0.783   -1.50     0.13
-habitatunenclosed   -1.140      0.897   -1.27     0.20
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)             0.132      0.377    0.35     0.73
+newhabitatunenclosed   -0.326      0.737   -0.44     0.66
 
 Correlation of Fixed Effects:
-            (Intr) hbttps
-habittpstrl -0.862       
-habttnnclsd -0.733  0.632
+            (Intr)
+nwhbttnncls -0.487
 
-$nest.protect
+$mowing
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 17.075
+Prior dev  : 16.216
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + lit.type + (1 | reference)
+Formula: success ~ mowing * newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   119.2    131.6    -54.6    109.2       83 
+    92.2    104.4    -41.1     82.2       81 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.172 -0.730 -0.500  0.952  2.092 
+-0.883 -0.482 -0.302 -0.180  3.317 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.686    0.828   
-Number of obs: 88, groups:  reference, 15
+ reference (Intercept) 2.35     1.53    
+Number of obs: 86, groups:  reference, 17
 
 Fixed effects:
-                             Estimate Std. Error z value Pr(>|z|)
-(Intercept)                    -0.834      1.038   -0.80     0.42
-habitatmixed arable/pastoral    1.327      1.076    1.23     0.22
-habitatpastoral                 0.672      0.969    0.69     0.49
-lit.typeprimary                -0.646      0.869   -0.74     0.46
+                                 Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                        -2.982      1.526   -1.95    0.051 .
+mowingreduced                       1.110      1.711    0.65    0.516  
+newhabitatpastoral                 -0.358      1.816   -0.20    0.844  
+mowingreduced:newhabitatpastoral    1.398      1.934    0.72    0.470  
+---
+Signif. codes:  0 �***� 0.001 �**� 0.01 �*� 0.05 �.� 0.1 � � 1
 
 Correlation of Fixed Effects:
-            (Intr) harbl/ hbttps
-hbttmxarbl/ -0.687              
-habittpstrl -0.665  0.732       
-lt.typprmry -0.524  0.058 -0.183
+            (Intr) mwngrd nwhbtt
+mowingredcd -0.669              
+nwhbttpstrl -0.360  0.093       
+mwngrdcd:nw  0.131 -0.427 -0.705
+
+$grazing
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 23.488
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ grazing * newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   156.8    176.5    -71.4    142.8      116 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.034 -0.526 -0.417  0.684  2.396 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.89     1.37    
+Number of obs: 123, groups:  reference, 28
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                           -0.799      0.911   -0.88     0.38
+grazingreduced                        -0.505      1.303   -0.39     0.70
+newhabitatpastoral                    -0.243      1.007   -0.24     0.81
+newhabitatunenclosed                   0.141      1.201    0.12     0.91
+grazingreduced:newhabitatpastoral      0.836      1.552    0.54     0.59
+grazingreduced:newhabitatunenclosed   -0.627      1.746   -0.36     0.72
+
+Correlation of Fixed Effects:
+                  (Intr) grzngr nwhbttp nwhbttn grzngrdcd:nwhbttp
+grazingrdcd       -0.424                                         
+nwhbttpstrl       -0.846  0.323                                  
+nwhbttnncls       -0.678  0.219  0.598                           
+grzngrdcd:nwhbttp  0.282 -0.717 -0.372  -0.147                   
+grzngrdcd:nwhbttn  0.207 -0.558 -0.153  -0.383   0.401           
+
+$fertpest
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3), corr = 0, common.scale = FALSE)
+Prior dev  : 3.087
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    40.3     44.1    -17.1     34.3       24 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.598 -0.597 -0.197  0.110  1.675 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 45.9     6.78    
+Number of obs: 27, groups:  reference, 11
+
+Fixed effects:
+                   Estimate Std. Error z value Pr(>|z|)
+(Intercept)            1.46       3.38    0.43     0.67
+newhabitatpastoral     2.17       2.64    0.82     0.41
+
+Correlation of Fixed Effects:
+            (Intr)
+nwhbttpstrl 0.032 
+
+$nest.protect
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3), corr = 0, common.scale = FALSE)
+Prior dev  : 8.457
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   121.2    128.7    -57.6    115.2       87 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.127 -0.743 -0.499  1.085  2.101 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.788    0.888   
+Number of obs: 90, groups:  reference, 16
+
+Fixed effects:
+                   Estimate Std. Error z value Pr(>|z|)
+(Intercept)          -0.362      0.535   -0.68     0.50
+newhabitatpastoral   -0.371      0.603   -0.62     0.54
+
+Correlation of Fixed Effects:
+            (Intr)
+nwhbttpstrl -0.753
+
+$predator.control
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3), corr = 0, common.scale = FALSE)
+Prior dev  : 4.516
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    50.8     55.6    -22.4     44.8       34 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.736 -0.646 -0.217  0.529  1.548 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 12.4     3.51    
+Number of obs: 37, groups:  reference, 10
+
+Fixed effects:
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            -1.387      1.628   -0.85     0.39
+newhabitatunenclosed   -0.169      1.748   -0.10     0.92
+
+Correlation of Fixed Effects:
+            (Intr)
+nwhbttnncls -0.453
 
 $water
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 22.605
+Prior dev  : 10.927
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + lit.type + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   104.8    119.7    -46.4     92.8       82 
+   111.0    120.9    -51.5    103.0       84 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.344 -0.672 -0.306  0.744  2.332 
+-1.284 -0.650 -0.233  0.634  2.261 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.611    0.782   
+ reference (Intercept) 2.68     1.64    
 Number of obs: 88, groups:  reference, 18
 
 Fixed effects:
-                                 Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                         1.235      1.363    0.91    0.365  
-habitatmixed pastoral/unenclosed    2.105      1.361    1.55    0.122  
-habitatpastoral                     1.089      0.828    1.31    0.189  
-habitatunenclosed                  -0.335      1.377   -0.24    0.808  
-lit.typeprimary                    -2.822      1.278   -2.21    0.027 *
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            -0.853      1.099   -0.78     0.44
+newhabitatpastoral      0.997      1.153    0.86     0.39
+newhabitatunenclosed    0.999      1.529    0.65     0.51
 
 Correlation of Fixed Effects:
-            (Intr) hpstr/ hbttps hbttnn
-hbttmpstrl/ -0.294                     
-habittpstrl -0.335  0.351              
-habttnnclsd -0.794  0.247  0.300       
-lt.typprmry -0.850  0.075 -0.115  0.655
+            (Intr) nwhbttp
+nwhbttpstrl -0.817        
+nwhbttnncls -0.654  0.521 
 
 
-########==========  0d) success of individual management types (subset only) by habitat - lme4 models (also good) ==========########
+########==========  0d) success of individual management types (subset only) by habitat - lme4 models (convergence issues) ==========########
 
 $AE
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + lit.type + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   309.0    330.2   -148.5    297.0      248 
+   322.3    336.6   -157.2    314.3      258 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.310 -0.752 -0.469  0.841  3.095 
+-1.251 -0.750 -0.481  0.876  2.482 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.758    0.87    
-Number of obs: 254, groups:  reference, 30
+ reference (Intercept) 1.09     1.05    
+Number of obs: 262, groups:  reference, 31
 
 Fixed effects:
-                                 Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                         0.694      1.153    0.60    0.547  
-habitatmixed arable/pastoral       -0.738      1.133   -0.65    0.515  
-habitatmixed pastoral/unenclosed   -3.568      1.652   -2.16    0.031 *
-habitatpastoral                    -0.114      0.789   -0.14    0.885  
-lit.typeprimary                    -1.152      0.898   -1.28    0.199  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            -0.689      0.624   -1.10     0.27
+newhabitatpastoral      0.021      0.702    0.03     0.98
+newhabitatunenclosed   -0.515      1.486   -0.35     0.73
 
 Correlation of Fixed Effects:
-            (Intr) harbl/ hpstr/ hbttps
-hbttmxarbl/ -0.380                     
-hbttmpstrl/ -0.706  0.257              
-habittpstrl -0.688  0.564  0.484       
-lt.typprmry -0.781 -0.006  0.550  0.156
+            (Intr) nwhbttp
+nwhbttpstrl -0.890        
+nwhbttnncls -0.424  0.377 
 
 $AE.level
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ AE.level * habitat + lit.type + (1 | reference)
+Formula: success ~ AE.level * newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   297.6    333.0   -138.8    277.6      244 
+   302.2    319.9   -146.1    292.2      249 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.814 -0.601 -0.438  0.688  2.626 
+-1.388 -0.573 -0.418  0.823  2.585 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.361    0.601   
+ reference (Intercept) 0.873    0.934   
 Number of obs: 254, groups:  reference, 30
 
 Fixed effects:
-                                                Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                                       -1.257      1.399   -0.90    0.369  
-AE.levelhigher                                     3.623      1.675    2.16    0.031 *
-habitatmixed arable/pastoral                       2.213      1.882    1.18    0.240  
-habitatmixed pastoral/unenclosed                 -16.330   1761.287   -0.01    0.993  
-habitatpastoral                                    1.109      1.214    0.91    0.361  
-lit.typeprimary                                   -0.898      0.761   -1.18    0.238  
-AE.levelhigher:habitatmixed arable/pastoral       -5.339      2.361   -2.26    0.024 *
-AE.levelhigher:habitatmixed pastoral/unenclosed   13.963   1761.288    0.01    0.994  
-AE.levelhigher:habitatpastoral                    -2.573      1.713   -1.50    0.133  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                                  Estimate Std. Error z value Pr(>|z|)
+(Intercept)                        -1.5323     0.9622   -1.59     0.11
+AE.levelhigher                      1.3239     1.2697    1.04     0.30
+newhabitatpastoral                  0.3096     1.0198    0.30     0.76
+AE.levelhigher:newhabitatpastoral  -0.0645     1.3234   -0.05     0.96
 
 Correlation of Fixed Effects:
-            (Intr) AE.lvl harbl/ hpstr/ hbttps lt.typ AE.:a/ AE.:p/
-AE.levlhghr -0.588                                                 
-hbttmxarbl/ -0.518  0.432                                          
-hbttmpstrl/ -0.001  0.000  0.000                                   
-habittpstrl -0.847  0.677  0.597  0.001                            
-lt.typprmry -0.544  0.000  0.001  0.000  0.066                     
-AE.lvlhg:a/  0.413 -0.705 -0.797  0.000 -0.476 -0.001              
-AE.lvlhg:p/  0.001 -0.001  0.000 -1.000 -0.001  0.000  0.001       
-AE.lvlhghr:  0.565 -0.978 -0.423  0.000 -0.690  0.018  0.690  0.001
-convergence code: 0
-unable to evaluate scaled gradient
-Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
-
+            (Intr) AE.lvl nwhbtt
+AE.levlhghr -0.764              
+nwhbttpstrl -0.940  0.713       
+AE.lvlhghr:  0.732 -0.958 -0.731
 
 $reserve.desig
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   217.1    229.4   -104.5    209.1      155 
+   218.2    227.4   -106.1    212.2      156 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.771 -0.747 -0.710  1.086  1.409 
+-1.443 -0.740 -0.717  1.040  1.395 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.265    0.515   
+ reference (Intercept) 0.355    0.596   
 Number of obs: 159, groups:  reference, 13
 
 Fixed effects:
-                  Estimate Std. Error z value Pr(>|z|)  
-(Intercept)          1.152      0.727    1.58    0.113  
-habitatpastoral     -1.368      0.797   -1.72    0.086 .
-habitatunenclosed   -1.357      0.914   -1.48    0.138  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            0.0802     0.3332    0.24     0.81
+newhabitatunenclosed  -0.2861     0.6739   -0.42     0.67
 
 Correlation of Fixed Effects:
-            (Intr) hbttps
-habittpstrl -0.910       
-habttnnclsd -0.795  0.724
+            (Intr)
+nwhbttnncls -0.496
+
+$mowing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ mowing * newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    90.7    103.0    -40.3     80.7       81 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.8329 -0.4765 -0.3363 -0.0001  2.9732 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.3      1.14    
+Number of obs: 86, groups:  reference, 17
+
+Fixed effects:
+                                  Estimate Std. Error z value Pr(>|z|)
+(Intercept)                       -18.7092  5775.8655       0        1
+mowingreduced                      16.9339  5775.8657       0        1
+newhabitatpastoral                  0.0114  8145.1404       0        1
+mowingreduced:newhabitatpastoral    0.9278  8145.1405       0        1
+
+Correlation of Fixed Effects:
+            (Intr) mwngrd nwhbtt
+mowingredcd -1.000              
+nwhbttpstrl -0.709  0.709       
+mwngrdcd:nw  0.709 -0.709 -1.000
+convergence code: 0
+unable to evaluate scaled gradient
+Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+
+
+$grazing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ grazing * newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   156.3    175.9    -71.1    142.3      116 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.997 -0.548 -0.452  0.909  2.225 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.875    0.935   
+Number of obs: 123, groups:  reference, 28
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                           -0.867      1.007   -0.86     0.39
+grazingreduced                        -0.605      1.526   -0.40     0.69
+newhabitatpastoral                    -0.129      1.085   -0.12     0.91
+newhabitatunenclosed                   0.414      1.267    0.33     0.74
+grazingreduced:newhabitatpastoral      1.003      1.788    0.56     0.57
+grazingreduced:newhabitatunenclosed   -0.641      2.028   -0.32     0.75
+
+Correlation of Fixed Effects:
+                  (Intr) grzngr nwhbttp nwhbttn grzngrdcd:nwhbttp
+grazingrdcd       -0.661                                         
+nwhbttpstrl       -0.918  0.608                                  
+nwhbttnncls       -0.804  0.534  0.745                           
+grzngrdcd:nwhbttp  0.558 -0.850 -0.608  -0.453                   
+grzngrdcd:nwhbttn  0.494 -0.749 -0.452  -0.603   0.636           
+
+$fertpest
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    39.0     42.8    -16.5     33.0       24 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.644 -0.606 -0.376  0.305  1.649 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 7.01     2.65    
+Number of obs: 27, groups:  reference, 11
+
+Fixed effects:
+                   Estimate Std. Error z value Pr(>|z|)
+(Intercept)          -0.474      1.720   -0.28     0.78
+newhabitatpastoral    1.999      2.909    0.69     0.49
+
+Correlation of Fixed Effects:
+            (Intr)
+nwhbttpstrl -0.603
 
 $nest.protect
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + lit.type + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   118.3    130.7    -54.1    108.3       83 
+   120.4    127.9    -57.2    114.4       87 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.160 -0.686 -0.582  0.987  2.077 
+-0.965 -0.718 -0.577  1.150  1.803 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.134    0.366   
-Number of obs: 88, groups:  reference, 15
+ reference (Intercept) 0.24     0.49    
+Number of obs: 90, groups:  reference, 16
 
 Fixed effects:
-                             Estimate Std. Error z value Pr(>|z|)
-(Intercept)                    -1.190      0.980   -1.21     0.22
-habitatmixed arable/pastoral    1.605      1.069    1.50     0.13
-habitatpastoral                 0.721      0.960    0.75     0.45
-lit.typeprimary                -0.338      0.692   -0.49     0.63
+                   Estimate Std. Error z value Pr(>|z|)
+(Intercept)          -0.329      0.460   -0.71     0.47
+newhabitatpastoral   -0.426      0.543   -0.78     0.43
 
 Correlation of Fixed Effects:
-            (Intr) harbl/ hbttps
-hbttmxarbl/ -0.794              
-habittpstrl -0.754  0.759       
-lt.typprmry -0.462  0.141 -0.153
+            (Intr)
+nwhbttpstrl -0.800
+
+$predator.control
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ newhabitat + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    49.7     54.6    -21.9     43.7       34 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.524 -0.650 -0.328  0.656  1.538 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 3.01     1.74    
+Number of obs: 37, groups:  reference, 10
+
+Fixed effects:
+                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)            -1.350      1.320   -1.02     0.31
+newhabitatunenclosed    0.402      1.446    0.28     0.78
+
+Correlation of Fixed Effects:
+            (Intr)
+nwhbttnncls -0.759
 
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ habitat + lit.type + (1 | reference)
+Formula: success ~ newhabitat + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   101.9    116.8    -44.9     89.9       82 
+   109.7    119.6    -50.8    101.7       84 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.528 -0.764 -0.385  0.655  2.598 
+-1.170 -0.758 -0.307  0.855  2.402 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0        0       
+ reference (Intercept) 0.502    0.708   
 Number of obs: 88, groups:  reference, 18
 
 Fixed effects:
-                                 Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                        17.824   6868.636    0.00    0.998  
-habitatmixed pastoral/unenclosed    2.603      1.337    1.95    0.052 .
-habitatpastoral                     1.371      0.633    2.17    0.030 *
-habitatunenclosed                 -16.977   6868.636    0.00    0.998  
-lit.typeprimary                   -19.734   6868.636    0.00    0.998  
+                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)            -1.718      0.816   -2.11    0.035 *
+newhabitatpastoral      1.627      0.829    1.96    0.050 *
+newhabitatunenclosed    2.054      1.121    1.83    0.067 .
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 �***� 0.001 �**� 0.01 �*� 0.05 �.� 0.1 � � 1
 
 Correlation of Fixed Effects:
-            (Intr) hpstr/ hbttps hbttnn
-hbttmpstrl/  0.000                     
-habittpstrl  0.000  0.339              
-habttnnclsd -1.000  0.000  0.000       
-lt.typprmry -1.000  0.000  0.000  1.000
-convergence code: 0
-unable to evaluate scaled gradient
- Hessian is numerically singular: parameters are not uniquely determined
-
+            (Intr) nwhbttp
+nwhbttpstrl -0.840        
+nwhbttnncls -0.733  0.613 
 
 
 ########==========  Warning messages BLME models (good) ==========########
@@ -402,29 +604,51 @@ NULL
 $reserve.desig
 NULL
 
+$mowing
+NULL
+
+$grazing
+NULL
+
+$fertpest
+NULL
+
 $nest.protect
+NULL
+
+$predator.control
 NULL
 
 $water
 NULL
 
 
-########==========  Warning messages lme4 models (also good) ==========########
+########==========  Warning messages lme4 models (convergence issues) ==========########
 
 $AE
 NULL
 
 $AE.level
-[1] "unable to evaluate scaled gradient"                                       
-[2] "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
+NULL
 
 $reserve.desig
+NULL
+
+$mowing
+[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 2 negative eigenvalues"
+
+$grazing
+NULL
+
+$fertpest
 NULL
 
 $nest.protect
 NULL
 
+$predator.control
+NULL
+
 $water
-[1] "unable to evaluate scaled gradient"                                      
-[2] " Hessian is numerically singular: parameters are not uniquely determined"
+NULL
 

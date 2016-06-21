@@ -1,0 +1,49 @@
+
+########==========  Success of higher-level interventions combined ==========########
+
+Linear mixed-effects model fit by REML
+ Data: dat 
+      AIC     BIC   logLik
+  811.633 877.078 -390.816
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev:    0.190451 0.436334
+
+Fixed effects: success ~ AE.level * reserve.desig + species 
+                                        Value Std.Error  DF  t-value p-value
+(Intercept)                          0.342800  0.071312 505  4.80704  0.0000
+AE.levelbasic                       -0.103696  0.068461 505 -1.51466  0.1305
+AE.levelhigher                       0.244189  0.080669 505  3.02704  0.0026
+reserve.desigapplied                 0.140094  0.070704 505  1.98140  0.0481
+speciescurlew                       -0.136583  0.090646 505 -1.50678  0.1325
+speciesdunlin                        0.058290  0.221234 505  0.26348  0.7923
+specieslapwing                       0.027699  0.069594 505  0.39801  0.6908
+speciesoystercatcher                -0.069751  0.082415 505 -0.84634  0.3978
+speciesredshank                      0.037535  0.072476 505  0.51790  0.6048
+speciesruff                          0.510410  0.326704 505  1.56230  0.1188
+speciessnipe                        -0.039728  0.087240 505 -0.45539  0.6490
+AE.levelbasic:reserve.desigapplied  -0.078459  0.113673 505 -0.69021  0.4904
+AE.levelhigher:reserve.desigapplied -0.318232  0.128241 505 -2.48152  0.0134
+ Correlation: 
+                                    (Intr) AE.lvlb AE.lvlh rsrv.d spcscr spcsdn spcslp spcsys spcsrd spcsrf spcssn AE.lvlb:.
+AE.levelbasic                       -0.311                                                                                  
+AE.levelhigher                      -0.354  0.295                                                                           
+reserve.desigapplied                -0.316  0.444   0.353                                                                   
+speciescurlew                       -0.616  0.036   0.112   0.081                                                           
+speciesdunlin                       -0.295  0.074   0.092   0.047  0.188                                                    
+specieslapwing                      -0.783  0.058   0.126   0.104  0.631  0.239                                             
+speciesoystercatcher                -0.580  0.012   0.076   0.050  0.499  0.179  0.600                                      
+speciesredshank                     -0.692  0.033   0.102   0.055  0.596  0.213  0.718  0.581                               
+speciesruff                         -0.141  0.004   0.021  -0.036  0.110  0.086  0.138  0.115  0.130                        
+speciessnipe                        -0.617  0.038   0.098   0.055  0.569  0.190  0.653  0.504  0.633  0.116                 
+AE.levelbasic:reserve.desigapplied   0.181 -0.593  -0.166  -0.561 -0.021 -0.027 -0.028  0.014 -0.008  0.022 -0.018          
+AE.levelhigher:reserve.desigapplied  0.196 -0.154  -0.597  -0.455 -0.056 -0.038 -0.064 -0.028 -0.048  0.009 -0.054  0.343   
+
+Standardized Within-Group Residuals:
+      Min        Q1       Med        Q3       Max 
+-1.667139 -0.739637 -0.411729  1.044658  2.231386 
+
+Number of Observations: 593
+Number of Groups: 76 

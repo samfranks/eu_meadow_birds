@@ -26,14 +26,14 @@ Number of obs: 262, groups:  reference, 31
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)  
-(Intercept)          -0.40788    0.45489   -0.90    0.370  
+(Intercept)          -0.40789    0.45490   -0.90    0.370  
 speciescurlew        -1.49398    0.75939   -1.97    0.049 *
-specieslapwing       -0.16499    0.50622   -0.33    0.744  
-speciesoystercatcher -1.29248    0.72904   -1.77    0.076 .
-speciesredshank       0.00708    0.52012    0.01    0.989  
-speciessnipe         -0.47243    0.61245   -0.77    0.440  
+specieslapwing       -0.16499    0.50623   -0.33    0.744  
+speciesoystercatcher -1.29248    0.72906   -1.77    0.076 .
+speciesredshank       0.00708    0.52013    0.01    0.989  
+speciessnipe         -0.47243    0.61246   -0.77    0.440  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcscr spcslp spcsys spcsrd
@@ -81,33 +81,21 @@ AE.levelhigher:speciesoystercatcher   -1.175      1.327   -0.89    0.376
 AE.levelhigher:speciesredshank        -0.888      0.878   -1.01    0.312  
 AE.levelhigher:speciessnipe           -0.563      0.999   -0.56    0.573  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn AE.lvlhghr:spcsc AE.lvlhghr:spcsl
-AE.levlhghr      -0.643                                                                            
-speciescrlw      -0.512  0.315                                                                     
-specislpwng      -0.755  0.481  0.472                                                              
-spcsystrctc      -0.465  0.273  0.288  0.418                                                       
-specsrdshnk      -0.730  0.475  0.474  0.666  0.417                                                
-speciessnip      -0.629  0.406  0.435  0.591  0.341  0.596                                         
-AE.lvlhghr:spcsc  0.278 -0.443 -0.538 -0.210 -0.128 -0.201 -0.169                                  
-AE.lvlhghr:spcsl  0.474 -0.749 -0.238 -0.617 -0.228 -0.365 -0.304  0.358                           
-AE.lvlhghr:spcsy  0.227 -0.366 -0.117 -0.193 -0.558 -0.184 -0.141  0.196            0.332          
-AE.lvlhghr:spcsr  0.460 -0.726 -0.228 -0.360 -0.224 -0.592 -0.288  0.347            0.589          
-AE.lvlhghr:spcss  0.424 -0.671 -0.216 -0.326 -0.187 -0.320 -0.613  0.319            0.527          
-                 AE.lvlhghr:spcsy AE.lvlhghr:spcsr
-AE.levlhghr                                       
-speciescrlw                                       
-specislpwng                                       
-spcsystrctc                                       
-specsrdshnk                                       
-speciessnip                                       
-AE.lvlhghr:spcsc                                  
-AE.lvlhghr:spcsl                                  
-AE.lvlhghr:spcsy                                  
-AE.lvlhghr:spcsr  0.328                           
-AE.lvlhghr:spcss  0.275            0.511          
+                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn AE.lvlhghr:spcsc AE.lvlhghr:spcsl AE.lvlhghr:spcsy AE.lvlhghr:spcsr
+AE.levlhghr      -0.643                                                                                                              
+speciescrlw      -0.512  0.315                                                                                                       
+specislpwng      -0.755  0.481  0.472                                                                                                
+spcsystrctc      -0.465  0.273  0.288  0.418                                                                                         
+specsrdshnk      -0.730  0.475  0.474  0.666  0.417                                                                                  
+speciessnip      -0.629  0.406  0.435  0.591  0.341  0.596                                                                           
+AE.lvlhghr:spcsc  0.278 -0.443 -0.538 -0.210 -0.128 -0.201 -0.169                                                                    
+AE.lvlhghr:spcsl  0.474 -0.749 -0.238 -0.617 -0.228 -0.365 -0.304  0.358                                                             
+AE.lvlhghr:spcsy  0.227 -0.366 -0.117 -0.193 -0.558 -0.184 -0.141  0.196            0.332                                            
+AE.lvlhghr:spcsr  0.460 -0.726 -0.228 -0.360 -0.224 -0.592 -0.288  0.347            0.589            0.328                           
+AE.lvlhghr:spcss  0.424 -0.671 -0.216 -0.326 -0.187 -0.320 -0.613  0.319            0.527            0.275            0.511          
 
 $reserve.desig
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -135,13 +123,13 @@ Number of obs: 157, groups:  reference, 13
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)  
 (Intercept)            0.1493     0.5426    0.28    0.783  
-speciescurlew         -2.4636     1.0396   -2.37    0.018 *
+speciescurlew         -2.4636     1.0397   -2.37    0.018 *
 specieslapwing        -0.2085     0.6437   -0.32    0.746  
 speciesoystercatcher   0.1895     0.8460    0.22    0.823  
 speciesredshank        0.0383     0.6305    0.06    0.952  
 speciessnipe          -0.3846     0.6869   -0.56    0.576  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcscr spcslp spcsys spcsrd
@@ -230,30 +218,18 @@ grazingreduced:speciesredshank       -0.4099     1.4464   -0.28     0.78
 grazingreduced:speciessnipe          -0.0337     1.6437   -0.02     0.98
 
 Correlation of Fixed Effects:
-                (Intr) grzngr spcscr spcslp spcsys spcsrd spcssn grzngrdcd:spcsc grzngrdcd:spcsl
-grazingrdcd     -0.455                                                                          
-speciescrlw     -0.414  0.113                                                                   
-specislpwng     -0.774  0.296  0.397                                                            
-spcsystrctc     -0.597  0.246  0.321  0.535                                                     
-specsrdshnk     -0.683  0.301  0.336  0.585  0.540                                              
-speciessnip     -0.407  0.106  0.249  0.379  0.319  0.352                                       
-grzngrdcd:spcsc  0.065 -0.201 -0.318 -0.059 -0.052 -0.056 -0.023                                
-grzngrdcd:spcsl  0.249 -0.584 -0.081 -0.391 -0.167 -0.194 -0.068  0.182                         
-grzngrdcd:spcsy  0.145 -0.412 -0.044 -0.113 -0.408 -0.155 -0.041  0.151           0.383         
-grzngrdcd:spcsr  0.164 -0.455 -0.037 -0.114 -0.141 -0.377 -0.044  0.153           0.405         
-grzngrdcd:spcss  0.084 -0.355 -0.029 -0.067 -0.078 -0.096 -0.513  0.143           0.313         
-                grzngrdcd:spcsy grzngrdcd:spcsr
-grazingrdcd                                    
-speciescrlw                                    
-specislpwng                                    
-spcsystrctc                                    
-specsrdshnk                                    
-speciessnip                                    
-grzngrdcd:spcsc                                
-grzngrdcd:spcsl                                
-grzngrdcd:spcsy                                
-grzngrdcd:spcsr  0.351                         
-grzngrdcd:spcss  0.260           0.279         
+                (Intr) grzngr spcscr spcslp spcsys spcsrd spcssn grzngrdcd:spcsc grzngrdcd:spcsl grzngrdcd:spcsy grzngrdcd:spcsr
+grazingrdcd     -0.455                                                                                                          
+speciescrlw     -0.414  0.113                                                                                                   
+specislpwng     -0.774  0.296  0.397                                                                                            
+spcsystrctc     -0.597  0.246  0.321  0.535                                                                                     
+specsrdshnk     -0.683  0.301  0.336  0.585  0.540                                                                              
+speciessnip     -0.407  0.106  0.249  0.379  0.319  0.352                                                                       
+grzngrdcd:spcsc  0.065 -0.201 -0.318 -0.059 -0.052 -0.056 -0.023                                                                
+grzngrdcd:spcsl  0.249 -0.584 -0.081 -0.391 -0.167 -0.194 -0.068  0.182                                                         
+grzngrdcd:spcsy  0.145 -0.412 -0.044 -0.113 -0.408 -0.155 -0.041  0.151           0.383                                         
+grzngrdcd:spcsr  0.164 -0.455 -0.037 -0.114 -0.141 -0.377 -0.044  0.153           0.405           0.351                         
+grzngrdcd:spcss  0.084 -0.355 -0.029 -0.067 -0.078 -0.096 -0.513  0.143           0.313           0.260           0.279         
 
 $fertpest
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -319,7 +295,7 @@ speciesoystercatcher   -0.812      1.115   -0.73    0.467
 speciesredshank         0.889      0.816    1.09    0.276  
 speciessnipe            0.345      1.308    0.26    0.792  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcsdn spcslp spcsys spcsrd
@@ -360,7 +336,7 @@ speciesoystercatcher  -1.9869     1.9537   -1.02    0.309
 speciesredshank        0.0582     1.5603    0.04    0.970  
 speciessnipe          -3.4745     1.9328   -1.80    0.072 .
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcslp spcsys spcsrd
@@ -400,7 +376,7 @@ specieslapwing         -1.094      0.819   -1.34    0.182
 speciesoystercatcher   -2.208      1.115   -1.98    0.048 *
 speciesredshank        -0.918      0.829   -1.11    0.268  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcsc/ spcslp spcsys
@@ -434,13 +410,13 @@ Number of obs: 262, groups:  reference, 31
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)  
 (Intercept)           -0.3566     0.4514   -0.79     0.43  
-speciescurlew         -1.6386     0.7967   -2.06     0.04 *
+speciescurlew         -1.6386     0.7966   -2.06     0.04 *
 specieslapwing        -0.2226     0.5160   -0.43     0.67  
 speciesoystercatcher  -1.4292     0.7607   -1.88     0.06 .
 speciesredshank       -0.0745     0.5313   -0.14     0.89  
 speciessnipe          -0.5503     0.6276   -0.88     0.38  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcscr spcslp spcsys spcsrd
@@ -478,39 +454,27 @@ specieslapwing                         0.126      0.784    0.16    0.873
 speciesoystercatcher                  -0.395      1.024   -0.39    0.700  
 speciesredshank                        0.776      0.780    1.00    0.320  
 speciessnipe                           0.177      0.917    0.19    0.847  
-AE.levelhigher:speciescurlew          -1.935      1.618   -1.20    0.232  
+AE.levelhigher:speciescurlew          -1.935      1.617   -1.20    0.232  
 AE.levelhigher:specieslapwing         -0.205      1.051   -0.20    0.846  
-AE.levelhigher:speciesoystercatcher   -1.874      1.600   -1.17    0.241  
+AE.levelhigher:speciesoystercatcher   -1.874      1.599   -1.17    0.241  
 AE.levelhigher:speciesredshank        -1.386      1.057   -1.31    0.190  
 AE.levelhigher:speciessnipe           -1.075      1.194   -0.90    0.368  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn AE.lvlhghr:spcsc AE.lvlhghr:spcsl
-AE.levlhghr      -0.764                                                                            
-speciescrlw      -0.644  0.497                                                                     
-specislpwng      -0.846  0.645  0.599                                                              
-spcsystrctc      -0.608  0.464  0.425  0.559                                                       
-specsrdshnk      -0.830  0.641  0.599  0.770  0.557                                                
-speciessnip      -0.744  0.574  0.558  0.702  0.484  0.703                                         
-AE.lvlhghr:spcsc  0.437 -0.565 -0.632 -0.375 -0.278 -0.369 -0.330                                  
-AE.lvlhghr:spcsl  0.643 -0.837 -0.426 -0.726 -0.414 -0.553 -0.490  0.494                           
-AE.lvlhghr:spcsy  0.393 -0.505 -0.266 -0.356 -0.641 -0.349 -0.301  0.317            0.469          
-AE.lvlhghr:spcsr  0.628 -0.820 -0.414 -0.544 -0.408 -0.708 -0.474  0.483            0.717          
-AE.lvlhghr:spcss  0.592 -0.770 -0.395 -0.509 -0.368 -0.505 -0.714  0.454            0.663          
-                 AE.lvlhghr:spcsy AE.lvlhghr:spcsr
-AE.levlhghr                                       
-speciescrlw                                       
-specislpwng                                       
-spcsystrctc                                       
-specsrdshnk                                       
-speciessnip                                       
-AE.lvlhghr:spcsc                                  
-AE.lvlhghr:spcsl                                  
-AE.lvlhghr:spcsy                                  
-AE.lvlhghr:spcsr  0.463                           
-AE.lvlhghr:spcss  0.414            0.649          
+                 (Intr) AE.lvl spcscr spcslp spcsys spcsrd spcssn AE.lvlhghr:spcsc AE.lvlhghr:spcsl AE.lvlhghr:spcsy AE.lvlhghr:spcsr
+AE.levlhghr      -0.764                                                                                                              
+speciescrlw      -0.644  0.497                                                                                                       
+specislpwng      -0.846  0.645  0.599                                                                                                
+spcsystrctc      -0.608  0.464  0.425  0.559                                                                                         
+specsrdshnk      -0.830  0.641  0.599  0.770  0.557                                                                                  
+speciessnip      -0.744  0.574  0.558  0.702  0.484  0.703                                                                           
+AE.lvlhghr:spcsc  0.437 -0.565 -0.632 -0.375 -0.278 -0.369 -0.330                                                                    
+AE.lvlhghr:spcsl  0.643 -0.837 -0.426 -0.726 -0.414 -0.553 -0.490  0.494                                                             
+AE.lvlhghr:spcsy  0.393 -0.505 -0.266 -0.356 -0.641 -0.349 -0.301  0.317            0.469                                            
+AE.lvlhghr:spcsr  0.628 -0.820 -0.414 -0.544 -0.408 -0.708 -0.474  0.483            0.717            0.463                           
+AE.lvlhghr:spcss  0.592 -0.770 -0.395 -0.509 -0.368 -0.505 -0.714  0.454            0.663            0.414            0.649          
 
 $reserve.desig
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
@@ -538,9 +502,9 @@ speciescurlew         -2.8255     1.2021   -2.35    0.019 *
 specieslapwing        -0.2998     0.6703   -0.45    0.655  
 speciesoystercatcher   0.1338     0.8870    0.15    0.880  
 speciesredshank       -0.0522     0.6584   -0.08    0.937  
-speciessnipe          -0.4720     0.7099   -0.66    0.506  
+speciessnipe          -0.4720     0.7098   -0.66    0.506  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcscr spcslp spcsys spcsrd
@@ -578,7 +542,7 @@ speciesoystercatcher        -2.046      1.155   -1.77    0.077 .
 speciesredshank             -1.345      0.920   -1.46    0.144  
 speciessnipe                -0.693      1.306   -0.53    0.596  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcs// spcslp spcsys spcsrd
@@ -616,37 +580,25 @@ specieslapwing                         0.7855     1.0108    0.78     0.44
 speciesoystercatcher                   0.4475     1.0940    0.41     0.68
 speciesredshank                        0.1930     1.0230    0.19     0.85
 speciessnipe                          -0.1100     1.4857   -0.07     0.94
-grazingreduced:speciescurlew         -17.2483  1024.0003   -0.02     0.99
+grazingreduced:speciescurlew         -17.1116  1024.0014   -0.02     0.99
 grazingreduced:specieslapwing         -1.0875     1.5639   -0.70     0.49
 grazingreduced:speciesoystercatcher   -1.5168     1.8586   -0.82     0.41
 grazingreduced:speciesredshank        -1.4485     1.7969   -0.81     0.42
-grazingreduced:speciessnipe           -0.9248     2.1295   -0.43     0.66
+grazingreduced:speciessnipe           -0.9248     2.1296   -0.43     0.66
 
 Correlation of Fixed Effects:
-                (Intr) grzngr spcscr spcslp spcsys spcsrd spcssn grzngrdcd:spcsc grzngrdcd:spcsl
-grazingrdcd     -0.684                                                                          
-speciescrlw     -0.601  0.402                                                                   
-specislpwng     -0.886  0.596  0.568                                                            
-spcsystrctc     -0.770  0.540  0.494  0.704                                                     
-specsrdshnk     -0.834  0.587  0.519  0.753  0.698                                              
-speciessnip     -0.579  0.399  0.391  0.537  0.483  0.520                                       
-grzngrdcd:spcsc  0.001  0.000  0.000 -0.001 -0.001 -0.001 -0.001                                
-grzngrdcd:spcsl  0.554 -0.791 -0.349 -0.622 -0.451 -0.483 -0.338  0.000                         
-grzngrdcd:spcsy  0.443 -0.649 -0.281 -0.402 -0.586 -0.409 -0.279  0.000           0.577         
-grzngrdcd:spcsr  0.461 -0.680 -0.282 -0.410 -0.394 -0.567 -0.289  0.000           0.595         
-grzngrdcd:spcss  0.392 -0.586 -0.261 -0.359 -0.334 -0.360 -0.692  0.001           0.513         
-                grzngrdcd:spcsy grzngrdcd:spcsr
-grazingrdcd                                    
-speciescrlw                                    
-specislpwng                                    
-spcsystrctc                                    
-specsrdshnk                                    
-speciessnip                                    
-grzngrdcd:spcsc                                
-grzngrdcd:spcsl                                
-grzngrdcd:spcsy                                
-grzngrdcd:spcsr  0.522                         
-grzngrdcd:spcss  0.442           0.459         
+                (Intr) grzngr spcscr spcslp spcsys spcsrd spcssn grzngrdcd:spcsc grzngrdcd:spcsl grzngrdcd:spcsy grzngrdcd:spcsr
+grazingrdcd     -0.684                                                                                                          
+speciescrlw     -0.601  0.402                                                                                                   
+specislpwng     -0.886  0.596  0.568                                                                                            
+spcsystrctc     -0.770  0.540  0.494  0.704                                                                                     
+specsrdshnk     -0.834  0.587  0.519  0.753  0.698                                                                              
+speciessnip     -0.579  0.399  0.391  0.537  0.483  0.520                                                                       
+grzngrdcd:spcsc  0.001  0.000  0.000 -0.001 -0.001 -0.001 -0.001                                                                
+grzngrdcd:spcsl  0.554 -0.791 -0.349 -0.622 -0.451 -0.483 -0.338  0.000                                                         
+grzngrdcd:spcsy  0.443 -0.649 -0.281 -0.402 -0.586 -0.409 -0.279  0.000           0.577                                         
+grzngrdcd:spcsr  0.461 -0.680 -0.282 -0.410 -0.394 -0.567 -0.289  0.000           0.595           0.522                         
+grzngrdcd:spcss  0.392 -0.586 -0.261 -0.359 -0.334 -0.360 -0.692  0.001           0.513           0.442           0.459         
 convergence code: 0
 Model is nearly unidentifiable: large eigenvalue ratio
  - Rescale variables?
@@ -708,7 +660,7 @@ speciesoystercatcher   -0.949      1.228   -0.77     0.44
 speciesredshank         0.854      0.830    1.03     0.30  
 speciessnipe            0.429      1.400    0.31     0.76  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcsdn spcslp spcsys spcsrd
@@ -741,9 +693,9 @@ Fixed effects:
                       Estimate Std. Error z value Pr(>|z|)
 (Intercept)             -0.320      1.210   -0.26     0.79
 specieslapwing          -0.569      1.282   -0.44     0.66
-speciesoystercatcher   -20.892  20679.163    0.00     1.00
+speciesoystercatcher   -20.892  20678.829    0.00     1.00
 speciesredshank         -0.683      1.723   -0.40     0.69
-speciessnipe           -20.634   8572.300    0.00     1.00
+speciessnipe           -20.634   8571.923    0.00     1.00
 
 Correlation of Fixed Effects:
             (Intr) spcslp spcsys spcsrd
@@ -777,23 +729,23 @@ Number of obs: 86, groups:  reference, 18
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)  
-(Intercept)             0.919      0.576    1.60    0.111  
-speciescurlew/snipe   -19.478   3872.757    0.00    0.996  
-specieslapwing         -1.679      0.722   -2.33    0.020 *
-speciesoystercatcher   -2.905      1.244   -2.33    0.020 *
-speciesredshank        -1.305      0.792   -1.65    0.099 .
+(Intercept)             0.919      0.589    1.56    0.119  
+speciescurlew/snipe   -19.459   1024.002   -0.02    0.985  
+specieslapwing         -1.679      0.750   -2.24    0.025 *
+speciesoystercatcher   -2.905      1.229   -2.36    0.018 *
+speciesredshank        -1.305      0.808   -1.62    0.106  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) spcsc/ spcslp spcsys
-spcscrlw/sn  0.000                     
-specislpwng -0.778  0.000              
-spcsystrctc -0.433  0.000  0.359       
-specsrdshnk -0.692  0.000  0.565  0.338
+spcscrlw/sn  0.001                     
+specislpwng -0.719 -0.001              
+spcsystrctc -0.435 -0.002  0.368       
+specsrdshnk -0.690 -0.001  0.533  0.343
 convergence code: 0
-unable to evaluate scaled gradient
-Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
 
 
 
@@ -853,10 +805,10 @@ $nest.protect
 NULL
 
 $predator.control
-[1] "unable to evaluate scaled gradient"                                      
-[2] " Hessian is numerically singular: parameters are not uniquely determined"
+[1] "unable to evaluate scaled gradient"                                       " Hessian is numerically singular: parameters are not uniquely determined"
 
 $water
-[1] "unable to evaluate scaled gradient"                                       
-[2] "Model failed to converge: degenerate  Hessian with 1 negative eigenvalues"
+$water[[1]]
+[1] "Model is nearly unidentifiable: large eigenvalue ratio\n - Rescale variables?"
+
 

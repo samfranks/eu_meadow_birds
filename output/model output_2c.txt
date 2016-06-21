@@ -1,0 +1,92 @@
+
+########==========  Success of higher-level interventions combined, by metric ==========########
+
+Linear mixed-effects model fit by REML
+ Data: mdat 
+      AIC     BIC   logLik
+  836.761 945.138 -393.381
+
+Random effects:
+ Formula: ~1 | reference
+        (Intercept) Residual
+StdDev:    0.179618 0.437145
+
+Fixed effects: success ~ AE.level * new.metric + reserve.desig * new.metric +      species 
+                                                    Value Std.Error  DF  t-value p-value
+(Intercept)                                      0.390252  0.083510 489  4.67311  0.0000
+AE.levelbasic                                   -0.165811  0.082566 489 -2.00824  0.0452
+AE.levelhigher                                  -0.001427  0.108017 489 -0.01321  0.9895
+new.metricabundance change                       0.028831  0.101533 489  0.28396  0.7766
+new.metricoccupancy                             -0.028918  0.099782 489 -0.28981  0.7721
+new.metricproductivity                          -0.077850  0.080382 489 -0.96850  0.3333
+reserve.desigapplied                            -0.084338  0.088830 489 -0.94944  0.3429
+speciescurlew                                   -0.150914  0.092556 489 -1.63052  0.1036
+speciesdunlin                                    0.203177  0.238617 489  0.85148  0.3949
+specieslapwing                                   0.038279  0.071614 489  0.53452  0.5932
+speciesoystercatcher                            -0.066805  0.084515 489 -0.79045  0.4296
+speciesredshank                                  0.051514  0.074182 489  0.69443  0.4877
+speciesruff                                      0.481312  0.329760 489  1.45958  0.1450
+speciessnipe                                    -0.025285  0.089378 489 -0.28290  0.7774
+AE.levelbasic:new.metricabundance change        -0.088452  0.134148 489 -0.65936  0.5100
+AE.levelhigher:new.metricabundance change        0.141363  0.147697 489  0.95711  0.3390
+AE.levelbasic:new.metricoccupancy                0.100128  0.130486 489  0.76735  0.4432
+AE.levelhigher:new.metricoccupancy               0.070251  0.164811 489  0.42626  0.6701
+AE.levelbasic:new.metricproductivity             0.248949  0.241132 489  1.03242  0.3024
+AE.levelhigher:new.metricproductivity            0.278716  0.170069 489  1.63884  0.1019
+new.metricabundance change:reserve.desigapplied  0.263474  0.129973 489  2.02715  0.0432
+new.metricoccupancy:reserve.desigapplied         0.169885  0.122077 489  1.39162  0.1647
+new.metricproductivity:reserve.desigapplied      0.042388  0.198714 489  0.21331  0.8312
+ Correlation: 
+                                                (Intr) AE.lvlb AE.lvlh nw.mtc nw.mtrcc nw.mtrcp rsrv.d spcscr spcsdn spcslp spcsys spcsrd spcsrf spcssn AE.lvlb:.c AE.lvlh:.c
+AE.levelbasic                                   -0.329                                                                                                                       
+AE.levelhigher                                  -0.284  0.287                                                                                                                
+new.metricabundance change                      -0.361  0.260   0.241                                                                                                        
+new.metricoccupancy                             -0.324  0.302   0.230   0.352                                                                                                
+new.metricproductivity                          -0.476  0.320   0.283   0.421  0.400                                                                                         
+reserve.desigapplied                            -0.257  0.063   0.058   0.239  0.335    0.266                                                                                
+speciescurlew                                   -0.548  0.023   0.022  -0.017 -0.022    0.017    0.039                                                                       
+speciesdunlin                                   -0.183  0.005   0.001  -0.030 -0.027   -0.129   -0.007  0.180                                                                
+specieslapwing                                  -0.660  0.009  -0.002  -0.014 -0.041   -0.058   -0.006  0.639  0.237                                                         
+speciesoystercatcher                            -0.525 -0.008  -0.011  -0.013 -0.032    0.011    0.017  0.517  0.175  0.618                                                  
+speciesredshank                                 -0.613  0.009  -0.001   0.002 -0.037    0.010   -0.017  0.606  0.204  0.728  0.598                                           
+speciesruff                                     -0.125 -0.005  -0.002  -0.009 -0.096    0.015   -0.024  0.122  0.085  0.148  0.129  0.143                                    
+speciessnipe                                    -0.554  0.018  -0.019  -0.015 -0.035    0.028   -0.036  0.580  0.179  0.664  0.525  0.647  0.128                             
+AE.levelbasic:new.metricabundance change         0.194 -0.587  -0.140  -0.572 -0.185   -0.222    0.031 -0.014  0.019 -0.001  0.009 -0.013  0.009 -0.008                      
+AE.levelhigher:new.metricabundance change        0.191 -0.199  -0.626  -0.569 -0.202   -0.227   -0.064  0.016  0.017  0.014  0.010  0.009  0.007  0.043  0.373               
+AE.levelbasic:new.metricoccupancy                0.173 -0.602  -0.121  -0.176 -0.485   -0.208    0.040 -0.008  0.011  0.018  0.034  0.027  0.043  0.010  0.404      0.105    
+AE.levelhigher:new.metricoccupancy               0.164 -0.158  -0.590  -0.169 -0.347   -0.181    0.037 -0.027  0.005  0.003  0.016  0.009  0.027  0.019  0.120      0.387    
+AE.levelbasic:new.metricproductivity             0.082 -0.338  -0.094  -0.098 -0.115   -0.266   -0.019  0.024  0.049  0.020  0.034  0.016  0.004  0.018  0.206      0.074    
+AE.levelhigher:new.metricproductivity            0.044 -0.173  -0.611  -0.141 -0.164   -0.388   -0.035  0.122  0.097  0.180  0.144  0.146  0.025  0.145  0.081      0.397    
+new.metricabundance change:reserve.desigapplied  0.162 -0.028  -0.030  -0.531 -0.224   -0.202   -0.638  0.000 -0.017  0.027 -0.002  0.022 -0.039  0.053  0.165      0.268    
+new.metricoccupancy:reserve.desigapplied         0.162 -0.014   0.018  -0.182 -0.544   -0.214   -0.623 -0.026  0.018  0.042  0.014  0.041  0.054  0.041  0.005      0.021    
+new.metricproductivity:reserve.desigapplied      0.017 -0.024  -0.017  -0.075 -0.163   -0.293   -0.442  0.081  0.078  0.149  0.098  0.095  0.025  0.113 -0.033      0.029    
+                                                AE.lvlbsc:nw.mtrcc AE.lvlhghr:nw.mtrcc AE.lvlbsc:nw.mtrcp AE.lvlhghr:nw.mtrcp nw.c:. nw.mtrcc:.
+AE.levelbasic                                                                                                                                  
+AE.levelhigher                                                                                                                                 
+new.metricabundance change                                                                                                                     
+new.metricoccupancy                                                                                                                            
+new.metricproductivity                                                                                                                         
+reserve.desigapplied                                                                                                                           
+speciescurlew                                                                                                                                  
+speciesdunlin                                                                                                                                  
+specieslapwing                                                                                                                                 
+speciesoystercatcher                                                                                                                           
+speciesredshank                                                                                                                                
+speciesruff                                                                                                                                    
+speciessnipe                                                                                                                                   
+AE.levelbasic:new.metricabundance change                                                                                                       
+AE.levelhigher:new.metricabundance change                                                                                                      
+AE.levelbasic:new.metricoccupancy                                                                                                              
+AE.levelhigher:new.metricoccupancy               0.321                                                                                         
+AE.levelbasic:new.metricproductivity             0.211              0.056                                                                      
+AE.levelhigher:new.metricproductivity            0.085              0.366               0.129                                                  
+new.metricabundance change:reserve.desigapplied -0.016             -0.014               0.014              0.027                               
+new.metricoccupancy:reserve.desigapplied        -0.020             -0.101               0.010              0.004               0.422           
+new.metricproductivity:reserve.desigapplied     -0.011             -0.018               0.127              0.091               0.288  0.288    
+
+Standardized Within-Group Residuals:
+      Min        Q1       Med        Q3       Max 
+-1.696879 -0.718654 -0.413172  1.003624  2.250362 
+
+Number of Observations: 587
+Number of Groups: 76 

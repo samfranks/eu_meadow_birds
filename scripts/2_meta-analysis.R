@@ -14,7 +14,7 @@
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -71,7 +71,24 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nes
 # subset dataset for analysis to desired columns only
 dat <- subset(dat0, select=c("reference","lit.type","score","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success","failure","outcome",mgmtvars))
 
+### Combine habitat categories ###
 
+# combine habitat categories even further into 3 different categories
+# arable: includes arable and mixed arable/pastoral
+# pastoral: includes pastoral and mixed pastoral/unenclosed
+# unenclosed
+dat$newhabitat <- ifelse((dat$habitat %in% c("arable","mixed arable/pastoral")), "arable", ifelse((dat$habitat %in% c("pastoral","mixed pastoral/unenclosed")), "pastoral", "unenclosed"))
+
+### Identify studies where specific intervention is evaluated ###
+
+# identify studies where a specific intervention is evaluated (could be in combination with others, and also with higher-level interventions)
+# if any specific measure is used, then dat$spec.int.used=1, otherwise if all specific measures are 'none', then spec.int.used=0
+dat$spec.int.used <- with(dat, ifelse(mowing=="none" & grazing=="none" & fertpest=="none" & nest.protect=="none" & predator.control=="none" & water=="none", 0, 1))
+
+
+### Identify abundance change studies ###
+
+dat$new.metric <- with(dat, ifelse(dat$overall.metric=="abundance change", "abundance change", metric))
 
 #------------  Recode management variables as factors for analysis and make 'none' the reference level -----------------
 
@@ -81,7 +98,31 @@ for (i in 1:length(mgmtvars)) {
   print(levels(dat[,mgmtvars[i]]))
 }
 
-#=================================  ANALYSIS  ===============================
+#================================== Test effect of nuisance variables on success for the full dataset ===========================
+
+m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.nui1)
+
+setwd(outputwd)
+sink(paste("model output_nuisance variables.txt", sep=" "))
+
+cat("\n########==========  Nuisance variables - lme4 models ==========########\n", sep="\n")
+print(summary(m.nui1))
+
+sink()
+
+# significance is given by Wald Z tests (default for summary.glmer())
+# only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
+# primary literature study is more likely to be unsuccessful than successful
+# include lit.type in subsequent analyses
+# controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
+
+# proportion of scores for each literature type
+#             good   medium     poor
+# grey    0.224299 0.485981 0.289720
+# primary 0.405350 0.465021 0.129630
+
+#=================================  ANALYSIS  1 ===============================
 
 # Analysis evaluates whether one or several management interventions has a significantly positive outcome (i.e. is successful) compared to the baseline reference situation (which in most cases is no management)
 # reference level for all interventions is 'none', so management (either applied or reduced, depending on the intervention) is evaluated against the reference
@@ -91,38 +132,12 @@ for (i in 1:length(mgmtvars)) {
 # 0c) success of individual management types by metric
 # 0d) success of individual management types by habitat
 
-# 1a) success of AES and nature reserves
-# 1b) success of specific management interventions
-# 2a) success of AES and nature reserves by species
-# 2b) success of specific management interventions by species
-# 3a) success of AES and nature reserves by different metrics (abundance vs reproductive success)
-# 3b) success of specific management interventions by different metrics (abundance vs reproductive success)
-# 4a) success of AES and nature reserves by reproductive success metrics (nest vs chick)
-# 4b) success of specific management interventions by reproductive success metrics (nest vs chick)
-# 5a) success of AES and nature reserves by abundance metrics (abundance vs abundance change)
-# 5b) success of specific management interventions by abundance metrics (abundance vs abundance change)
-# 6a) success of AES and nature reserves by habitat and species
-# 6b) success of specific management interventions by habitat and species
-
 ### Nuisance explanatory variables and random effects
 # 'nuisance explanatory variables: study duration (continuous), sample size (categorical: small, medium, large), multivariate/univariate (categorical)
 # Random effects: study id - habitat will be included later on - have taken out country as a random effect since it causes problems in the analysis
 
 
-#------------------------------ Test effect of nuisance variables on success for the full dataset -------------------------
 
-m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui1)
-
-# significance is given by Wald Z tests (default for summary.glmer())
-# only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
-# primary literature study is more likely to be unsuccessful than successful
-# include lit.type in subsequent analyses
-# controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
-
-#             good   medium     poor
-# grey    0.224299 0.485981 0.289720
-# primary 0.405350 0.465021 0.129630
 
 #------------------------------ 0a) success of individual management types -------------------------
 
@@ -295,7 +310,7 @@ for (i in 1:length(mgmtvars)) {
   
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, fertpest!="applied") # remove applied level as causes non-convergence even for bglmer model
-    mdat <- subset(mdat, species=="black-tailed godwit" | species=="lapwing")
+    mdat <- subset(mdat, species=="black-tailed godwit" | species=="lapwing") # model convergence issues when oyc and redshank are included
     # mdat <- subset(mdat, species!="snipe" & species!="curlew" & species!="dunlin" & species!="ruff")
   }
   
@@ -404,24 +419,24 @@ for (i in 1:length(mgmtvars)) {
   mgmtvars[i]
   mdat <- metricdat[metricdat[,mgmtvars[i]]!="none",]
   table(mdat[,mgmtvars[i]], mdat$metric, mdat$success)
-  mdat <- subset(mdat, species!="ruff" & species!="dunlin")
+  # mdat <- subset(mdat, species!="ruff" & species!="dunlin")
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
   #   if (mgmtvars[i]=="reserve.desig") {
   #     mdat <- subset(mdat, metric!="productivity")
   #   }
   
-  if (mgmtvars[i]=="mowing") {
-    mdat <- subset(mdat, mowing!="applied")
-  }
+  #   if (mgmtvars[i]=="mowing") {
+  #     mdat <- subset(mdat, mowing!="applied")
+  #   }
   
   #   if (mgmtvars[i]=="grazing") {
   #     mdat <- subset(mdat, metric!="occupancy")
   #   }
   
   if (mgmtvars[i]=="fertpest") {
-    # mdat <- subset(mdat, fertpest!="applied")
-    mdat <- subset(mdat, metric!="occupancy")
+    mdat <- subset(mdat, fertpest!="applied")
+    # mdat <- subset(mdat, metric!="occupancy")
   }
   
   if (mgmtvars[i]=="predator.control") {
@@ -443,11 +458,13 @@ for (i in 1:length(mgmtvars)) {
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference) + (1|species)", sep=""))
+    #     modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference) + (1|species)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ metric + (1|reference) + (1|species)")
+    #     modform <- as.formula("success ~ metric + (1|reference) + (1|species)")
+    modform <- as.formula("success ~ metric + (1|reference)")
   }
   
   # run a normal glmer model
@@ -480,13 +497,13 @@ sink(paste("model output_0c.txt", sep=" "))
 cat("\n########==========  0b) success of individual management types by metric - BLME models (good) ==========########\n", sep="\n")
 print(lapply(m.ind.sp.blme, summary))
 
-cat("\n########==========  0b) success of individual management types by metric - lme4 models (also good) ==========########\n", sep="\n")
+cat("\n########==========  0b) success of individual management types by metric - lme4 models (convergence issues) ==========########\n", sep="\n")
 print(lapply(m.ind.sp, summary))
 
 cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
 print(warningmessages.blme)
 
-cat("\n########==========  Warning messages lme4 models (also good) ==========########\n", sep="\n")
+cat("\n########==========  Warning messages lme4 models (convergence issues) ==========########\n", sep="\n")
 print(warningmessages.lme4)
 sink()
 
@@ -523,14 +540,15 @@ for(i in 1:length(mgmtvars)) {
 names(out) <- mgmtvars
 out
 
-mgmtvars <- c("AE","AE.level","reserve.desig","nest.protect","water")
+# mgmtvars <- c("AE","AE.level","reserve.desig","nest.protect","water")
+
 
 ### ANALYSIS ###
 
 # identify which categories have low numbers
 out <- list()
 for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$habitat, dat[,mgmtvars[i]])
+  out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
 }
 names(out) <- mgmtvars
 out
@@ -545,50 +563,43 @@ for (i in 1:length(mgmtvars)) {
   
   mgmtvars[i]
   mdat <- dat[dat[,mgmtvars[i]]!="none",]
-  table(mdat[,mgmtvars[i]], mdat$habitat, mdat$success)
+  table(mdat[,mgmtvars[i]], mdat$newhabitat, mdat$success)
   
-  # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-  if (mgmtvars[i]=="AE") {
-    mdat <- subset(mdat, habitat!="unenclosed")
-  }
   if (mgmtvars[i]=="AE.level") {
-    mdat <- subset(mdat, habitat!="unenclosed")
+    mdat <- subset(mdat, newhabitat!="unenclosed")
   }
   
-  #   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-  #   if (mgmtvars[i]=="reserve.desig") {
-  #     mdat <- subset(mdat, !(grepl("arable", mdat$habitat)) & habitat!="mixed pastoral/unenclosed")
-  #     mdat <- subset(mdat, habitat=="pastoral")
-  #   }
+  if (mgmtvars[i]=="mowing") {
+    mdat <- subset(mdat, newhabitat!="unenclosed")
+  }
   
+  if (mgmtvars[i]=="fertpest") {
+    mdat <- subset(mdat, newhabitat!="unenclosed")
+    mdat <- subset(mdat, fertpest!="applied")
+  }
+  
+  if (mgmtvars[i]=="predator.control") {
+    mdat <- subset(mdat, predator.control!="reduced")
+  }
   
   if (mgmtvars[i]=="water") {
     mdat <- subset(mdat, water!="reduced")
-    # mdat <- subset(mdat, metric!="occupancy")
-    # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
-    # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
-    # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
   }
   
   mdat <- droplevels(mdat)
   usedat[[i]] <- mdat
   
-  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$habitat, mdat$success))
+  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$newhabitat, mdat$success))
   
   
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*habitat + lit.type + (1|reference)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*newhabitat + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ habitat + lit.type + (1|reference)")
-  }
-  
-  # if model produces rank deficiency because of missing observations from certain habitat types for certain literature types, use below formula - only the case for nature reserves management type
-  if (mgmtvars[i] %in% c("reserve.desig")) {
-    modform <- as.formula("success ~ habitat + (1|reference)")
+    modform <- as.formula("success ~ newhabitat + (1|reference)")
   }
   
   # run a normal glmer model
@@ -602,6 +613,7 @@ for (i in 1:length(mgmtvars)) {
   vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
   m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
   # }
+  summary(m.ind.sp.blme[[i]])
   
   
   
@@ -623,13 +635,13 @@ sink(paste("model output_0d.txt", sep=" "))
 cat("\n########==========  0d) success of individual management types (subset only) by habitat - BLME models (good) ==========########\n", sep="\n")
 print(lapply(m.ind.sp.blme, summary))
 
-cat("\n########==========  0d) success of individual management types (subset only) by habitat - lme4 models (also good) ==========########\n", sep="\n")
+cat("\n########==========  0d) success of individual management types (subset only) by habitat - lme4 models (convergence issues) ==========########\n", sep="\n")
 print(lapply(m.ind.sp, summary))
 
 cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
 print(warningmessages.blme)
 
-cat("\n########==========  Warning messages lme4 models (also good) ==========########\n", sep="\n")
+cat("\n########==========  Warning messages lme4 models (convergence issues) ==========########\n", sep="\n")
 print(warningmessages.lme4)
 sink()
 
@@ -640,91 +652,316 @@ saveRDS(m.ind.sp, file=paste(workspacewd, "models_0d_lme4.rds", sep="/"))
 ### Save dataset for 0b models
 saveRDS(usedat, file=paste(workspacewd, "model dataset_0d.rds", sep="/"))
 
+
+
+
 #######################################################
 #######################################################
-#######################################################
+#######################################################        
 #######################################################
 #######################################################
 
+
+
+
+
+#=================================  ANALYSIS  2 ===============================
+
+
+#-----------------   HIGH-LEVEL INTERVENTION SUCCESS  ------------------
+
+m.high <- lme(success ~ AE.level*reserve.desig + species, random = ~1|reference, data=dat)
+
+summary(m.high)
+
+setwd(outputwd)
+sink(paste("model output_2a.txt", sep=" "))
+cat("\n########==========  Success of higher-level interventions combined ==========########\n", sep="\n")
+print(summary(m.high))
+
+sink()
+
+### Save individual interventions models
+saveRDS(m.high, file=paste(workspacewd, "models_2a.rds", sep="/"))
+
+### Save dataset for 0b models
+saveRDS(dat, file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
+
+
+
+#-----------------   SPECIFIC INTERVENTION SUCCESS  ------------------
+
+# when every specific intervention type = none, we won't evaluate studies which don't explicitly test the effect of a specific intervention (i.e. remove these records from being included in the model evaluating success of different interventions)
+# For all other interventions, they may or may not be being used in combination with the focal intervention of the study, but often, this is not stated in the paper or is not tested explicitly in the study - ASSUMPTION is that these 'other interventions' which may be used are staying constant between the treatments of the focal intervention and the control (i.e. all else assumed equal between control + treatment)
+
+# identify studies where a specific intervention is evaluated (could be in combination with others, and also with higher-level interventions)
+# if any specific measure is used, then dat$spec.int.used=1, otherwise if all specific measures are 'none', then spec.int.used=0
+
+# table(dat$spec.int.used)
+# 0   1 
+# 242 351
+
+# subset data to only use records where specific interventions were tested
+mdat <- subset(dat, spec.int.used==1)
+mdat <- droplevels(mdat)
+m.spec <- lme(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + species, random = ~1|reference, data=mdat)
+
+summary(m.spec)
+
+setwd(outputwd)
+sink(paste("model output_2b.txt", sep=" "))
+
+cat("\n########==========  Success of specific interventions combined ==========########\n", sep="\n")
+print(summary(m.spec))
+
+sink()
+
+### Save individual interventions models
+saveRDS(m.spec, file=paste(workspacewd, "models_2b.rds", sep="/"))
+
+### Save dataset for 0b models
+saveRDS(mdat, file=paste(workspacewd, "model dataset_2b.rds", sep="/"))
+
+
+
+#-----------------   HIGH-LEVEL INTERVENTION SUCCESS by metric  ------------------
+
+mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment")
+mdat <- droplevels(mdat)
+
+m.high.metric <- lme(success ~ AE.level*new.metric + reserve.desig*new.metric + species, random = ~1|reference, data=mdat)
+
+summary(m.high.metric)
+
+setwd(outputwd)
+sink(paste("model output_2c.txt", sep=" "))
+cat("\n########==========  Success of higher-level interventions combined, by metric ==========########\n", sep="\n")
+print(summary(m.high.metric))
+
+sink()
+
+### Save individual interventions models
+saveRDS(m.high.metric, file=paste(workspacewd, "models_2c.rds", sep="/"))
+
+### Save dataset for 0b models
+saveRDS(mdat, file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
+
+
+
+#-----------------   HIGH-LEVEL INTERVENTION SUCCESS by habitat  ------------------
+
+out <- list()
+for(i in 1:length(mgmtvars)) {
+  out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
+}
+names(out) <- mgmtvars
+out
+
+# $AE
 # 
-# #------------------------------ 1a) overall success of AES and nature reserves -------------------------
+# none applied
+# arable       55      46
+# pastoral    205     208
+# unenclosed   71       8
 # 
-# m1 <- list()
+# $AE.level
 # 
-# print(Sys.time())
+# none basic higher
+# arable       55    11     35
+# pastoral    205   132     76
+# unenclosed   71     8      0
 # 
-# m1[[1]] <- glmer(success ~ AE.level + reserve.desig + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# $reserve.desig
 # 
-# print(Sys.time())
-# 
-# #------------------------------ 1b) success of specific management interventions -------------------------
-# 
-# # subset out management categories with few observations
-# mdat <- subset(dat, mowing!="applied" & fertpest!="applied" & predator.control!="reduced")
-# mdat <- droplevels(mdat)
-# 
-# print(Sys.time())
-# 
-# m1[[2]] <- glmer(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-# 
-# print(Sys.time())
-# 
-# warningmessages <- lapply(m1, function(x) slot(x, "optinfo")$conv$lme4$messages)
-# warningmessages
-# 
-# ### Output model results ###
-# 
-# setwd(outputwd)
-# sink(paste("model output_1ab.txt", sep=" "))
-# cat("\n########==========  1) success of AES/natures reserves and specific management interventions (species pooled) ==========########\n", sep="\n")
-# print(lapply(m1, summary))
-# print(warningmessages)
-# sink()
-# 
-# ### Save individual interventions models
-# saveRDS(m1, file=paste(workspacewd, "models_1ab.rds", sep="/"))
-# 
-# 
-# 
-# #------------------------------ 2a) success of AES and nature reserves by species -------------------------
-# 
-# # subset dataset to remove dunlin and ruff, not enough data for these species
-# mdat <- subset(dat, species!="dunlin" & species!="ruff")
-# mdat <- droplevels(mdat)
-# 
-# 
-# print(Sys.time())
-# 
-# m[[3]] <- glmer(success ~ AE.level*species + reserve.desig*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-# 
-# print(Sys.time())
-# 
-# #######################################################
-# #######################################################
-# #######################################################
-# #######################################################
-# #######################################################
-# 
-# 
-# #------------------------------ 2b) success of specific management interventions by species -------------------------
-# 
-# # subset dataset to remove dunlin and ruff, not enough data for these species
-# mdat <- subset(dat, species!="dunlin" & species!="ruff")
-# mdat <- droplevels(mdat)
-# 
-# print(Sys.time())
-# 
-# m[[4]] <- glmer(success ~ mowing*species + grazing*species + fertpest*species + nest.protect*species + predator.control*species + water*species + study.length + analysis2 + sample.size + (1|reference) + (1|country), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-# 
-# print(Sys.time())
-# 
-# 
-# #######################################################
-# #######################################################
-# #######################################################
-# #######################################################
-# #######################################################
-# 
-# 
-# 
-# 
+# none applied
+# arable      101       0
+# pastoral    274     139
+# unenclosed   59      20
+
+# m.high.hab <- lme(success ~ AE*newhabitat + reserve.desig*newhabitat + species, random = ~1|reference, data=dat)
+
+##### model doesn't run because of singularities (probably due to low-no unenclosed habitats using AES and no arable habitats in reserves) ####
+
+#-----------------   SPECIFIC INTERVENTION SUCCESS by metric  ------------------
+
+mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="occupancy" & new.metric!="abundance change")
+mdat <- subset(mdat, grazing!="reduced" & mowing!="reduced" & fertpest!="applied" & predator.control!="reduced" & water!="reduced")
+
+# subset data to only use records where specific interventions were tested
+mdat <- subset(mdat, spec.int.used==1)
+mdat <- droplevels(mdat)
+
+
+# identify which categories have low numbers
+out <- list()
+for(i in 1:length(mgmtvars)) {
+  out[[i]] <- table(mdat$new.metric, mdat[,mgmtvars[i]])
+}
+names(out) <- mgmtvars
+out
+
+# m.spec.metric <- lme(success ~ new.metric*mowing + new.metric*grazing + new.metric*fertpest + new.metric*nest.protect + new.metric*predator.control + new.metric*water + species, random = ~1|reference, data=mdat)
+
+##### model doesn't run because of singularities  ####
+
+
+
+#-----------------   SPECIFIC INTERVENTION SUCCESS by habitat  ------------------
+
+##### model doesn't run because of singularities ####
+
+
+#=================================  PLOT OUTPUTS - ANALYSIS  2 ===============================
+
+setwd(outputwd)
+
+
+### Read individual interventions models
+m.high <- readRDS(file=paste(workspacewd, "models_2a.rds", sep="/"))
+m.spec <- readRDS(file=paste(workspacewd, "models_2b.rds", sep="/"))
+m.high.metric <- readRDS(file=paste(workspacewd, "models_2c.rds", sep="/"))
+
+### Read dataset
+dat.high <- readRDS(file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
+dat.spec <- readRDS(file=paste(workspacewd, "model dataset_2b.rds", sep="/"))
+dat.high.metric <- readRDS(file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
+
+
+#-------------  Higher level interventions  -------------#
+
+###----  Produce plotting dataset predictions ----###
+
+plotmod <- m.high # model to plot results
+origdat <- dat.high # original dataset
+
+unique.mgmtvars <- unique(origdat[,c("AE.level","reserve.desig")]) # unique combination of mgmtvars appearing in the original dataset
+
+newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+
+newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
+
+Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
+predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
+newdat$SE <- sqrt(predvar)
+newdat$lwr <- newdat$pred - (1.96*newdat$SE)
+newdat$upr <- newdat$pred + (1.96*newdat$SE)
+newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
+
+fits <- newdat[,c("AE.level","reserve.desig","species","pred","SE","lwr","upr")]
+fits <- unique(fits)
+
+# produce mean population level prediction for interventions across species
+sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.level=fits$AE.level, reserve.desig=fits$reserve.desig), mean)
+
+plotdat <- sum.fits
+
+
+###---- Output plot ----###
+
+setwd(outputwd)
+png("2a_high level combination intervention success.png", res=300, height=12, width=15, units="in", pointsize=20)
+
+par(mar=c(6,6,2,2))
+
+x <- c(1:nrow(plotdat))
+
+plotdat$pch <- c(0,1,2,15,16,17)
+
+plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n")
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2)
+# axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
+text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
+title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+title(xlab="Intervention combination", cex.lab=1.5, font=2, line=5)
+
+dev.off()
+
+
+#-------------  Specific interventions  -------------#
+
+###----  Produce plotting dataset predictions ----###
+
+plotmod <- m.spec # model to plot results
+origdat <- dat.spec # original dataset
+
+unique.mgmtvars <- unique(origdat[,mgmtvars[4:9]]) # unique combination of mgmtvars appearing in the original dataset
+
+newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+
+newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
+
+Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
+predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
+newdat$SE <- sqrt(predvar)
+newdat$lwr <- newdat$pred - (1.96*newdat$SE)
+newdat$upr <- newdat$pred + (1.96*newdat$SE)
+newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
+
+fits <- newdat
+fits <- unique(fits)
+
+# produce mean population level prediction for interventions across species
+sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(mowing=fits$mowing, grazing=fits$grazing, fertpest=fits$fertpest, nest.protect=fits$nest.protect, predator.control=fits$predator.control, water=fits$water), mean)
+
+plotdat <- sum.fits
+plotdat <- plotdat[order(plotdat$mowing, plotdat$grazing, plotdat$fertpest, plotdat$nest.protect, plotdat$predator.control, plotdat$water),]
+
+
+
+
+###---- Output plot ----###
+
+setwd(outputwd)
+png("2b_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
+
+par(mfrow=c(2,1))
+
+par(mar=c(1,8,1,2))
+
+x <- c(1:nrow(plotdat))-0.5
+
+plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(-0.3,1), xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(1,27))
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2)
+# axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+# axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+# text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
+# text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
+title(xlab="Intervention combination", cex.lab=1.5, font=2, line=0, xpd=TRUE)
+title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+
+# dev.off()
+
+
+# par(new=T)
+
+y <- length(mgmtvars[4:9]):1
+
+x <- c(1:nrow(plotdat))
+new.x <- rep(x, each=max(y))
+new.y <- rep(y, times=max(x))
+tab <- data.frame(x=new.x,y=new.y)
+tab <- tab[order(tab$y, decreasing=TRUE),]
+labs <- plotdat[,1:6]
+
+labs.long <- gather(labs, intervention, level, mowing:water)
+
+tab.filled <- data.frame(tab, labs.long)
+tab.filled[4] <- apply(tab.filled[4], 2, function(x) {
+  gsub("none", "", x)
+})
+
+par(mar=c(1,8,1,2))
+plot(tab, type="n", bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(1.2,6.8), xlim=c(1,27))
+abline(v=c(0,x,29), h=c(y,7), lty=1)
+axis(2, y+0.5, labels=c("mowing","grazing","fertiliser/\npesticides", "nest protection","predator control", "water"), las=1, cex.axis=1, font=2,tick=FALSE)
+text(tab$x-0.5, tab$y+0.5, labels=tab.filled$level, cex=0.7)
+
+dev.off()
+
+
