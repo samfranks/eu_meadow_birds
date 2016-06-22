@@ -13,8 +13,8 @@ set.seed(2)
 
 # default to plot when all are FALSE is results from overall analysis (0a)
 species <- FALSE # plot the species-specific model results (0b)
-metric <- FALSE # plot the metric-specific model results (0c)
-habitat <- TRUE # plot the habitat-specific model results (0d)
+metric <- TRUE # plot the metric-specific model results (0c)
+habitat <- FALSE # plot the habitat-specific model results (0d)
 alphalevel <- 0.05
 successlevel <- 0.05
 
@@ -399,22 +399,22 @@ if (!species & metric & !habitat) {
     pred <- predict(mod[[i]], type="response", re.form=NA)
     pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
     
-    fits <- data.frame(pred, pred.CI, metric=moddat[[i]]$metric, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
+    fits <- data.frame(pred, pred.CI, new.metric=moddat[[i]]$new.metric, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
     unique.fits <- unique(fits)
     
-    plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, metric=unique.fits$metric), mean)
+    plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, new.metric=unique.fits$new.metric), mean)
     
     
   }
   
   plotfinal <- do.call(rbind, plotdat)
   
-  n <- length(levels(plotfinal$metric))
+  n <- length(levels(plotfinal$new.metric))
   
-  pch <- data.frame(metric=levels(plotfinal$metric), pch=c(21,22,24), col=sample(grey(seq(from=0,to=1,length.out = n)), n))
-  plotfinal <- merge(plotfinal,pch, by="metric")
+  pch <- data.frame(new.metric=levels(plotfinal$new.metric), pch=c(21,22,23,24), col=sample(grey(seq(from=0,to=1,length.out = n)), n))
+  plotfinal <- merge(plotfinal,pch, by="new.metric")
   
-  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$metric),]
+  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$new.metric),]
   
   plotfinal$rowid <- 1:nrow(plotfinal)
   
@@ -443,14 +443,14 @@ if (!species & metric & !habitat) {
   abline(h=successlevel, lty=3, lwd=2)
   
   
-  legend(min(plotfinal$rowid)-1,1.1, legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+  legend(min(plotfinal$rowid)-1,1.1, legend=pch$new.metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
   
   dev.off()
   
   ###-------- Output table of predicted probabilities +/- CIs --------###
   if (alphalevel==0.05) {
-    write.csv(plotfinal[,c("metric","pred","lwr","upr","mgmtvar")], "0c_metric-specific probabilities and CIs.csv", row.names=FALSE)
-  } else {write.csv(plotfinal[,c("metric","pred","lwr","upr","mgmtvar")], "0c_metric-specific probabilities and 84CIs.csv", row.names=FALSE)}
+    write.csv(plotfinal[,c("new.metric","pred","lwr","upr","mgmtvar")], "0c_metric-specific probabilities and CIs.csv", row.names=FALSE)
+  } else {write.csv(plotfinal[,c("new.metric","pred","lwr","upr","mgmtvar")], "0c_metric-specific probabilities and 84CIs.csv", row.names=FALSE)}
   
   
 }

@@ -405,13 +405,13 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
 ### ANALYSIS ###
 
 # subset dataset to remove recruitment and survival metrics, too few observations
-metricdat <- subset(dat, metric!="recruitment" & metric!="survival")
+metricdat <- subset(dat, new.metric!="recruitment" & new.metric!="survival")
 metricdat <- droplevels(metricdat)
 
 # identify which categories have low numbers
 out <- list()
 for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(metricdat$metric, metricdat[,mgmtvars[i]])
+  out[[i]] <- table(metricdat$new.metric, metricdat[,mgmtvars[i]])
 }
 names(out) <- mgmtvars
 out
@@ -420,30 +420,31 @@ out
 m.ind.sp <- list()
 m.ind.sp.blme <- list()
 usedat <- list() # data subset used to run a model
+checkzeros <- list()
 
 for (i in 1:length(mgmtvars)) {
   
   mgmtvars[i]
   mdat <- metricdat[metricdat[,mgmtvars[i]]!="none",]
-  table(mdat[,mgmtvars[i]], mdat$metric, mdat$success)
+  table(mdat[,mgmtvars[i]], mdat$new.metric, mdat$success)
   # mdat <- subset(mdat, species!="ruff" & species!="dunlin")
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
   #   if (mgmtvars[i]=="reserve.desig") {
-  #     mdat <- subset(mdat, metric!="productivity")
+  #     mdat <- subset(mdat, new.metric!="productivity")
   #   }
   
   #   if (mgmtvars[i]=="mowing") {
   #     mdat <- subset(mdat, mowing!="applied")
   #   }
   
-  #   if (mgmtvars[i]=="grazing") {
-  #     mdat <- subset(mdat, metric!="occupancy")
-  #   }
+  if (mgmtvars[i]=="grazing") {
+    mdat <- subset(mdat, new.metric!="abundance change")
+  }
   
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, fertpest!="applied")
-    # mdat <- subset(mdat, metric!="occupancy")
+    mdat <- subset(mdat, new.metric!="occupancy")
   }
   
   if (mgmtvars[i]=="predator.control") {
@@ -452,7 +453,7 @@ for (i in 1:length(mgmtvars)) {
   
   if (mgmtvars[i]=="water") {
     # mdat <- subset(mdat, water!="reduced")
-    mdat <- subset(mdat, metric!="occupancy")
+    mdat <- subset(mdat, new.metric!="abundance change" & new.metric!="occupancy")
     # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
     # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
     # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
@@ -461,17 +462,17 @@ for (i in 1:length(mgmtvars)) {
   mdat <- droplevels(mdat)
   usedat[[i]] <- mdat
   
-  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$metric, mdat$success))
+  (checkzeros[[i]] <- table(mdat[,mgmtvars[i]], mdat$new.metric, mdat$success))
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    #     modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference) + (1|species)", sep=""))
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*metric + (1|reference)", sep=""))
+    #     modform <- as.formula(paste("success ~ ", mgmtvars[i], "*new.metric + (1|reference) + (1|species)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*new.metric + (1|reference)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    #     modform <- as.formula("success ~ metric + (1|reference) + (1|species)")
-    modform <- as.formula("success ~ metric + (1|reference)")
+    #     modform <- as.formula("success ~ new.metric + (1|reference) + (1|species)")
+    modform <- as.formula("success ~ new.metric + (1|reference)")
   }
   
   # run a normal glmer model
@@ -491,6 +492,7 @@ for (i in 1:length(mgmtvars)) {
 names(m.ind.sp) <- mgmtvars
 names(m.ind.sp.blme) <- mgmtvars
 names(usedat) <- mgmtvars
+names(checkzeros) <- mgmtvars
 
 warningmessages.lme4 <- lapply(m.ind.sp, function(x) slot(x, "optinfo")$conv$lme4$messages)
 warningmessages.lme4
