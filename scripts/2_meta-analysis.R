@@ -86,6 +86,13 @@ dat$newhabitat <- ifelse((dat$habitat %in% c("arable","mixed arable/pastoral")),
 dat$spec.int.used <- with(dat, ifelse(mowing=="none" & grazing=="none" & fertpest=="none" & nest.protect=="none" & predator.control=="none" & water=="none", 0, 1))
 
 
+### Identify studies where high level interventions are evaluated ###
+
+# identify studies where a high level intervention is evaluated (could be in combination with others, and also with specific interventions)
+# if any higher level measure is used, then dat$high.int.used=1, otherwise if all high level measures are 'none', then high.int.used=0
+dat$high.int.used <- with(dat, ifelse(AE.level=="none" & reserve.desig=="none", 0, 1))
+
+
 ### Identify abundance change studies ###
 
 dat$new.metric <- with(dat, ifelse(dat$overall.metric=="abundance change", "abundance change", metric))
@@ -670,7 +677,17 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0d.rds", sep="/"))
 
 #-----------------   HIGH-LEVEL INTERVENTION SUCCESS  ------------------
 
-m.high <- lme(success ~ AE.level*reserve.desig + species, random = ~1|reference, data=dat)
+mdat <- subset(dat, high.int.used==1)
+mdat <- droplevels(mdat)
+
+newlevels <- data.frame(unique(mdat[,c("AE.level","reserve.desig")]), AE.reserve=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
+
+mdat <- merge(mdat, newlevels, by=c("AE.level","reserve.desig"))
+
+mdat$AE.reserve <- relevel(mdat$AE.reserve, ref="no AE-reserve")
+print(levels(mdat$AE.reserve))
+
+m.high <- lme(success ~ AE.reserve + species, random = ~1|reference, data=mdat)
 
 summary(m.high)
 
@@ -685,7 +702,7 @@ sink()
 saveRDS(m.high, file=paste(workspacewd, "models_2a.rds", sep="/"))
 
 ### Save dataset for 0b models
-saveRDS(dat, file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
+saveRDS(mdat, file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
 
 
 
@@ -784,6 +801,7 @@ out
 
 #-----------------   SPECIFIC INTERVENTION SUCCESS by metric  ------------------
 
+# remove categories with too few records, which make the model collapse
 mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="occupancy" & new.metric!="abundance change")
 mdat <- subset(mdat, grazing!="reduced" & mowing!="reduced" & fertpest!="applied" & predator.control!="reduced" & water!="reduced")
 
@@ -827,16 +845,19 @@ dat.spec <- readRDS(file=paste(workspacewd, "model dataset_2b.rds", sep="/"))
 dat.high.metric <- readRDS(file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
 
 
-#-------------  Higher level interventions  -------------#
+#-------------  HIGHER LEVEL INTERVENTIONS  -------------#
 
 ###----  Produce plotting dataset predictions ----###
 
 plotmod <- m.high # model to plot results
 origdat <- dat.high # original dataset
 
-unique.mgmtvars <- unique(origdat[,c("AE.level","reserve.desig")]) # unique combination of mgmtvars appearing in the original dataset
+# unique.mgmtvars <- unique(origdat[,c("AE.level","reserve.desig")]) # unique combination of mgmtvars appearing in the original dataset
+# newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
 
-newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+unique.mgmtvars <- unique(origdat$AE.reserve)
+
+newdat <- data.frame(AE.reserve=rep(unique.mgmtvars, times=length(levels(origdat$species))), species=rep(levels(origdat$species), each=length(unique.mgmtvars)))
 
 newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
 
@@ -847,41 +868,69 @@ newdat$lwr <- newdat$pred - (1.96*newdat$SE)
 newdat$upr <- newdat$pred + (1.96*newdat$SE)
 newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
 
-fits <- newdat[,c("AE.level","reserve.desig","species","pred","SE","lwr","upr")]
+# fits <- newdat[,c("AE.level","reserve.desig","species","pred","SE","lwr","upr")]
+# fits <- unique(fits)
+
+fits <- newdat[,c("AE.reserve","species","pred","SE","lwr","upr")]
 fits <- unique(fits)
 
 # produce mean population level prediction for interventions across species
-sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.level=fits$AE.level, reserve.desig=fits$reserve.desig), mean)
+sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.reserve=fits$AE.reserve), mean)
 
 plotdat <- sum.fits
 
+plotdat <- merge(plotdat, unique(origdat[,c("AE.level","reserve.desig","AE.reserve")]), by="AE.reserve")
+plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE.level),]
 
 ###---- Output plot ----###
 
 setwd(outputwd)
 png("2a_high level combination intervention success.png", res=300, height=12, width=15, units="in", pointsize=20)
 
-par(mar=c(6,6,2,2))
+par(mar=c(6,6.5,2,3))
 
 x <- c(1:nrow(plotdat))
 
-plotdat$pch <- c(0,1,2,15,16,17)
+plotdat$pch <- c(1,2,15,16,17)
 
-plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n")
+plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(-0.2,1.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
 arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
 arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
 abline(h=0.05, lty=3, lwd=2)
 # axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
 axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
-text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
-text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
+text(x, par("usr")[3]*1.2, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES\n no nature reserve","higher-level AES\n no nature reserve", "no AES \n nature reserve", "basic-level AES\n nature reserve", "higher-level AES\n nature reserve"), cex=1)
+# text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
+# text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
 title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
-title(xlab="Intervention combination", cex.lab=1.5, font=2, line=5)
+title(xlab="Intervention combination", cex.lab=1.5, font=2, line=4.5)
 
 dev.off()
 
+# 
+# setwd(outputwd)
+# png("2a_high level combination intervention success.png", res=300, height=12, width=15, units="in", pointsize=20)
+# 
+# par(mar=c(6,6,2,2))
+# 
+# x <- c(1:nrow(plotdat))
+# 
+# plotdat$pch <- c(0,1,2,15,16,17)
+# 
+# plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n")
+# arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
+# arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+# abline(h=0.05, lty=3, lwd=2)
+# # axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+# axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+# text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
+# text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
+# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+# title(xlab="Intervention combination", cex.lab=1.5, font=2, line=5)
+# 
+# dev.off()
 
-#-------------  Specific interventions  -------------#
+#-------------  SPECIFIC INTERVENTIONS  -------------#
 
 ###----  Produce plotting dataset predictions ----###
 
@@ -908,7 +957,9 @@ fits <- unique(fits)
 sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(mowing=fits$mowing, grazing=fits$grazing, fertpest=fits$fertpest, nest.protect=fits$nest.protect, predator.control=fits$predator.control, water=fits$water), mean)
 
 plotdat <- sum.fits
-plotdat <- plotdat[order(plotdat$mowing, plotdat$grazing, plotdat$fertpest, plotdat$nest.protect, plotdat$predator.control, plotdat$water),]
+# plotdat <- plotdat[order(plotdat$mowing, plotdat$grazing, plotdat$fertpest, plotdat$nest.protect, plotdat$predator.control, plotdat$water),]
+
+plotdat <- plotdat[order(plotdat$pred),]
 
 
 
@@ -933,7 +984,7 @@ abline(h=0.05, lty=3, lwd=2)
 # text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
 # text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
 title(xlab="Intervention combination", cex.lab=1.5, font=2, line=0, xpd=TRUE)
-title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+title(ylab="Predicted probability of success \n (significant positive impact) ", cex.lab=1.5, font=2, line=3)
 
 # dev.off()
 
@@ -951,17 +1002,97 @@ labs <- plotdat[,1:6]
 
 labs.long <- gather(labs, intervention, level, mowing:water)
 
+# unicode up arrow: &#x2191;
+# unicode down arrow: &#x2193;
+
 tab.filled <- data.frame(tab, labs.long)
 tab.filled[4] <- apply(tab.filled[4], 2, function(x) {
   gsub("none", "", x)
 })
+# tab.filled[4] <- apply(tab.filled[4], 2, function(x) {
+#   gsub("applied", 2191, x)
+# })
+# tab.filled[4] <- apply(tab.filled[4], 2, function(x) {
+#   gsub("reduced", 2193, x)
+# })
 
 par(mar=c(1,8,1,2))
 plot(tab, type="n", bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(1.2,6.8), xlim=c(1,27))
+# points(x=tab$x-0.5, y=tab$y+0.5, pch=tab.filled$level, cex=1.5)
 abline(v=c(0,x,29), h=c(y,7), lty=1)
 axis(2, y+0.5, labels=c("mowing","grazing","fertiliser/\npesticides", "nest protection","predator control", "water"), las=1, cex.axis=1, font=2,tick=FALSE)
-text(tab$x-0.5, tab$y+0.5, labels=tab.filled$level, cex=0.7)
+text(tab$x-0.5, tab$y+0.5, labels=ifelse(tab.filled$level=="applied", "\U2191", ifelse(tab.filled$level=="reduced", "\U2193", tab.filled$level)), cex=2)
 
 dev.off()
+
+
+
+#-------------  HIGHER LEVEL INTERVENTIONS - METRIC  -------------#
+
+###----  Produce plotting dataset predictions ----###
+
+plotmod <- m.high.metric # model to plot results
+origdat <- dat.high.metric # original dataset
+
+unique.mgmtvars <- unique(origdat[,c("AE.level","reserve.desig")]) # unique combination of mgmtvars appearing in the original dataset
+
+newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+
+newdat <- data.frame(newdat[rep(seq_len(nrow(newdat)), times=length(levels(as.factor(origdat$new.metric)))),], new.metric=rep(levels(as.factor(origdat$new.metric)), each=nrow(newdat)))
+
+newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
+
+Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
+predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
+newdat$SE <- sqrt(predvar)
+newdat$lwr <- newdat$pred - (1.96*newdat$SE)
+newdat$upr <- newdat$pred + (1.96*newdat$SE)
+newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
+
+fits <- newdat[,c("AE.level","reserve.desig","species","new.metric","pred","SE","lwr","upr")]
+fits <- unique(fits)
+
+# produce mean population level prediction for interventions across species
+sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.level=fits$AE.level, reserve.desig=fits$reserve.desig, new.metric=fits$new.metric), mean)
+
+plotdat <- sum.fits
+
+# set up colours and plotting points for plot
+cols <- rev(grey(seq(from=0,to=1,length.out = 6)))
+colpch <- data.frame(cols, AE.level=rep(levels(plotdat$AE.level), times=2), reserve.desig=rep(levels(plotdat$reserve.desig), each=3))
+pchs <- data.frame(pch=c(21,22,23,24), new.metric=levels(plotdat$new.metric))
+
+plotdat <- merge(plotdat, colpch, by=c("AE.level","reserve.desig"))
+plotdat <- merge(plotdat, pchs, by=c("new.metric"))
+
+plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE.level, plotdat$new.metric),]
+
+
+###---- Output plot ----###
+
+setwd(outputwd)
+png("2c_high level combination intervention success_metric.png", res=300, height=10, width=25, units="in", pointsize=20)
+
+par(mar=c(7,6,2,2))
+
+x <- c(1:nrow(plotdat))
+
+plot(plotdat$pred~x, pch=plotdat$pch, bg=as.character(plotdat$cols), cex=1.5, ylim=c(-0.2,1.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2)
+abline(v=12.5, lty=3, lwd=2)
+# axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+axis(1, seq(from=2.5, by=4, length.out=6), labels=rep("", 6), tick=TRUE)
+text(seq(from=2.5, by=4, length.out=6), par("usr")[3]*1.15, srt = 0, pos=1, xpd = TRUE, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), cex=1)
+text(c(4,16), par("usr")[3]*2, srt = 0, pos=4, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1.2)
+title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+title(xlab="Intervention combination", cex.lab=1.5, font=2, line=5.5)
+
+legend(min(x)-0.5,1.2, legend=unique(plotdat$new.metric), pch=plotdat$pch, pt.cex=1.2, bty="n", xpd=TRUE)
+
+dev.off()
+
+
 
 

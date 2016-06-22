@@ -153,6 +153,7 @@ d0.4$outcome <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, ifelse(d0
 
 # group fertilizer and pesticides into single variable
 d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied", "applied", ifelse(d0.4$fertilizer=="restricted" | d0.4$pesticide=="restricted", "restricted", ifelse(d0.4$fertilizer=="removed" | d0.4$pesticide=="removed", "removed", "none")))
+
 # group groundwater.drainage and surface.water into single variable meaning 'more water'
 # restricted/removed groundwater drainage equates to more water (same as applying surface water)
 # combinations of drainage/surface water in dataset
