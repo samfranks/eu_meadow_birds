@@ -127,6 +127,11 @@ dat$high.int.used <- with(dat, ifelse(AE.level=="none" & reserve.desig=="none", 
 
 dat$new.metric <- with(dat, ifelse(dat$overall.metric=="abundance change", "abundance change", metric))
 
+### Identify abundance/occupancy studies ###
+dat$biased.metric <- with(dat, ifelse(dat$overall.metric=="abundance" | dat$overall.metric=="occupancy", "Y", "N"))
+
+
+
 #------------  Recode management variables as factors for analysis and make 'none' the reference level -----------------
 
 for (i in 1:length(mgmtvars)) {
@@ -140,19 +145,38 @@ for (i in 1:length(mgmtvars)) {
 m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.nui1)
 
+m.nui2 <- glmer(success ~ study.length + sample.size + analysis2 + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.nui2)
+
+m.nui3 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.nui3)
+
+m.nui4 <- glmer(success ~ study.length + sample.size + analysis2 + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.nui4)
+
 setwd(outputwd)
 sink(paste("model output_nuisance variables.txt", sep=" "))
 
-cat("\n########==========  Nuisance variables - lme4 models ==========########\n", sep="\n")
+cat("\n########==========  Nuisance variables - set 1 - lit.type*score - lme4 models ==========########\n", sep="\n")
 print(summary(m.nui1))
+
+cat("\n########==========  Nuisance variables - set 2 - score - lme4 models ==========########\n", sep="\n")
+print(summary(m.nui2))
+
+cat("\n########==========  Nuisance variables - set 3 - lit.type*score + biased.metric - lme4 models ==========########\n", sep="\n")
+print(summary(m.nui3))
+
+cat("\n########==========  Nuisance variables - set 4 - biased.metric - lme4 models ==========########\n", sep="\n")
+print(summary(m.nui4))
 
 sink()
 
 # significance is given by Wald Z tests (default for summary.glmer())
 # only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
 # primary literature study is more likely to be unsuccessful than successful
-# include lit.type in subsequent analyses
 # controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
+# including score only, it's not significant
+# including a variable "biased metric" which includes the abundance/occupancy problem suggests no different in success between unbiased vs biased metrics
 
 # proportion of scores for each literature type
 #             good   medium     poor
@@ -220,11 +244,11 @@ for (i in 1:length(mgmtvars)) {
   
   # create different formulas to use depending on whether management variable is 1 or 2 levels
   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + biased.metric + (1|reference) + (1|species)", sep=""))
   }
   
   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ 1 + (1|reference) + (1|species)")
+    modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
   }
   
   # run a normal glmer model
@@ -1276,7 +1300,7 @@ for (i in 1:length(mod)) {
 plotfinal <- do.call(rbind, plotdat)
 
 ###-------- Output plot --------###
-png("3a_overall model results.png", res=300, height=12, width=28, units="in", pointsize=20)
+png("3a_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
 par(mar=c(7,6,2,2))
 
 x <- c(1:nrow(plotfinal))
@@ -1294,4 +1318,188 @@ dev.off()
 
 ###-------- Output table of predicted probabilities +/- CIs --------###
 write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "3a_overall probabilities and CIs.csv", row.names=FALSE)
+
+
+
+#=================================  ANALYSIS  4 - no effect of management interventions ===============================
+
+
+dat$neutral <- ifelse(dat$outcome==0, 1, 0)
+
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+
+
+#------------------------------ 4a) overall no effect of individual management types -------------------------
+
+# identify which categories have low numbers
+out <- list()
+for(i in 1:length(mgmtvars)) {
+  out[[i]] <- table(dat$neutral, dat[,mgmtvars[i]])
+}
+names(out) <- mgmtvars
+out
+
+# set up list to output models and model datasets to
+m.ind <- list()
+usedat <- list() # data subset used to run a model
+
+for (i in 1:length(mgmtvars)) {
+  
+  print(mgmtvars[i])
+  mdat <- dat[dat[,mgmtvars[i]]!="none",]
+  mdat <- subset(mdat, species!="ruff") # subset out ruff because there are too few studies
+  
+  # for the following categories, subset further because there aren't enough observations of either 0,1 or both
+  #   if (mgmtvars[i]=="mowing") {
+  #     mdat <- subset(mdat, mowing!="applied")
+  #   }
+  #   if (mgmtvars[i]=="fertpest") {
+  #     mdat <- subset(mdat, fertpest!="applied")
+  #   }
+  #     if (mgmtvars[i]=="predator.control") {
+  #       mdat <- subset(mdat, predator.control!="reduced")
+  #     }
+  #   if (mgmtvars[i]=="water") {
+  #     mdat <- subset(mdat, water!="reduced")
+  #   }
+  
+  mdat <- droplevels(mdat)
+  usedat[[i]] <- mdat
+  
+  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$neutral))
+  
+  # create different formulas to use depending on whether management variable is 1 or 2 levels
+  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+    modform <- as.formula(paste("neutral ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
+  }
+  
+  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+    modform <- as.formula("neutral ~ 1 + (1|reference) + (1|species)")
+  }
+  
+  # run a normal glmer model
+  m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  
+  # run a bglmer model  
+  #   vcov.dim <- nrow(vcov(m.ind[[i]]))
+  #   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  
+  
+}
+
+names(m.ind) <- mgmtvars
+# names(m.ind.blme) <- mgmtvars
+names(usedat) <- mgmtvars
+
+warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.lme4
+
+# ### lme4 convergence troubleshooting
+# # check singularity
+# tt <- getME(m.ind.blme[[5]],"theta")
+# ll <- getME(m.ind.blme[[5]],"lower")
+# min(tt[ll==0])
+# 
+# # check gradient calculations
+# derivs1 <- m.ind.blme[[5]]@optinfo$derivs
+# sc_grad1 <- with(derivs1,solve(Hessian,gradient))
+# max(abs(sc_grad1))
+# max(pmin(abs(sc_grad1),abs(derivs1$gradient)))
+
+### Output model results ###
+
+setwd(outputwd)
+sink(paste("model output_4a.txt", sep=" "))
+
+cat("\n########==========  4a) no effect of individual management types - lme4 models ==========########\n", sep="\n")
+print(lapply(m.ind, summary))
+
+cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
+print(warningmessages.lme4)
+sink()
+
+### Save individual interventions models
+saveRDS(m.ind, file=paste(workspacewd, "models_4a_lme4.rds", sep="/"))
+
+### Save dataset for 0a models
+saveRDS(usedat, file=paste(workspacewd, "model dataset_4a.rds", sep="/"))
+
+
+
+#=================================  OUTPUT PARAMETER TABLES  ===============================
+
+setwd(outputwd)
+
+moddat <- readRDS(paste(workspacewd, "model dataset_4a.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_4a_lme4.rds", sep="/"))
+alphalevel <- 0.05
+successlevel <- 0.05
+
+
+#------------------------------ 4a) no effect of individual management types -------------------------
+
+# Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
+coeftab <- lapply(mod, function(x) summary(x)$coefficients)
+coeftab <- lapply(coeftab, function(x) {
+  out <- as.data.frame(x)
+  out$parameter <- rownames(out)
+  rownames(out) <- 1:nrow(out)
+  return(out) })
+coeftab2 <- do.call(rbind, coeftab)
+coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
+coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
+rownames(coeftab3) <- c(1:nrow(coeftab3))
+partable <- coeftab3
+partable <- partable[,c(6,5,1,2,4)] # omit z value column
+names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+
+# Write the parameter table
+write.csv(format(partable, scientific=FALSE, digits=2),  "4a_overall parameter table.csv", row.names=FALSE)
+
+
+# set the wd to output to
+setwd(outputwd)
+
+#------------------------------ 4a) no effect of individual management types -------------------------
+
+
+plotdat <- list()
+n <- list()
+
+for (i in 1:length(mod)) {
+  
+  # dataset to predict over is the same as the original dataset
+  pred <- predict(mod[[i]], type="response", re.form=NA)
+  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
+  n[i] <- nrow(moddat[[i]])
+  
+  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
+  unique.fits <- unique(fits)
+  
+  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
+  
+}
+
+plotfinal <- do.call(rbind, plotdat)
+
+###-------- Output plot --------###
+png("4a_overall model results_neutral.png", res=300, height=12, width=28, units="in", pointsize=20)
+par(mar=c(7,6,2,2))
+
+x <- c(1:nrow(plotfinal))
+
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
+axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied", "predator control \n reduced", "water \n applied", "water \n reduced"))
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+title(ylab="Predicted probability of neutral effect \n (neither positive nor negative significant impact)", cex.lab=1.5, font=2, line=3)
+abline(h=successlevel, lty=3, lwd=2)
+
+dev.off()
+
+###-------- Output table of predicted probabilities +/- CIs --------###
+write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "4a_overall probabilities and CIs.csv", row.names=FALSE)
+
 

@@ -84,9 +84,10 @@ names(d0.2) <- c("reference","record","lit.type","score","country","region1","ha
 # management intervention variables
 mgmtvars <- c("AE","basic.AE","higher.AE","reserve","designation","mowing","grazing","fertilizer","pesticide","nest.protect.ag","nest.protect.predation","groundwater.drainage","surface.water","predator.control","other.mgmt")
 
-# exlude studies 2 and 36
+### exlude studies 2 and 36
 # 2: remove this reference (Kruk et al. 1997) as it doesn't really measure a population or demographic metric
 # 36: remove this reference (Kleijn et al. 2004) as it pools an assessment of conservation across multiple species
+
 d0.2 <- subset(d0.2, reference!=36) # remove this reference (Kruk et al. 1997) as it doesn't really measure a population or demographic metric
 d0.2 <- subset(d0.2, reference!=2) # remove this reference (Kleijn et al. 2004) as it pools an assessment of conservation across multiple species
 d0.2 <- droplevels(d0.2)
@@ -140,16 +141,7 @@ d0.4 <- d0.3
 # }
 # summary(d0.4)
 
-### Add some additional grouping variables and the success variable
-
-# success variable defined as 1 = significant positive effect, 0 = neutral or negative effect
-d0.4$success <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, 0) # success variable
-
-# failure variable defined as 1 = significant negative effect, 0 = neutral or positive effect
-d0.4$failure <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", 1, 0) # failure variable
-
-# outcome variable: -1 = significant negative, 0 = no effect, 1 = significant positive
-d0.4$outcome <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", -1, 0)) # success variable) # success variable
+#---------- Add some additional grouping variables -----------
 
 # group fertilizer and pesticides into single variable
 d0.4$fertpest <- ifelse(d0.4$fertilizer=="applied" | d0.4$pesticide=="applied", "applied", ifelse(d0.4$fertilizer=="restricted" | d0.4$pesticide=="restricted", "restricted", ifelse(d0.4$fertilizer=="removed" | d0.4$pesticide=="removed", "removed", "none")))
@@ -181,6 +173,39 @@ d0.4$study.length <- d0.4$end.year - d0.4$start.year + 1
 # add some overall metrics which lump all productivity metrics, all abundance metrics, all occupancy metrics
 d0.4$metric <- ifelse(grepl("productivity", d0.4$overall.metric), "productivity", ifelse(grepl("abundance", d0.4$overall.metric), "abundance", ifelse(grepl("recruitment", d0.4$overall.metric), "recruitment", ifelse(grepl("survival", d0.4$overall.metric), "survival", "occupancy"))))
 
+
+#------------- Change the predator.control level for studies 5 & 10 ---------------
+
+# these 2 studies both deal with the effects of a halt in predator control/game-keepering on grouse moors and the impacts on wader populations
+# kind of a reverse of what the conservation measure would normally be (control applied), so reverse the level of predator control to 'applied' and change the direction of the effect (but obviously leave the significance)
+# create 5 new records for these studies (2 and 3 each), then add them to the dataset WITH THEIR EFFECT SIZES REMOVED so there is no confusion
+
+temp <- d0.4[d0.4$reference=="5" | d0.4$reference=="10",]
+
+# remove all metric calculations from these records so there is no confusion
+temp[,c("metric.before","metric.after","stan.metric.before","stan.metric.after","stan.effect.size","log.effect.size","percent.change.effect.size")] <- ""
+
+# change predator control to applied
+temp[,"predator.control"] <- "applied"
+
+# change positives to negatives and vice versa
+temp$effect.dir <- ifelse(temp$effect.dir=="positive","negative","positive")
+
+# remove the original records from the dataset and add these new ones in
+d0.4 <- d0.4[-which(d0.4$reference %in% c("5","10")),]
+d0.4 <- rbind(d0.4, temp)
+
+#------------ Add the success/failure/outcome variables --------------
+
+# success variable defined as 1 = significant positive effect, 0 = neutral or negative effect
+d0.4$success <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, 0) # success variable
+
+# failure variable defined as 1 = significant negative effect, 0 = neutral or positive effect
+d0.4$failure <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", 1, 0) # failure variable
+
+# outcome variable: -1 = significant negative, 0 = no effect, 1 = significant positive
+d0.4$outcome <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", -1, 0)) # success variable) # success variable
+
 #------------- Definitive dataset --------------
 
 # final dataset for analysis 
@@ -202,6 +227,10 @@ d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
 ### Save definitive dataset
 saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
 write.table(d1, file=paste(datawd, "meadow birds analysis dataset_full.txt", sep="/"), row.names=FALSE, quote=FALSE, sep="\t")
+
+
+
+
 
 #=================================  SUMMARY STATISTICS  ===============================
 
