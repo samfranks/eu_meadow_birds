@@ -1,0 +1,259 @@
+
+########==========  3a) failure of individual management types - lme4 models ==========########
+
+$AE
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   109.4    120.1    -51.7    103.4      259 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.228 -0.228 -0.228 -0.228  4.377 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0        0       
+ species   (Intercept) 0        0       
+Number of obs: 262, groups:  reference, 31; species, 6
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   -2.953      0.284   -10.4   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$AE.level
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ AE.level + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   108.7    123.0    -50.3    100.7      258 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.413 -0.237 -0.221 -0.127  4.521 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.707    0.841   
+ species   (Intercept) 0.000    0.000   
+Number of obs: 262, groups:  reference, 31; species, 6
+
+Fixed effects:
+               Estimate Std. Error z value Pr(>|z|)    
+(Intercept)      -2.768      0.502   -5.52  3.4e-08 ***
+AE.levelhigher   -1.342      0.946   -1.42     0.16    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+AE.levlhghr -0.049
+
+$reserve.desig
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    34.8     44.0    -14.4     28.8      155 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.308 -0.099 -0.097 -0.058  5.801 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.926    0.962   
+ species   (Intercept) 2.009    1.417   
+Number of obs: 158, groups:  reference, 13; species, 7
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)    -5.15       2.80   -1.84    0.066 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$mowing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ mowing + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    49.3     59.4    -20.6     41.3       88 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.6269 -0.1873 -0.1197 -0.0838  2.8302 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 5.19     2.28    
+ species   (Intercept) 1.23     1.11    
+Number of obs: 92, groups:  reference, 18; species, 7
+
+Fixed effects:
+              Estimate Std. Error z value Pr(>|z|)
+(Intercept)     -4.732      3.193   -1.48     0.14
+mowingreduced    0.841      2.246    0.37     0.71
+
+Correlation of Fixed Effects:
+            (Intr)
+mowingredcd -0.791
+
+$grazing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ grazing + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    87.2     98.4    -39.6     79.2      118 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.806 -0.280 -0.222 -0.107  4.500 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 2.2      1.48    
+ species   (Intercept) 0.0      0.00    
+Number of obs: 122, groups:  reference, 28; species, 7
+
+Fixed effects:
+               Estimate Std. Error z value Pr(>|z|)   
+(Intercept)      -2.231      0.738   -3.02   0.0025 **
+grazingreduced   -2.148      1.427   -1.50   0.1323   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+grazingrdcd -0.133
+
+$fertpest
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ fertpest + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    46.9     54.0    -19.5     38.9       39 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.260 -0.395 -0.191 -0.129  1.686 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.77     1.33    
+ species   (Intercept) 1.41     1.19    
+Number of obs: 43, groups:  reference, 16; species, 7
+
+Fixed effects:
+                Estimate Std. Error z value Pr(>|z|)
+(Intercept)        -2.00       1.68   -1.19     0.23
+fertpestreduced    -1.11       1.40   -0.80     0.43
+
+Correlation of Fixed Effects:
+            (Intr)
+fertpstrdcd -0.419
+
+$nest.protect
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    43.5     51.0    -18.8     37.5       86 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.8471 -0.0284 -0.0266 -0.0239  2.8466 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 40.7     6.38    
+ species   (Intercept)  0.0     0.00    
+Number of obs: 89, groups:  reference, 16; species, 7
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)    -7.02       3.46   -2.03    0.042 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$water
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ water + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    54.6     65.2    -23.3     46.6      101 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.252 -0.208 -0.093 -0.087  4.811 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 3.5809   1.892   
+ species   (Intercept) 0.0141   0.119   
+Number of obs: 105, groups:  reference, 22; species, 7
+
+Fixed effects:
+             Estimate Std. Error z value Pr(>|z|)   
+(Intercept)     -4.67       1.56   -2.99   0.0028 **
+waterreduced     3.10       1.76    1.76   0.0789 . 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+waterreducd -0.627
+
+
+########==========  Warning messages lme4 models ==========########
+
+$AE
+NULL
+
+$AE.level
+NULL
+
+$reserve.desig
+NULL
+
+$mowing
+NULL
+
+$grazing
+NULL
+
+$fertpest
+NULL
+
+$nest.protect
+NULL
+
+$water
+NULL
+

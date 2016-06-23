@@ -13,7 +13,7 @@ set.seed(2)
 
 # default to plot when all are FALSE is results from overall analysis (0a)
 species <- FALSE # plot the species-specific model results (0b)
-metric <- TRUE # plot the metric-specific model results (0c)
+metric <- FALSE # plot the metric-specific model results (0c)
 habitat <- FALSE # plot the habitat-specific model results (0d)
 alphalevel <- 0.05
 successlevel <- 0.05
