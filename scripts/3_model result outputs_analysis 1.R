@@ -15,6 +15,9 @@ set.seed(2)
 species <- FALSE # plot the species-specific model results (0b)
 metric <- FALSE # plot the metric-specific model results (0c)
 habitat <- FALSE # plot the habitat-specific model results (0d)
+
+bias <- TRUE
+
 alphalevel <- 0.05
 successlevel <- 0.05
 
@@ -100,28 +103,28 @@ options(digits=6)
 
 #=================================  LOAD DATA & MODELS  ===============================
 
-# load master dataset
-dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
-# subset master dataset to desired columns only
-dat <- subset(dat0, select=c("reference","lit.type","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success",mgmtvars))
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+if (bias) mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","water")
 
 # load model data & models: use blme models for all 0a-d analyses
 
-if (!species & !habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/"))
+if (!bias & !species & !habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/"))
 if (species & !habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0b.rds", sep="/"))
 if (!species & !habitat & metric) moddat <- readRDS(paste(workspacewd, "model dataset_0c.rds", sep="/"))
 if (!species & habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0d.rds", sep="/"))
+if (bias & !species & !habitat & !metric) moddat <- readRDS(paste(workspacewd, "model dataset_0a_bias.rds", sep="/"))
 
+if (bias) moddat <- moddat[-8] # remove predator control model (huge variance on the random effects, and SEs on fixed effects are very large)
 
 # load models
-if (!species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0a_lme4.rds", sep="/"))
+if (!bias & !species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0a_lme4.rds", sep="/"))
 if (species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
 if (!species & !habitat & metric) mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
 if (!species & habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0d_blme.rds", sep="/"))
+if (bias & !species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "models_0a_lme4_bias.rds", sep="/"))
 
-
+if (bias) mod <- mod[-8] # remove predator control model (huge variance)
 
 #=================================  OUTPUT PARAMETER TABLES  ===============================
 
@@ -129,7 +132,7 @@ setwd(outputwd)
 
 #------------------------------ 0a) success of individual management types -------------------------
 
-if (!species & !metric & !habitat) {
+if (!bias & !species & !metric & !habitat) {
   
   # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
   coeftab <- lapply(mod, function(x) summary(x)$coefficients)
@@ -148,6 +151,29 @@ if (!species & !metric & !habitat) {
   
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0a_overall parameter table.csv", row.names=FALSE)
+  
+}
+
+if (bias & !species & !habitat & !metric) {
+  
+  # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
+  coeftab <- lapply(mod, function(x) summary(x)$coefficients)
+  coeftab <- lapply(coeftab, function(x) {
+    out <- as.data.frame(x)
+    out$parameter <- rownames(out)
+    rownames(out) <- 1:nrow(out)
+    return(out) })
+  coeftab2 <- do.call(rbind, coeftab)
+  coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
+  coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
+  rownames(coeftab3) <- c(1:nrow(coeftab3))
+  partable <- coeftab3
+  partable <- partable[,c(6,5,1,2,4)] # omit z value column
+  names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+  
+  # Write the parameter table
+  write.csv(format(partable, scientific=FALSE, digits=2),  "0a_overall parameter table_bias.csv", row.names=FALSE)
+  
   
 }
 
@@ -237,7 +263,7 @@ setwd(outputwd)
 
 #------------------------------ 0a) success of individual management types -------------------------
 
-if (!species & !metric & !habitat) {
+if (!bias & !species & !metric & !habitat) {
   
   plotdat <- list()
   n <- list()
@@ -266,7 +292,7 @@ if (!species & !metric & !habitat) {
   
   plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
   axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-  text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","predator control \n reduced","water \n applied", "water \n reduced"))
+  text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
   arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
   arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
   title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
@@ -277,6 +303,75 @@ if (!species & !metric & !habitat) {
   
   ###-------- Output table of predicted probabilities +/- CIs --------###
   write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs.csv", row.names=FALSE)
+  
+}
+
+
+if (bias & !species & !metric & !habitat) {
+  
+  plotdat <- list()
+  n <- list()
+  
+  for (i in 1:length(mod)) {
+    
+    # dataset to predict over is the same as the original dataset
+    pred <- predict(mod[[i]], type="response", re.form=NA)
+    pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
+    
+    fits <- data.frame(pred, pred.CI, biased.metric=moddat[[i]]$biased.metric, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
+    unique.fits <- unique(fits)
+    
+    plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, biased.metric=unique.fits$biased.metric), mean)
+    
+    
+  }
+  
+  plotfinal <- do.call(rbind, plotdat)
+  
+  n <- length(levels(plotfinal$biased.metric))
+  
+  pch <- data.frame(biased.metric=levels(plotfinal$biased.metric), pch=c(21,22), col=sample(grey(seq(from=0,to=1,length.out = n)), n))
+  plotfinal <- merge(plotfinal,pch, by="biased.metric")
+  
+  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$biased.metric),]
+  
+  plotfinal$rowid <- 1:nrow(plotfinal)
+  
+  xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
+  xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
+  xloc.divide <- xloc.divide[-length(xloc.divide)]
+  
+  
+  ###-------- Output plot --------###
+  
+  if (alphalevel==0.05) {
+    png("0a_overall model results_bias.png", res=300, height=12, width=30, units="in", pointsize=20)
+  } else {png("0a_overall model results_84CIs_bias.png", res=300, height=12, width=30, units="in", pointsize=20)}
+  
+  par(mar=c(7,6,3,2))
+  
+  x <- c(1:nrow(plotfinal))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
+  axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
+  abline(v=xloc.divide, lty=3, lwd=1.5)
+  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \napplied", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","more water \napplied", "water \nreduced"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  abline(h=successlevel, lty=3, lwd=2)
+  
+  
+  legend(min(plotfinal$rowid)-1,1.1, legend=c("change/productivity metrics","abundance/occupancy metrics"), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+  
+  dev.off()
+  
+  ###-------- Output table of predicted probabilities +/- CIs --------###
+  if (alphalevel==0.05) {
+    write.csv(plotfinal[,c("biased.metric","pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs_bias.csv", row.names=FALSE)
+  } else {write.csv(plotfinal[,c("biased.metric","pred","lwr","upr","mgmtvar")], "0a_overall probabilities and 84CIs_bias.csv", row.names=FALSE)}
+  
   
 }
 

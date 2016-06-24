@@ -31,7 +31,7 @@ new.metricabundance change    0.605      0.439    1.38  0.16827
 new.metricoccupancy           0.558      0.441    1.27  0.20556    
 new.metricproductivity        1.514      0.641    2.36  0.01811 *  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc nw.mtrcc
@@ -66,14 +66,14 @@ Fixed effects:
                                           Estimate Std. Error z value Pr(>|z|)    
 (Intercept)                                -1.6678     0.4403   -3.79  0.00015 ***
 AE.levelhigher                              0.8649     0.5911    1.46  0.14338    
-new.metricabundance change                  0.0625     0.5965    0.10  0.91655    
+new.metricabundance change                  0.0625     0.5964    0.10  0.91655    
 new.metricoccupancy                         0.5841     0.5513    1.06  0.28939    
-new.metricproductivity                      1.2680     1.0826    1.17  0.24152    
+new.metricproductivity                      1.2680     1.0826    1.17  0.24151    
 AE.levelhigher:new.metricabundance change   1.2290     0.8123    1.51  0.13027    
 AE.levelhigher:new.metricoccupancy         -0.2908     0.8213   -0.35  0.72329    
 AE.levelhigher:new.metricproductivity       0.0755     1.2423    0.06  0.95153    
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
                     (Intr) AE.lvl nw.mtc nw.mtrcc nw.mtrcp AE.:.c AE.lvlhghr:nw.mtrcc
@@ -115,7 +115,7 @@ new.metricabundance change    1.080      0.549    1.97    0.049 *
 new.metricoccupancy           0.830      0.449    1.85    0.065 .
 new.metricproductivity       -0.237      0.982   -0.24    0.810  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc nw.mtrcc
@@ -155,7 +155,7 @@ new.metricproductivity                     -1.050      1.523   -0.69    0.491
 mowingreduced:new.metricabundance change   -2.168      1.536   -1.41    0.158  
 mowingreduced:new.metricproductivity        3.050      1.626    1.88    0.061 .
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) mwngrd nw.mtc nw.mtr mwn:.c
@@ -197,7 +197,7 @@ new.metricproductivity                  -0.768      0.896   -0.86    0.391
 grazingreduced:new.metricoccupancy      -0.692      1.628   -0.42    0.671  
 grazingreduced:new.metricproductivity    1.350      1.426    0.95    0.344  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
                    (Intr) grzngr nw.mtrcc nw.mtrcp grzngrdcd:nw.mtrcc
@@ -210,7 +210,7 @@ grzngrdcd:nw.mtrcp  0.238 -0.532 -0.049   -0.403    0.211
 $fertpest
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 14.369
+Prior dev  : 8.934
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
@@ -219,29 +219,27 @@ Formula: success ~ new.metric + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    37.4     43.9    -13.7     27.4       22 
+    33.3     38.2    -12.6     25.3       21 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.931 -0.272 -0.206  0.271  1.501 
+-0.942 -0.243 -0.178  0.142  1.573 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 14.2     3.76    
-Number of obs: 27, groups:  reference, 11
+ reference (Intercept) 32.8     5.72    
+Number of obs: 25, groups:  reference, 9
 
 Fixed effects:
                            Estimate Std. Error z value Pr(>|z|)
-(Intercept)                   1.638      1.616    1.01     0.31
-new.metricabundance change   -2.494      1.630   -1.53     0.13
-new.metricoccupancy          -3.206      2.523   -1.27     0.20
-new.metricproductivity        0.808      2.375    0.34     0.73
+(Intercept)                   3.262      2.347    1.39     0.16
+new.metricabundance change   -2.708      1.758   -1.54     0.12
+new.metricproductivity        0.773      2.500    0.31     0.76
 
 Correlation of Fixed Effects:
-            (Intr) nw.mtc nw.mtrcc
-nw.mtrcbndc -0.248                
-nw.mtrcccpn -0.169  0.032         
-nw.mtrcprdc -0.241  0.030  0.110  
+            (Intr) nw.mtc
+nw.mtrcbndc -0.046       
+nw.mtrcprdc -0.080  0.054
 
 $nest.protect
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -273,7 +271,7 @@ new.metricabundance change    0.895      1.117    0.80    0.423
 new.metricoccupancy           0.370      1.255    0.30    0.768  
 new.metricproductivity        1.255      0.987    1.27    0.204  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc nw.mtrcc
@@ -284,7 +282,7 @@ nw.mtrcprdc -0.919  0.656  0.647
 $predator.control
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 9.743
+Prior dev  : 9.921
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
@@ -293,29 +291,29 @@ Formula: success ~ new.metric + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    46.3     52.8    -19.2     38.3       33 
+    53.8     60.8    -22.9     45.8       38 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.305 -0.287 -0.166  0.239  1.048 
+-1.287 -0.302 -0.189  0.394  1.049 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 14.3     3.78    
-Number of obs: 37, groups:  reference, 10
+ reference (Intercept) 11       3.32    
+Number of obs: 42, groups:  reference, 12
 
 Fixed effects:
                            Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                  -2.829      1.636   -1.73    0.084 .
-new.metricabundance change    0.243      1.913    0.13    0.899  
-new.metricproductivity        2.569      1.347    1.91    0.056 .
+(Intercept)                  -2.578      1.430   -1.80    0.072 .
+new.metricabundance change    0.262      1.717    0.15    0.879  
+new.metricproductivity        2.448      1.298    1.89    0.059 .
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc
-nw.mtrcbndc -0.345       
-nw.mtrcprdc -0.507  0.412
+nw.mtrcbndc -0.329       
+nw.mtrcprdc -0.545  0.400
 
 $water
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -382,7 +380,7 @@ new.metricabundance change    0.695      0.424    1.64   0.1017
 new.metricoccupancy           0.602      0.439    1.37   0.1697    
 new.metricproductivity        1.686      0.602    2.80   0.0051 ** 
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc nw.mtrcc
@@ -420,7 +418,7 @@ AE.levelhigher:new.metricabundance change    1.170      0.849    1.38     0.17
 AE.levelhigher:new.metricoccupancy          -0.295      0.873   -0.34     0.74    
 AE.levelhigher:new.metricproductivity       -0.129      1.359   -0.09     0.92    
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
                     (Intr) AE.lvl nw.mtc nw.mtrcc nw.mtrcp AE.:.c AE.lvlhghr:nw.mtrcc
@@ -458,7 +456,7 @@ new.metricabundance change    1.346      0.553    2.44    0.015 *
 new.metricoccupancy           0.731      0.463    1.58    0.115  
 new.metricproductivity        0.200      0.932    0.21    0.830  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc nw.mtrcc
@@ -487,23 +485,23 @@ Number of obs: 92, groups:  reference, 18
 
 Fixed effects:
                                           Estimate Std. Error z value Pr(>|z|)
-(Intercept)                              -1.96e+01   2.54e+02   -0.08     0.94
-mowingreduced                             1.77e+01   2.54e+02    0.07     0.94
-new.metricabundance change                2.10e+01   2.54e+02    0.08     0.93
-new.metricproductivity                    8.38e-06   6.49e+02    0.00     1.00
-mowingreduced:new.metricabundance change -2.04e+01   2.54e+02   -0.08     0.94
-mowingreduced:new.metricproductivity      2.16e+00   6.49e+02    0.00     1.00
+(Intercept)                              -1.96e+01   1.25e+04       0        1
+mowingreduced                             1.77e+01   1.25e+04       0        1
+new.metricabundance change                2.10e+01   1.25e+04       0        1
+new.metricproductivity                    3.45e-06   1.42e+04       0        1
+mowingreduced:new.metricabundance change -2.04e+01   1.25e+04       0        1
+mowingreduced:new.metricproductivity      2.16e+00   1.42e+04       0        1
 
 Correlation of Fixed Effects:
             (Intr) mwngrd nw.mtc nw.mtr mwn:.c
 mowingredcd -1.000                            
 nw.mtrcbndc -1.000  1.000                     
-nw.mtrcprdc  0.059 -0.059 -0.059              
-mwngrdcd:.c  1.000 -1.000 -1.000  0.059       
-mwngrdcd:n. -0.059  0.059  0.059 -1.000 -0.059
+nw.mtrcprdc -0.882  0.882  0.882              
+mwngrdcd:.c  1.000 -1.000 -1.000 -0.882       
+mwngrdcd:n.  0.882 -0.882 -0.882 -1.000  0.882
 convergence code: 0
-Model is nearly unidentifiable: large eigenvalue ratio
- - Rescale variables?
+unable to evaluate scaled gradient
+ Hessian is numerically singular: parameters are not uniquely determined
 
 
 $grazing
@@ -534,7 +532,7 @@ new.metricproductivity                  -0.552      0.862   -0.64    0.522
 grazingreduced:new.metricoccupancy      -0.834      1.550   -0.54    0.590  
 grazingreduced:new.metricproductivity    1.656      1.376    1.20    0.229  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
                    (Intr) grzngr nw.mtrcc nw.mtrcp grzngrdcd:nw.mtrcc
@@ -552,32 +550,27 @@ Formula: success ~ new.metric + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    33.8     40.3    -11.9     23.8       22 
+    31.8     36.7    -11.9     23.8       21 
 
 Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.103 -0.178  0.000  0.112  1.510 
+    Min      1Q  Median      3Q     Max 
+-1.1030 -0.1780 -0.0665  0.1180  1.5095 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
  reference (Intercept) 21.8     4.67    
-Number of obs: 27, groups:  reference, 11
+Number of obs: 25, groups:  reference, 9
 
 Fixed effects:
                            Estimate Std. Error z value Pr(>|z|)
 (Intercept)                    4.84       3.79    1.28     0.20
 new.metricabundance change    -5.62       4.89   -1.15     0.25
-new.metricoccupancy          -27.52    2048.00   -0.01     0.99
 new.metricproductivity        -0.87       3.81   -0.23     0.82
 
 Correlation of Fixed Effects:
-            (Intr) nw.mtc nw.mtrcc
-nw.mtrcbndc -0.633                
-nw.mtrcccpn  0.000  0.000         
-nw.mtrcprdc -0.191  0.058  0.000  
-convergence code: 0
- Hessian is numerically singular: parameters are not uniquely determined
-
+            (Intr) nw.mtc
+nw.mtrcbndc -0.633       
+nw.mtrcprdc -0.191  0.058
 
 $nest.protect
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
@@ -605,7 +598,7 @@ new.metricabundance change    1.135      0.966    1.18    0.240
 new.metricoccupancy           1.030      1.128    0.91    0.361  
 new.metricproductivity        1.786      0.807    2.21    0.027 *
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc nw.mtrcc
@@ -621,31 +614,29 @@ Formula: success ~ new.metric + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    43.7     50.1    -17.8     35.7       33 
+    52.9     59.8    -22.4     44.9       38 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.207 -0.381  0.000  0.395  1.095 
+-1.260 -0.336 -0.188  0.455  1.058 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 4.34     2.08    
-Number of obs: 37, groups:  reference, 10
+ reference (Intercept) 7.04     2.65    
+Number of obs: 42, groups:  reference, 12
 
 Fixed effects:
-                           Estimate Std. Error z value Pr(>|z|)
-(Intercept)                   -21.2    11879.4       0        1
-new.metricabundance change     19.4    11879.4       0        1
-new.metricproductivity         20.9    11879.4       0        1
+                           Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                   -3.50       2.10   -1.67    0.096 .
+new.metricabundance change     1.59       2.20    0.72    0.469  
+new.metricproductivity         3.46       2.06    1.68    0.094 .
+---
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.mtc
-nw.mtrcbndc -1.000       
-nw.mtrcprdc -1.000  1.000
-convergence code: 0
-unable to evaluate scaled gradient
- Hessian is numerically singular: parameters are not uniquely determined
-
+nw.mtrcbndc -0.666       
+nw.mtrcprdc -0.842  0.693
 
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
@@ -722,21 +713,20 @@ $reserve.desig
 NULL
 
 $mowing
-$mowing[[1]]
-[1] "Model is nearly unidentifiable: large eigenvalue ratio\n - Rescale variables?"
-
+[1] "unable to evaluate scaled gradient"                                      
+[2] " Hessian is numerically singular: parameters are not uniquely determined"
 
 $grazing
 NULL
 
 $fertpest
-[1] " Hessian is numerically singular: parameters are not uniquely determined"
+NULL
 
 $nest.protect
 NULL
 
 $predator.control
-[1] "unable to evaluate scaled gradient"                                       " Hessian is numerically singular: parameters are not uniquely determined"
+NULL
 
 $water
 NULL

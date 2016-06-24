@@ -36,50 +36,138 @@ AE.reserveAE.basic-reserve:new.metricoccupancy             0.054885  0.194935 27
 AE.reserveAE.higher-no reserve:new.metricoccupancy         0.180612  0.257304 272  0.701942  0.4833
 AE.reserveAE.higher-reserve:new.metricoccupancy           -0.017072  0.222147 272 -0.076851  0.9388
  Correlation: 
-                                                          (Intr) AE.rsrvAE.b-r AE.rsrvAE.b- AE.rsrvAE.h-r AE.rsrvAE.h- nw.mtc nw.mtr spcscr spcsdn spcslp spcsys spcsrd spcsrf
-AE.reserveAE.basic-no reserve                             -0.538                                                                                                              
-AE.reserveAE.basic-reserve                                -0.364  0.358                                                                                                       
-AE.reserveAE.higher-no reserve                            -0.464  0.422         0.334                                                                                         
-AE.reserveAE.higher-reserve                               -0.295  0.301         0.346        0.283                                                                            
-new.metricabundance change                                -0.525  0.473         0.342        0.441         0.288                                                              
-new.metricoccupancy                                       -0.395  0.421         0.390        0.362         0.359        0.430                                                 
-speciescurlew                                             -0.481  0.001         0.017       -0.015         0.027        0.015 -0.047                                          
-speciesdunlin                                             -0.113  0.017         0.007        0.008         0.003       -0.106 -0.006  0.109                                   
-specieslapwing                                            -0.594  0.026        -0.006       -0.012         0.000        0.044  0.005  0.698  0.128                            
-speciesoystercatcher                                      -0.489 -0.004         0.010       -0.018         0.009        0.013  0.000  0.587  0.111  0.671                     
-speciesredshank                                           -0.574  0.035        -0.006       -0.002         0.003        0.043  0.010  0.690  0.124  0.787  0.660              
-speciesruff                                               -0.113  0.017         0.007        0.008         0.003       -0.106 -0.006  0.109  0.193  0.128  0.111  0.124       
-speciessnipe                                              -0.554  0.054         0.008       -0.003         0.004        0.079  0.011  0.674  0.111  0.753  0.608  0.748  0.111
-AE.reserveAE.basic-no reserve:new.metricabundance change   0.393 -0.702        -0.231       -0.308        -0.190       -0.679 -0.290 -0.036  0.063 -0.049 -0.011 -0.051  0.063
-AE.reserveAE.basic-reserve:new.metricabundance change      0.285 -0.262        -0.656       -0.236        -0.197       -0.500 -0.258 -0.044  0.048 -0.021 -0.015 -0.019  0.048
-AE.reserveAE.higher-no reserve:new.metricabundance change  0.356 -0.336        -0.264       -0.710        -0.228       -0.654 -0.320  0.008  0.066 -0.012  0.002 -0.010  0.066
-AE.reserveAE.higher-reserve:new.metricabundance change     0.192 -0.190        -0.208       -0.167        -0.628       -0.348 -0.231 -0.037  0.035 -0.023 -0.014 -0.025  0.035
-AE.reserveAE.basic-no reserve:new.metricoccupancy          0.340 -0.655        -0.232       -0.266        -0.198       -0.308 -0.632 -0.003 -0.009 -0.033  0.001 -0.026 -0.009
-AE.reserveAE.basic-reserve:new.metricoccupancy             0.246 -0.274        -0.705       -0.239        -0.220       -0.279 -0.623  0.007  0.006  0.038  0.021  0.039  0.006
-AE.reserveAE.higher-no reserve:new.metricoccupancy         0.251 -0.236        -0.163       -0.562        -0.135       -0.261 -0.459  0.002  0.001 -0.007  0.010 -0.001  0.001
-AE.reserveAE.higher-reserve:new.metricoccupancy            0.219 -0.231        -0.221       -0.201        -0.718       -0.236 -0.552 -0.030  0.003  0.001 -0.004  0.000  0.003
-                                                          spcssn AE.rsrvAE.b-r:.c AE.rsrvAE.b-:.c AE.rsrvAE.h-r:.c AE.rsrvAE.h-:.c AE.rsrvAE.b-r:. AE.rsrvAE.b-:.
-AE.reserveAE.basic-no reserve                                                                                                                                    
-AE.reserveAE.basic-reserve                                                                                                                                       
-AE.reserveAE.higher-no reserve                                                                                                                                   
-AE.reserveAE.higher-reserve                                                                                                                                      
-new.metricabundance change                                                                                                                                       
-new.metricoccupancy                                                                                                                                              
-speciescurlew                                                                                                                                                    
-speciesdunlin                                                                                                                                                    
-specieslapwing                                                                                                                                                   
-speciesoystercatcher                                                                                                                                             
-speciesredshank                                                                                                                                                  
-speciesruff                                                                                                                                                      
-speciessnipe                                                                                                                                                     
-AE.reserveAE.basic-no reserve:new.metricabundance change  -0.074                                                                                                 
-AE.reserveAE.basic-reserve:new.metricabundance change     -0.044  0.359                                                                                          
-AE.reserveAE.higher-no reserve:new.metricabundance change -0.010  0.448            0.352                                                                         
-AE.reserveAE.higher-reserve:new.metricabundance change    -0.036  0.259            0.298           0.266                                                         
-AE.reserveAE.basic-no reserve:new.metricoccupancy         -0.037  0.469            0.171           0.220            0.128                                        
-AE.reserveAE.basic-reserve:new.metricoccupancy             0.028  0.191            0.487           0.206            0.141           0.404                        
-AE.reserveAE.higher-no reserve:new.metricoccupancy         0.003  0.184            0.133           0.413            0.087           0.322           0.298        
-AE.reserveAE.higher-reserve:new.metricoccupancy            0.002  0.160            0.147           0.177            0.460           0.350           0.352        
+                                                          (Intr) AE.rsrvAE.b-r AE.rsrvAE.b-
+AE.reserveAE.basic-no reserve                             -0.538                           
+AE.reserveAE.basic-reserve                                -0.364  0.358                    
+AE.reserveAE.higher-no reserve                            -0.464  0.422         0.334      
+AE.reserveAE.higher-reserve                               -0.295  0.301         0.346      
+new.metricabundance change                                -0.525  0.473         0.342      
+new.metricoccupancy                                       -0.395  0.421         0.390      
+speciescurlew                                             -0.481  0.001         0.017      
+speciesdunlin                                             -0.113  0.017         0.007      
+specieslapwing                                            -0.594  0.026        -0.006      
+speciesoystercatcher                                      -0.489 -0.004         0.010      
+speciesredshank                                           -0.574  0.035        -0.006      
+speciesruff                                               -0.113  0.017         0.007      
+speciessnipe                                              -0.554  0.054         0.008      
+AE.reserveAE.basic-no reserve:new.metricabundance change   0.393 -0.702        -0.231      
+AE.reserveAE.basic-reserve:new.metricabundance change      0.285 -0.262        -0.656      
+AE.reserveAE.higher-no reserve:new.metricabundance change  0.356 -0.336        -0.264      
+AE.reserveAE.higher-reserve:new.metricabundance change     0.192 -0.190        -0.208      
+AE.reserveAE.basic-no reserve:new.metricoccupancy          0.340 -0.655        -0.232      
+AE.reserveAE.basic-reserve:new.metricoccupancy             0.246 -0.274        -0.705      
+AE.reserveAE.higher-no reserve:new.metricoccupancy         0.251 -0.236        -0.163      
+AE.reserveAE.higher-reserve:new.metricoccupancy            0.219 -0.231        -0.221      
+                                                          AE.rsrvAE.h-r AE.rsrvAE.h- nw.mtc nw.mtr
+AE.reserveAE.basic-no reserve                                                                     
+AE.reserveAE.basic-reserve                                                                        
+AE.reserveAE.higher-no reserve                                                                    
+AE.reserveAE.higher-reserve                                0.283                                  
+new.metricabundance change                                 0.441         0.288                    
+new.metricoccupancy                                        0.362         0.359        0.430       
+speciescurlew                                             -0.015         0.027        0.015 -0.047
+speciesdunlin                                              0.008         0.003       -0.106 -0.006
+specieslapwing                                            -0.012         0.000        0.044  0.005
+speciesoystercatcher                                      -0.018         0.009        0.013  0.000
+speciesredshank                                           -0.002         0.003        0.043  0.010
+speciesruff                                                0.008         0.003       -0.106 -0.006
+speciessnipe                                              -0.003         0.004        0.079  0.011
+AE.reserveAE.basic-no reserve:new.metricabundance change  -0.308        -0.190       -0.679 -0.290
+AE.reserveAE.basic-reserve:new.metricabundance change     -0.236        -0.197       -0.500 -0.258
+AE.reserveAE.higher-no reserve:new.metricabundance change -0.710        -0.228       -0.654 -0.320
+AE.reserveAE.higher-reserve:new.metricabundance change    -0.167        -0.628       -0.348 -0.231
+AE.reserveAE.basic-no reserve:new.metricoccupancy         -0.266        -0.198       -0.308 -0.632
+AE.reserveAE.basic-reserve:new.metricoccupancy            -0.239        -0.220       -0.279 -0.623
+AE.reserveAE.higher-no reserve:new.metricoccupancy        -0.562        -0.135       -0.261 -0.459
+AE.reserveAE.higher-reserve:new.metricoccupancy           -0.201        -0.718       -0.236 -0.552
+                                                          spcscr spcsdn spcslp spcsys spcsrd spcsrf
+AE.reserveAE.basic-no reserve                                                                      
+AE.reserveAE.basic-reserve                                                                         
+AE.reserveAE.higher-no reserve                                                                     
+AE.reserveAE.higher-reserve                                                                        
+new.metricabundance change                                                                         
+new.metricoccupancy                                                                                
+speciescurlew                                                                                      
+speciesdunlin                                              0.109                                   
+specieslapwing                                             0.698  0.128                            
+speciesoystercatcher                                       0.587  0.111  0.671                     
+speciesredshank                                            0.690  0.124  0.787  0.660              
+speciesruff                                                0.109  0.193  0.128  0.111  0.124       
+speciessnipe                                               0.674  0.111  0.753  0.608  0.748  0.111
+AE.reserveAE.basic-no reserve:new.metricabundance change  -0.036  0.063 -0.049 -0.011 -0.051  0.063
+AE.reserveAE.basic-reserve:new.metricabundance change     -0.044  0.048 -0.021 -0.015 -0.019  0.048
+AE.reserveAE.higher-no reserve:new.metricabundance change  0.008  0.066 -0.012  0.002 -0.010  0.066
+AE.reserveAE.higher-reserve:new.metricabundance change    -0.037  0.035 -0.023 -0.014 -0.025  0.035
+AE.reserveAE.basic-no reserve:new.metricoccupancy         -0.003 -0.009 -0.033  0.001 -0.026 -0.009
+AE.reserveAE.basic-reserve:new.metricoccupancy             0.007  0.006  0.038  0.021  0.039  0.006
+AE.reserveAE.higher-no reserve:new.metricoccupancy         0.002  0.001 -0.007  0.010 -0.001  0.001
+AE.reserveAE.higher-reserve:new.metricoccupancy           -0.030  0.003  0.001 -0.004  0.000  0.003
+                                                          spcssn AE.rsrvAE.b-r:.c AE.rsrvAE.b-:.c
+AE.reserveAE.basic-no reserve                                                                    
+AE.reserveAE.basic-reserve                                                                       
+AE.reserveAE.higher-no reserve                                                                   
+AE.reserveAE.higher-reserve                                                                      
+new.metricabundance change                                                                       
+new.metricoccupancy                                                                              
+speciescurlew                                                                                    
+speciesdunlin                                                                                    
+specieslapwing                                                                                   
+speciesoystercatcher                                                                             
+speciesredshank                                                                                  
+speciesruff                                                                                      
+speciessnipe                                                                                     
+AE.reserveAE.basic-no reserve:new.metricabundance change  -0.074                                 
+AE.reserveAE.basic-reserve:new.metricabundance change     -0.044  0.359                          
+AE.reserveAE.higher-no reserve:new.metricabundance change -0.010  0.448            0.352         
+AE.reserveAE.higher-reserve:new.metricabundance change    -0.036  0.259            0.298         
+AE.reserveAE.basic-no reserve:new.metricoccupancy         -0.037  0.469            0.171         
+AE.reserveAE.basic-reserve:new.metricoccupancy             0.028  0.191            0.487         
+AE.reserveAE.higher-no reserve:new.metricoccupancy         0.003  0.184            0.133         
+AE.reserveAE.higher-reserve:new.metricoccupancy            0.002  0.160            0.147         
+                                                          AE.rsrvAE.h-r:.c AE.rsrvAE.h-:.c
+AE.reserveAE.basic-no reserve                                                             
+AE.reserveAE.basic-reserve                                                                
+AE.reserveAE.higher-no reserve                                                            
+AE.reserveAE.higher-reserve                                                               
+new.metricabundance change                                                                
+new.metricoccupancy                                                                       
+speciescurlew                                                                             
+speciesdunlin                                                                             
+specieslapwing                                                                            
+speciesoystercatcher                                                                      
+speciesredshank                                                                           
+speciesruff                                                                               
+speciessnipe                                                                              
+AE.reserveAE.basic-no reserve:new.metricabundance change                                  
+AE.reserveAE.basic-reserve:new.metricabundance change                                     
+AE.reserveAE.higher-no reserve:new.metricabundance change                                 
+AE.reserveAE.higher-reserve:new.metricabundance change     0.266                          
+AE.reserveAE.basic-no reserve:new.metricoccupancy          0.220            0.128         
+AE.reserveAE.basic-reserve:new.metricoccupancy             0.206            0.141         
+AE.reserveAE.higher-no reserve:new.metricoccupancy         0.413            0.087         
+AE.reserveAE.higher-reserve:new.metricoccupancy            0.177            0.460         
+                                                          AE.rsrvAE.b-r:. AE.rsrvAE.b-:.
+AE.reserveAE.basic-no reserve                                                           
+AE.reserveAE.basic-reserve                                                              
+AE.reserveAE.higher-no reserve                                                          
+AE.reserveAE.higher-reserve                                                             
+new.metricabundance change                                                              
+new.metricoccupancy                                                                     
+speciescurlew                                                                           
+speciesdunlin                                                                           
+specieslapwing                                                                          
+speciesoystercatcher                                                                    
+speciesredshank                                                                         
+speciesruff                                                                             
+speciessnipe                                                                            
+AE.reserveAE.basic-no reserve:new.metricabundance change                                
+AE.reserveAE.basic-reserve:new.metricabundance change                                   
+AE.reserveAE.higher-no reserve:new.metricabundance change                               
+AE.reserveAE.higher-reserve:new.metricabundance change                                  
+AE.reserveAE.basic-no reserve:new.metricoccupancy                                       
+AE.reserveAE.basic-reserve:new.metricoccupancy             0.404                        
+AE.reserveAE.higher-no reserve:new.metricoccupancy         0.322           0.298        
+AE.reserveAE.higher-reserve:new.metricoccupancy            0.350           0.352        
                                                           AE.rsrvAE.h-r:.
 AE.reserveAE.basic-no reserve                                            
 AE.reserveAE.basic-reserve                                               

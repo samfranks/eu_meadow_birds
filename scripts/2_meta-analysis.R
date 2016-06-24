@@ -10,11 +10,11 @@
 
 #=================================  SET LOGIC STATEMENTS  ====================
 
-
+bias <- TRUE
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -140,6 +140,8 @@ for (i in 1:length(mgmtvars)) {
   print(levels(dat[,mgmtvars[i]]))
 }
 
+
+
 #================================== Test effect of nuisance variables on success for the full dataset ===========================
 
 m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
@@ -241,14 +243,26 @@ for (i in 1:length(mgmtvars)) {
   
   table(mdat[,mgmtvars[i]], mdat$species,mdat$success)
   
-  
-  # create different formulas to use depending on whether management variable is 1 or 2 levels
-  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + biased.metric + (1|reference) + (1|species)", sep=""))
+  if (!bias) {
+    # create different formulas to use depending on whether management variable is 1 or 2 levels
+    if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+      modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
+    }
+    
+    if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+      modform <- as.formula("success ~ 1 + (1|reference) + (1|species)")
+    }
   }
   
-  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
+  if (bias) {
+    # create different formulas to use depending on whether management variable is 1 or 2 levels
+    if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+      modform <- as.formula(paste("success ~ ", mgmtvars[i], " + biased.metric + (1|reference) + (1|species)", sep=""))
+    }
+    
+    if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+      modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
+    }
   }
   
   # run a normal glmer model
@@ -277,22 +291,41 @@ warningmessages.lme4
 
 ### Output model results ###
 
-setwd(outputwd)
-sink(paste("model output_0a.txt", sep=" "))
+if (!bias) {
+  setwd(outputwd)
+  sink(paste("model output_0a.txt", sep=" "))
+  
+  cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
+  print(lapply(m.ind, summary))
+  
+  cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
+  print(warningmessages.lme4)
+  sink()
+  
+  ### Save individual interventions models
+  saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4.rds", sep="/"))
+  
+  ### Save dataset for 0a models
+  saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
+}
 
-cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
-print(lapply(m.ind, summary))
-
-cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
-print(warningmessages.lme4)
-sink()
-
-### Save individual interventions models
-saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4.rds", sep="/"))
-
-### Save dataset for 0a models
-saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
-
+if (bias) {
+  setwd(outputwd)
+  sink(paste("model output_0a_bias.txt", sep=" "))
+  
+  cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
+  print(lapply(m.ind, summary))
+  
+  cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
+  print(warningmessages.lme4)
+  sink()
+  
+  ### Save individual interventions models
+  saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4_bias.rds", sep="/"))
+  
+  ### Save dataset for 0a models
+  saveRDS(usedat, file=paste(workspacewd, "model dataset_0a_bias.rds", sep="/"))
+}
 
 
 #------------------------------ 0b) success of individual management types by species -------------------------
@@ -380,7 +413,7 @@ for (i in 1:length(mgmtvars)) {
   }
   
   if (mgmtvars[i]=="predator.control") {
-    mdat <- subset(mdat, predator.control!="reduced")
+    # mdat <- subset(mdat, predator.control!="reduced")
     # mdat <- subset(mdat, species!="dunlin" & species!="ruff")
   }
   
@@ -454,6 +487,8 @@ saveRDS(m.ind.sp, file=paste(workspacewd, "models_0b_lme4.rds", sep="/"))
 ### Save dataset for 0b models
 saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
 
+
+
 #------------------------------ 0c) success of individual management types by metric -------------------------
 
 ### ANALYSIS ###
@@ -500,11 +535,7 @@ for (i in 1:length(mgmtvars)) {
     mdat <- subset(mdat, fertpest!="applied")
     mdat <- subset(mdat, new.metric!="occupancy")
   }
-  
-  if (mgmtvars[i]=="predator.control") {
-    mdat <- subset(mdat, predator.control!="reduced")
-  }
-  
+
   if (mgmtvars[i]=="water") {
     # mdat <- subset(mdat, water!="reduced")
     mdat <- subset(mdat, new.metric!="abundance change" & new.metric!="occupancy")
@@ -621,6 +652,7 @@ m.ind.sp <- list()
 m.ind.sp.blme <- list()
 usedat <- list() # data subset used to run a model
 
+
 for (i in 1:length(mgmtvars)) {
   
   
@@ -639,10 +671,6 @@ for (i in 1:length(mgmtvars)) {
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, newhabitat!="unenclosed")
     mdat <- subset(mdat, fertpest!="applied")
-  }
-  
-  if (mgmtvars[i]=="predator.control") {
-    mdat <- subset(mdat, predator.control!="reduced")
   }
   
   if (mgmtvars[i]=="water") {
@@ -863,26 +891,27 @@ out
 
 #-----------------   SPECIFIC INTERVENTION SUCCESS by metric  ------------------
 
-# remove categories with too few records, which make the model collapse
-mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="occupancy" & new.metric!="abundance change")
-mdat <- subset(mdat, grazing!="reduced" & mowing!="reduced" & fertpest!="applied" & predator.control!="reduced" & water!="reduced")
-
-# subset data to only use records where specific interventions were tested
-mdat <- subset(mdat, spec.int.used==1)
-mdat <- droplevels(mdat)
-
-
-# identify which categories have low numbers
-out <- list()
-for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(mdat$new.metric, mdat[,mgmtvars[i]])
-}
-names(out) <- mgmtvars
-out
-
-# m.spec.metric <- lme(success ~ new.metric*mowing + new.metric*grazing + new.metric*fertpest + new.metric*nest.protect + new.metric*predator.control + new.metric*water + species, random = ~1|reference, data=mdat)
-
 ##### model doesn't run because of singularities  ####
+
+# # remove categories with too few records, which make the model collapse
+# mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="occupancy" & new.metric!="abundance change")
+# mdat <- subset(mdat, grazing!="reduced" & mowing!="reduced" & fertpest!="applied" & water!="reduced")
+# 
+# # subset data to only use records where specific interventions were tested
+# mdat <- subset(mdat, spec.int.used==1)
+# mdat <- droplevels(mdat)
+# 
+# 
+# # identify which categories have low numbers
+# out <- list()
+# for(i in 1:length(mgmtvars)) {
+#   out[[i]] <- table(mdat$new.metric, mdat[,mgmtvars[i]])
+# }
+# names(out) <- mgmtvars
+# out
+# 
+# # m.spec.metric <- lme(success ~ new.metric*mowing + new.metric*grazing + new.metric*fertpest + new.metric*nest.protect + new.metric*predator.control + new.metric*water + species, random = ~1|reference, data=mdat)
+
 
 
 
@@ -1007,6 +1036,8 @@ plotdat$sig <- ifelse(plotdat$lwr > 0.05, "Y", "N")
 # order by 'significance' and magnitude of success
 plotdat <- plotdat[order(plotdat$sig, plotdat$pred),]
 
+
+
 ###---- Output plot ----###
 
 setwd(outputwd)
@@ -1018,11 +1049,11 @@ par(mar=c(1,8,1,2))
 
 x <- c(1:nrow(plotdat))-0.5 # gives an x axis to plot against
 
-plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(-0.3,1), xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(1,27))
+plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(-0.3,1), xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(1,26))
 arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05) # add error bars, lwr and upr to each prediction
 arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
 abline(h=0.05, lty=3, lwd=2) # add a 'significance' line (what is the threshold for 'success'?)
-abline(v=17, lty=3, lwd=2) # add a line dividing 'successful' vs 'unsuccessful' intervention combos
+abline(v=max(which(plotdat$sig=="N")), lty=3, lwd=2) # add a line dividing 'successful' vs 'unsuccessful' intervention combos
 title(xlab="Intervention combination", cex.lab=1.5, font=2, line=0, xpd=TRUE)
 title(ylab="Predicted probability of success \n (significant positive impact) ", cex.lab=1.5, font=2, line=3)
 
@@ -1049,13 +1080,13 @@ tab.filled[4] <- apply(tab.filled[4], 2, function(x) {
 })
 
 # create a dataframe with x,y coordinates for the locations of the total number of interventions used
-total.interventions <- data.frame(x=1:28, y=rep(0, times=28), intervention=rep("", 28), sum=plotdat$num.interventions.sum)
+total.interventions <- data.frame(x, y=rep(0, times=length(x)), intervention=rep("", length(x)), sum=plotdat$num.interventions.sum)
 
 # set up the plot of the 'table'
 par(mar=c(1,8,1,2)) # give a big left margin to write the intervention names; margin for above plot needs to be exactly the same so everything lines up
-plot(tab, type="n", bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(0.2,6.8), xlim=c(1,27)) # plot a completely blank plot, with ylims and xlims only (will draw the table using abline; use exactly the same xlims as the actual data plot above so that everything lines up
-abline(v=c(0,x,29), h=c(7,y,0), lty=1) # draw the lines of the table (really the 'inner lines'), but adding 1 extra to each of top, bottom and sides to complete the outline of the table (otherwise will be inner lines only)
-abline(v=17, lty=1, lwd=4) # thick line showing division between 'successful' and 'unsuccessful' combinations of interventions
+plot(tab, type="n", bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(0.2,6.8), xlim=c(1,26)) # plot a completely blank plot, with ylims and xlims only (will draw the table using abline; use exactly the same xlims as the actual data plot above so that everything lines up
+abline(v=c(min(x)-1,x,max(x)), h=c(7,y,0), lty=1) # draw the lines of the table (really the 'inner lines'), but adding 1 extra to each of top, bottom and sides to complete the outline of the table (otherwise will be inner lines only)
+abline(v=max(which(plotdat$sig=="N")), lty=1, lwd=4) # thick line showing division between 'successful' and 'unsuccessful' combinations of interventions
 axis(2, y+0.5, labels=c("mowing","grazing","fertiliser/\npesticides", "nest protection","predator control", "water"), las=1, cex.axis=1, font=2,tick=FALSE) # draw the labels for the rows, from top to bottom
 text(tab$x-0.5, tab$y+0.5, labels=ifelse(tab.filled$level=="applied", "\U2191", ifelse(tab.filled$level=="reduced", "\U2193", tab.filled$level)), cex=2) # fill in the values of the grid cells, but if an intervention was applied then use a unicode 'up' arrow, and if it was reduced than use a down arrow
 text(tab$x-0.5, 0.5, labels=total.interventions$sum, cex=1) # add the total number of interventions to the bottom 'row' of the table
@@ -1158,7 +1189,7 @@ usedat <- list() # data subset used to run a model
 
 # remove predator control from list of interventions because it causes unsolvable convergence issues and huge SEs
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
-mgmtvars <- mgmtvars[-which(mgmtvars %in% "predator.control")]
+mgmtvars <- mgmtvars[-which(mgmtvars %in% "predator.control")]  # even if 'reduced' predator control is converted to applied, model outputs are still way off with really large variance on the random effects and huge error on the parameter estimate. Continue to leave this intervention out.
 
 for (i in 1:length(mgmtvars)) {
   
@@ -1173,9 +1204,9 @@ for (i in 1:length(mgmtvars)) {
   #   if (mgmtvars[i]=="fertpest") {
   #     mdat <- subset(mdat, fertpest!="applied")
   #   }
-#     if (mgmtvars[i]=="predator.control") {
-#       mdat <- subset(mdat, predator.control!="reduced")
-#     }
+  #     if (mgmtvars[i]=="predator.control") {
+  #       mdat <- subset(mdat, predator.control!="reduced")
+  #     }
   #   if (mgmtvars[i]=="water") {
   #     mdat <- subset(mdat, water!="reduced")
   #   }
@@ -1196,10 +1227,10 @@ for (i in 1:length(mgmtvars)) {
   
   # run a normal glmer model
   m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-
+  
   # run a bglmer model  
-#   vcov.dim <- nrow(vcov(m.ind[[i]]))
-#   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
+  #   vcov.dim <- nrow(vcov(m.ind[[i]]))
+  #   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
   
   
 }
@@ -1299,6 +1330,7 @@ for (i in 1:length(mod)) {
 
 plotfinal <- do.call(rbind, plotdat)
 
+
 ###-------- Output plot --------###
 png("3a_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
 par(mar=c(7,6,2,2))
@@ -1307,7 +1339,7 @@ x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
 axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","water \n applied", "water \n reduced"))
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n appliied","water \n applied", "water \n reduced"))
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
@@ -1490,7 +1522,7 @@ x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
 axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied", "predator control \n reduced", "water \n applied", "water \n reduced"))
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied", "water \n applied", "water \n reduced"))
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)

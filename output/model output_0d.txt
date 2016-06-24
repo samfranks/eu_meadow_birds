@@ -27,7 +27,7 @@ Number of obs: 262, groups:  reference, 31
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)
 (Intercept)           -0.6228     0.6339   -0.98     0.33
-newhabitatpastoral    -0.0534     0.7169   -0.08     0.94
+newhabitatpastoral    -0.0534     0.7170   -0.08     0.94
 newhabitatunenclosed  -0.4768     1.4225   -0.34     0.74
 
 Correlation of Fixed Effects:
@@ -133,7 +133,7 @@ mowingreduced                       1.110      1.711    0.65    0.516
 newhabitatpastoral                 -0.358      1.816   -0.20    0.844  
 mowingreduced:newhabitatpastoral    1.398      1.934    0.72    0.470  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) mwngrd nwhbtt
@@ -248,7 +248,7 @@ nwhbttpstrl -0.753
 $predator.control
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3), corr = 0, common.scale = FALSE)
-Prior dev  : 4.516
+Prior dev  : 5.234
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
@@ -257,25 +257,25 @@ Formula: success ~ newhabitat + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    50.8     55.6    -22.4     44.8       34 
+    57.6     62.8    -25.8     51.6       39 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.736 -0.646 -0.217  0.529  1.548 
+-1.674 -0.646 -0.259  0.596  1.549 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 12.4     3.51    
-Number of obs: 37, groups:  reference, 10
+ reference (Intercept) 7.49     2.74    
+Number of obs: 42, groups:  reference, 12
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)            -1.387      1.628   -0.85     0.39
-newhabitatunenclosed   -0.169      1.748   -0.10     0.92
+(Intercept)           -1.2853     1.3965   -0.92     0.36
+newhabitatunenclosed  -0.0187     1.5252   -0.01     0.99
 
 Correlation of Fixed Effects:
             (Intr)
-nwhbttnncls -0.453
+nwhbttnncls -0.615
 
 $water
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -365,10 +365,10 @@ Number of obs: 254, groups:  reference, 30
 
 Fixed effects:
                                   Estimate Std. Error z value Pr(>|z|)
-(Intercept)                        -1.5323     0.9622   -1.59     0.11
-AE.levelhigher                      1.3239     1.2697    1.04     0.30
-newhabitatpastoral                  0.3096     1.0198    0.30     0.76
-AE.levelhigher:newhabitatpastoral  -0.0645     1.3234   -0.05     0.96
+(Intercept)                        -1.5323     0.9621   -1.59     0.11
+AE.levelhigher                      1.3239     1.2696    1.04     0.30
+newhabitatpastoral                  0.3096     1.0197    0.30     0.76
+AE.levelhigher:newhabitatpastoral  -0.0645     1.3233   -0.05     0.96
 
 Correlation of Fixed Effects:
             (Intr) AE.lvl nwhbtt
@@ -397,7 +397,7 @@ Number of obs: 159, groups:  reference, 13
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)            0.0802     0.3332    0.24     0.81
+(Intercept)            0.0802     0.3331    0.24     0.81
 newhabitatunenclosed  -0.2861     0.6739   -0.42     0.67
 
 Correlation of Fixed Effects:
@@ -424,20 +424,20 @@ Random effects:
 Number of obs: 86, groups:  reference, 17
 
 Fixed effects:
-                                  Estimate Std. Error z value Pr(>|z|)
-(Intercept)                       -18.7092  5775.8655       0        1
-mowingreduced                      16.9339  5775.8657       0        1
-newhabitatpastoral                  0.0114  8145.1404       0        1
-mowingreduced:newhabitatpastoral    0.9278  8145.1405       0        1
+                                 Estimate Std. Error z value Pr(>|z|)
+(Intercept)                      -18.7092   243.0536   -0.08     0.94
+mowingreduced                     16.9339   243.0538    0.07     0.94
+newhabitatpastoral                 0.0113   260.0971    0.00     1.00
+mowingreduced:newhabitatpastoral   0.9279   260.0973    0.00     1.00
 
 Correlation of Fixed Effects:
             (Intr) mwngrd nwhbtt
 mowingredcd -1.000              
-nwhbttpstrl -0.709  0.709       
-mwngrdcd:nw  0.709 -0.709 -1.000
+nwhbttpstrl  0.000  0.000       
+mwngrdcd:nw  0.000  0.000 -1.000
 convergence code: 0
-unable to evaluate scaled gradient
-Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
 
 
 $grazing
@@ -540,25 +540,25 @@ Formula: success ~ newhabitat + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    49.7     54.6    -21.9     43.7       34 
+    56.7     61.9    -25.4     50.7       39 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.524 -0.650 -0.328  0.656  1.538 
+-1.457 -0.653 -0.355  0.703  1.531 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 3.01     1.74    
-Number of obs: 37, groups:  reference, 10
+ reference (Intercept) 2.34     1.53    
+Number of obs: 42, groups:  reference, 12
 
 Fixed effects:
                      Estimate Std. Error z value Pr(>|z|)
-(Intercept)            -1.350      1.320   -1.02     0.31
-newhabitatunenclosed    0.402      1.446    0.28     0.78
+(Intercept)            -1.281      1.217   -1.05     0.29
+newhabitatunenclosed    0.407      1.315    0.31     0.76
 
 Correlation of Fixed Effects:
             (Intr)
-nwhbttnncls -0.759
+nwhbttnncls -0.808
 
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
@@ -585,7 +585,7 @@ Fixed effects:
 newhabitatpastoral      1.627      0.829    1.96    0.050 *
 newhabitatunenclosed    2.054      1.121    1.83    0.067 .
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nwhbttp
@@ -635,7 +635,9 @@ $reserve.desig
 NULL
 
 $mowing
-[1] "unable to evaluate scaled gradient"                                        "Model failed to converge: degenerate  Hessian with 2 negative eigenvalues"
+$mowing[[1]]
+[1] "Model is nearly unidentifiable: large eigenvalue ratio\n - Rescale variables?"
+
 
 $grazing
 NULL

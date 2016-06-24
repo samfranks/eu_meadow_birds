@@ -8,45 +8,45 @@ Formula: success ~ study.length + sample.size + analysis2 + lit.type *      scor
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   746.8    799.4   -361.4    722.8      581 
+   744.8    797.4   -360.4    720.8      581 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.482 -0.735 -0.477  0.923  2.496 
+-1.501 -0.735 -0.473  0.906  2.512 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.676    0.822   
+ reference (Intercept) 0.723    0.85    
 Number of obs: 593, groups:  reference, 76
 
 Fixed effects:
                             Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                  -0.3839     1.1870   -0.32    0.746  
-study.length                  0.0283     0.0233    1.22    0.224  
-sample.sizemedium             0.1548     0.3788    0.41    0.683  
-sample.sizesmall             -0.1799     0.3822   -0.47    0.638  
-analysis2multivariate         1.4234     0.8065    1.76    0.078 .
-analysis2univariate           0.8794     0.7424    1.19    0.236  
-lit.typeprimary              -1.4872     0.9857   -1.51    0.131  
-scoremedium                  -0.5567     1.0563   -0.53    0.598  
-scorepoor                    -1.3802     1.0236   -1.35    0.178  
-lit.typeprimary:scoremedium   0.1438     1.1248    0.13    0.898  
-lit.typeprimary:scorepoor     0.6009     1.1624    0.52    0.605  
+(Intercept)                  -0.3745     1.2096   -0.31     0.76  
+study.length                  0.0303     0.0237    1.28     0.20  
+sample.sizemedium             0.1818     0.3839    0.47     0.64  
+sample.sizesmall             -0.1903     0.3874   -0.49     0.62  
+analysis2multivariate         1.5397     0.8202    1.88     0.06 .
+analysis2univariate           0.8592     0.7520    1.14     0.25  
+lit.typeprimary              -1.5975     1.0100   -1.58     0.11  
+scoremedium                  -0.5670     1.0801   -0.52     0.60  
+scorepoor                    -1.3902     1.0456   -1.33     0.18  
+lit.typeprimary:scoremedium   0.1373     1.1497    0.12     0.90  
+lit.typeprimary:scorepoor     0.6432     1.1860    0.54     0.59  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
                  (Intr) stdy.l smpl.szm smpl.szs anlyss2m anlyss2n lt.typ scrmdm scorpr
-study.lngth      -0.138                                                                
-sampl.szmdm      -0.227 -0.064                                                         
-smpl.szsmll      -0.172 -0.062  0.366                                                  
-anlyss2mltv      -0.529 -0.071  0.163   -0.035                                         
-anlyss2nvrt      -0.612 -0.025  0.095   -0.071    0.865                                
-lt.typprmry      -0.713  0.073  0.030    0.142   -0.133    0.032                       
-scoremedium      -0.765 -0.058  0.181    0.165    0.178    0.193    0.754              
-scorepoor        -0.646  0.040  0.019    0.132   -0.023   -0.020    0.776  0.715       
-lt.typprmry:scrm  0.722  0.016 -0.176   -0.150   -0.166   -0.179   -0.787 -0.936 -0.671
-lt.typprmry:scrp  0.573 -0.082 -0.010   -0.163    0.083    0.027   -0.799 -0.627 -0.885
+study.lngth      -0.139                                                                
+sampl.szmdm      -0.223 -0.059                                                         
+smpl.szsmll      -0.173 -0.065  0.364                                                  
+anlyss2mltv      -0.523 -0.067  0.166   -0.038                                         
+anlyss2nvrt      -0.609 -0.021  0.093   -0.070    0.862                                
+lt.typprmry      -0.715  0.070  0.024    0.144   -0.137    0.031                       
+scoremedium      -0.765 -0.058  0.177    0.166    0.173    0.189    0.754              
+scorepoor        -0.650  0.038  0.017    0.133   -0.025   -0.020    0.778  0.717       
+lt.typprmry:scrm  0.723  0.016 -0.174   -0.150   -0.163   -0.176   -0.786 -0.937 -0.673
+lt.typprmry:scrp  0.577 -0.081 -0.007   -0.163    0.083    0.027   -0.801 -0.630 -0.886
                  lt.typprmry:scrm
 study.lngth                      
 sampl.szmdm                      
@@ -57,7 +57,7 @@ lt.typprmry
 scoremedium                      
 scorepoor                        
 lt.typprmry:scrm                 
-lt.typprmry:scrp  0.658          
+lt.typprmry:scrp  0.660          
 
 ########==========  Nuisance variables - set 2 - score - lme4 models ==========########
 
@@ -68,39 +68,39 @@ Formula: success ~ study.length + sample.size + analysis2 + score + (1 |      re
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   747.3    786.8   -364.7    729.3      584 
+   746.1    785.6   -364.1    728.1      584 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.523 -0.734 -0.513  0.931  2.547 
+-1.542 -0.734 -0.502  0.902  2.566 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.787    0.887   
+ reference (Intercept) 0.849    0.922   
 Number of obs: 593, groups:  reference, 76
 
 Fixed effects:
                       Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -1.2678     0.7876   -1.61    0.107  
-study.length            0.0344     0.0235    1.46    0.143  
-sample.sizemedium       0.1556     0.3788    0.41    0.681  
-sample.sizesmall       -0.1835     0.3851   -0.48    0.634  
-analysis2multivariate   0.7862     0.7316    1.07    0.283  
-analysis2univariate     0.7722     0.7139    1.08    0.279  
-scoremedium            -0.3663     0.3837   -0.96    0.340  
-scorepoor              -0.8628     0.4690   -1.84    0.066 .
+(Intercept)            -1.3278     0.8022   -1.66    0.098 .
+study.length            0.0369     0.0240    1.54    0.124  
+sample.sizemedium       0.1819     0.3849    0.47    0.637  
+sample.sizesmall       -0.1957     0.3912   -0.50    0.617  
+analysis2multivariate   0.8582     0.7452    1.15    0.249  
+analysis2univariate     0.7479     0.7239    1.03    0.302  
+scoremedium            -0.3756     0.3926   -0.96    0.339  
+scorepoor              -0.8340     0.4780   -1.75    0.081 .
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) stdy.l smpl.szm smpl.szs anlyss2m anlyss2n scrmdm
-study.lngth -0.172                                                  
-sampl.szmdm -0.274 -0.048                                           
-smpl.szsmll -0.086 -0.074  0.355                                    
-anlyss2mltv -0.879 -0.016  0.127   -0.054                           
-anlyss2nvrt -0.828 -0.004  0.069   -0.089    0.884                  
-scoremedium -0.359 -0.141  0.063    0.066    0.105    0.083         
-scorepoor   -0.277 -0.058  0.007   -0.034    0.103   -0.036    0.497
+study.lngth -0.175                                                  
+sampl.szmdm -0.277 -0.044                                           
+smpl.szsmll -0.084 -0.079  0.354                                    
+anlyss2mltv -0.878 -0.011  0.131   -0.057                           
+anlyss2nvrt -0.827 -0.001  0.069   -0.087    0.883                  
+scoremedium -0.357 -0.142  0.058    0.067    0.101    0.081         
+scorepoor   -0.279 -0.060  0.007   -0.034    0.104   -0.034    0.498
 
 ########==========  Nuisance variables - set 3 - lit.type*score + biased.metric - lme4 models ==========########
 
@@ -112,47 +112,47 @@ Formula: success ~ study.length + sample.size + analysis2 + lit.type *
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   748.7    805.7   -361.4    722.7      580 
+   746.8    803.8   -360.4    720.8      580 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.475 -0.731 -0.476  0.918  2.493 
+-1.493 -0.731 -0.472  0.902  2.509 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.653    0.808   
+ reference (Intercept) 0.696    0.834   
 Number of obs: 593, groups:  reference, 76
 
 Fixed effects:
                             Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                  -0.3655     1.1786   -0.31    0.757  
-study.length                  0.0281     0.0231    1.22    0.223  
-sample.sizemedium             0.1512     0.3774    0.40    0.689  
-sample.sizesmall             -0.1656     0.3852   -0.43    0.667  
-analysis2multivariate         1.4061     0.8054    1.75    0.081 .
-analysis2univariate           0.8502     0.7491    1.14    0.256  
-lit.typeprimary              -1.4651     0.9791   -1.50    0.135  
-scoremedium                  -0.5340     1.0491   -0.51    0.611  
-scorepoor                    -1.3556     1.0179   -1.33    0.183  
-biased.metricY               -0.0578     0.2569   -0.22    0.822  
-lit.typeprimary:scoremedium   0.1283     1.1144    0.12    0.908  
-lit.typeprimary:scorepoor     0.5896     1.1515    0.51    0.609  
+(Intercept)                  -0.3548     1.2000   -0.30    0.768  
+study.length                  0.0300     0.0235    1.28    0.201  
+sample.sizemedium             0.1781     0.3822    0.47    0.641  
+sample.sizesmall             -0.1738     0.3904   -0.44    0.656  
+analysis2multivariate         1.5201     0.8187    1.86    0.063 .
+analysis2univariate           0.8268     0.7579    1.09    0.275  
+lit.typeprimary              -1.5717     1.0027   -1.57    0.117  
+scoremedium                  -0.5404     1.0720   -0.50    0.614  
+scorepoor                    -1.3620     1.0389   -1.31    0.190  
+biased.metricY               -0.0655     0.2584   -0.25    0.800  
+lit.typeprimary:scoremedium   0.1192     1.1383    0.10    0.917  
+lit.typeprimary:scorepoor     0.6302     1.1738    0.54    0.591  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
                  (Intr) stdy.l smpl.szm smpl.szs anlyss2m anlyss2n lt.typ scrmdm scorpr bsd.mY
 study.lngth      -0.142                                                                       
-sampl.szmdm      -0.232 -0.061                                                                
-smpl.szsmll      -0.157 -0.065  0.353                                                         
-anlyss2mltv      -0.534 -0.067  0.170   -0.050                                                
-anlyss2nvrt      -0.616 -0.017  0.103   -0.098    0.865                                       
-lt.typprmry      -0.699  0.070  0.026    0.155   -0.141    0.015                              
-scoremedium      -0.752 -0.060  0.179    0.178    0.169    0.174    0.755                     
-scorepoor        -0.631  0.036  0.016    0.147   -0.033   -0.038    0.776  0.716              
-biasd.mtrcY      -0.070  0.039  0.037   -0.164    0.092    0.172   -0.098 -0.096 -0.105       
-lt.typprmry:scrm  0.714  0.017 -0.175   -0.157   -0.161   -0.167   -0.786 -0.936 -0.671  0.062
-lt.typprmry:scrp  0.566 -0.080 -0.008   -0.168    0.086    0.034   -0.798 -0.626 -0.883  0.043
+sampl.szmdm      -0.228 -0.055                                                                
+smpl.szsmll      -0.159 -0.069  0.351                                                         
+anlyss2mltv      -0.528 -0.062  0.172   -0.054                                                
+anlyss2nvrt      -0.612 -0.013  0.100   -0.096    0.862                                       
+lt.typprmry      -0.701  0.067  0.021    0.158   -0.146    0.014                              
+scoremedium      -0.753 -0.061  0.175    0.179    0.164    0.171    0.755                     
+scorepoor        -0.635  0.034  0.013    0.148   -0.035   -0.038    0.779  0.718              
+biasd.mtrcY      -0.066  0.042  0.032   -0.166    0.091    0.167   -0.099 -0.097 -0.104       
+lt.typprmry:scrm  0.715  0.017 -0.173   -0.157   -0.158   -0.165   -0.785 -0.936 -0.673  0.063
+lt.typprmry:scrp  0.570 -0.079 -0.006   -0.168    0.087    0.033   -0.799 -0.629 -0.884  0.043
                  lt.typprmry:scrm
 study.lngth                      
 sampl.szmdm                      
@@ -164,7 +164,7 @@ scoremedium
 scorepoor                        
 biasd.mtrcY                      
 lt.typprmry:scrm                 
-lt.typprmry:scrp  0.657          
+lt.typprmry:scrp  0.660          
 
 ########==========  Nuisance variables - set 4 - biased.metric - lme4 models ==========########
 
@@ -175,34 +175,34 @@ Formula: success ~ study.length + sample.size + analysis2 + biased.metric +     
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   748.6    783.6   -366.3    732.6      585 
+   747.0    782.1   -365.5    731.0      585 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.548 -0.722 -0.503  0.944  2.549 
+-1.565 -0.722 -0.496  0.927  2.564 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.863    0.929   
+ reference (Intercept) 0.919    0.959   
 Number of obs: 593, groups:  reference, 76
 
 Fixed effects:
                       Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -1.6895     0.7661   -2.21    0.027 *
-study.length            0.0315     0.0237    1.33    0.184  
-sample.sizemedium       0.2176     0.3803    0.57    0.567  
-sample.sizesmall       -0.1943     0.3937   -0.49    0.622  
-analysis2multivariate   0.9788     0.7383    1.33    0.185  
-analysis2univariate     0.7327     0.7287    1.01    0.315  
-biased.metricY         -0.0855     0.2588   -0.33    0.741  
+(Intercept)            -1.7413     0.7783   -2.24    0.025 *
+study.length            0.0339     0.0242    1.40    0.160  
+sample.sizemedium       0.2403     0.3860    0.62    0.534  
+sample.sizesmall       -0.2021     0.3994   -0.51    0.613  
+analysis2multivariate   1.0442     0.7507    1.39    0.164  
+analysis2univariate     0.7098     0.7375    0.96    0.336  
+biased.metricY         -0.0928     0.2605   -0.36    0.722  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) stdy.l smpl.szm smpl.szs anlyss2m anlyss2n
-study.lngth -0.236                                           
-sampl.szmdm -0.279 -0.044                                    
-smpl.szsmll -0.037 -0.078  0.361                             
-anlyss2mltv -0.897 -0.002  0.126   -0.064                    
-anlyss2nvrt -0.882  0.011  0.073   -0.121    0.893           
-biasd.mtrcY -0.258  0.031  0.028   -0.172    0.099    0.180  
+study.lngth -0.240                                           
+sampl.szmdm -0.282 -0.040                                    
+smpl.szsmll -0.035 -0.082  0.359                             
+anlyss2mltv -0.898  0.003  0.129   -0.066                    
+anlyss2nvrt -0.881  0.014  0.073   -0.119    0.891           
+biasd.mtrcY -0.253  0.033  0.025   -0.173    0.097    0.176  
