@@ -201,7 +201,7 @@ newtemp[,c("log.effect.size","percent.change.effect.size")] <- ""
 
 # remove the original records from the dataset and add these new ones in
 d0.4 <- d0.4[-which(d0.4$reference %in% c("5","10")),]
-d0.4 <- rbind(d0.4, temp)
+d0.4 <- rbind(d0.4, newtemp)
 
 #------------ Add the success/failure/outcome variables --------------
 

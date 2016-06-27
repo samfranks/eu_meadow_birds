@@ -25,7 +25,7 @@ Fixed effects:
             Estimate Std. Error z value Pr(>|z|)  
 (Intercept)   -0.792      0.336   -2.36    0.018 *
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $AE.level
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
@@ -52,7 +52,7 @@ Fixed effects:
 (Intercept)      -1.351      0.355   -3.81  0.00014 ***
 AE.levelhigher    1.245      0.362    3.44  0.00059 ***
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr)
@@ -136,7 +136,7 @@ Fixed effects:
 (Intercept)      -0.898      0.353   -2.54    0.011 *
 grazingreduced   -0.232      0.673   -0.34    0.731  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr)
@@ -195,31 +195,36 @@ Fixed effects:
             Estimate Std. Error z value Pr(>|z|)  
 (Intercept)   -0.641      0.289   -2.22    0.027 *
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $predator.control
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ 1 + (1 | reference) + (1 | species)
+Formula: success ~ predator.control + (1 | reference) + (1 | species)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    55.0     60.2    -24.5     49.0       39 
+    60.0     66.9    -26.0     52.0       38 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--0.982 -0.373 -0.268  0.473  1.409 
+-1.186 -0.652 -0.473  0.843  1.535 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 5.64     2.38    
- species   (Intercept) 2.66     1.63    
+ reference (Intercept) 1.13     1.06    
+ species   (Intercept) 0.00     0.00    
 Number of obs: 42, groups:  reference, 12; species, 5
 
 Fixed effects:
-            Estimate Std. Error z value Pr(>|z|)
-(Intercept)    -2.02       1.78   -1.13     0.26
+                        Estimate Std. Error z value Pr(>|z|)
+(Intercept)               -0.878      0.575   -1.53     0.13
+predator.controlreduced    0.428      1.372    0.31     0.75
+
+Correlation of Fixed Effects:
+            (Intr)
+prdtr.cntrl -0.411
 
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
