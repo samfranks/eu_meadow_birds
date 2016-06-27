@@ -280,14 +280,14 @@ for (i in 1:length(mgmtvars)) {
   }
   
   if (mgmtvars[i]=="mowing") {
-    mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff" | mdat$species=="curlew", "dunlin/ruff/curlew", as.character(mdat$species)) # combine dunlin + ruff + curlew
-    # mdat <- subset(mdat, species!="dunlin" & species!="ruff" & species!="curlew")
+    # mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff" | mdat$species=="curlew", "dunlin/ruff/curlew", as.character(mdat$species)) # combine dunlin + ruff + curlew
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff" & species!="curlew")
     mdat <- subset(mdat, mowing!="applied")
   }
   
   if (mgmtvars[i]=="grazing") {
     # mdat$species <- ifelse(mdat$species=="dunlin" | mdat$species=="ruff", "dunlin/ruff", as.character(mdat$species)) # combine dunlin + ruff since only 1 obs of each
-    mdat <- subset(mdat, species!="dunlin" & species!="ruff")
+    mdat <- subset(mdat, species!="dunlin" & species!="ruff" & species!="curlew")
     # mdat <- subset(mdat, grazing!="reduced")
     # mdat <- subset(mdat, species!="snipe" & species!="curlew")
   }
@@ -304,7 +304,7 @@ for (i in 1:length(mgmtvars)) {
   
   if (mgmtvars[i]=="predator.control") {
     # mdat <- subset(mdat, predator.control!="reduced")
-    # mdat <- subset(mdat, species!="dunlin" & species!="ruff")
+    mdat <- subset(mdat, species!="snipe" & species!="oystercatcher" & species!="redshank")
   }
   
   if (mgmtvars[i]=="water") {
@@ -312,8 +312,8 @@ for (i in 1:length(mgmtvars)) {
     
     mdat <- subset(mdat, water!="reduced")
     # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
-    # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
-    mdat$species <- ifelse(mdat$species=="curlew" | mdat$species=="snipe", "curlew/snipe", as.character(mdat$species))
+    mdat <- subset(mdat, species!="curlew" & species!="snipe")
+    # mdat$species <- ifelse(mdat$species=="curlew" | mdat$species=="snipe", "curlew/snipe", as.character(mdat$species))
   }
   
   mdat <- droplevels(mdat)
@@ -337,12 +337,15 @@ for (i in 1:length(mgmtvars)) {
   # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
   # calculate the dimensions of the covariance matrix for bglmer, based on the dimensions of the covariance matrix from the regular glmer model
   
-  # if (any(checkzeros==0)) {
   vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
   m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
-  # }
+
   
 }
+
+
+# m <- bglmer(success ~ species + lit.type + (1|reference), data=usedat[[1]], family=binomial, fixef.prior = normal(sd=3), control=glmerControl(optimizer="bobyqa"))
+# anova(m,update(m,~.-species))
 
 names(m.ind.sp) <- mgmtvars
 names(m.ind.sp.blme) <- mgmtvars
@@ -377,6 +380,11 @@ saveRDS(m.ind.sp, file=paste(workspacewd, "models_0b_lme4.rds", sep="/"))
 ### Save dataset for 0b models
 saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
 
+
+
+m <- m.ind.sp[[1]]
+m2 <- bglmer(formula = success ~ species + (1 | reference), data = mdat, family = binomial, control = glmerControl(optimizer = "bobyqa"), fixef.prior = normal(cov = matrix(9,6)))
+m2 <- drop1(m, scope = ~species, test="Chisq")
 
 
 #------------------------------ 0c) success of individual management types by metric -------------------------
@@ -417,18 +425,18 @@ for (i in 1:length(mgmtvars)) {
   #     mdat <- subset(mdat, mowing!="applied")
   #   }
   
-  if (mgmtvars[i]=="grazing") {
-    mdat <- subset(mdat, new.metric!="abundance change")
-  }
+#   if (mgmtvars[i]=="grazing") {
+#     mdat <- subset(mdat, new.metric!="abundance change")
+#   }
   
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, fertpest!="applied")
-    mdat <- subset(mdat, new.metric!="occupancy")
+    # mdat <- subset(mdat, new.metric!="occupancy")
   }
 
   if (mgmtvars[i]=="water") {
     # mdat <- subset(mdat, water!="reduced")
-    mdat <- subset(mdat, new.metric!="abundance change" & new.metric!="occupancy")
+    # mdat <- subset(mdat, new.metric!="abundance change" & new.metric!="occupancy")
     # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
     # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
     # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))

@@ -200,31 +200,26 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 $predator.control
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ predator.control + (1 | reference) + (1 | species)
+Formula: success ~ 1 + (1 | reference) + (1 | species)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    60.0     66.9    -26.0     52.0       38 
+    55.0     60.2    -24.5     49.0       39 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.186 -0.652 -0.473  0.843  1.535 
+-0.982 -0.373 -0.268  0.473  1.409 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.13     1.06    
- species   (Intercept) 0.00     0.00    
+ reference (Intercept) 5.64     2.38    
+ species   (Intercept) 2.66     1.63    
 Number of obs: 42, groups:  reference, 12; species, 5
 
 Fixed effects:
-                        Estimate Std. Error z value Pr(>|z|)
-(Intercept)               -0.878      0.575   -1.53     0.13
-predator.controlreduced    0.428      1.372    0.31     0.75
-
-Correlation of Fixed Effects:
-            (Intr)
-prdtr.cntrl -0.411
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)    -2.02       1.78   -1.13     0.26
 
 $water
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']

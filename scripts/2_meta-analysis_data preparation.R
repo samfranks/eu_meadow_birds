@@ -92,8 +92,8 @@ dat$high.int.used <- with(dat, ifelse(AE.level=="none" & reserve.desig=="none", 
 
 
 ### Identify abundance change studies ###
-
-dat$new.metric <- with(dat, ifelse(dat$overall.metric=="abundance change", "abundance change", metric))
+# dat$new.metric <- with(dat, ifelse(dat$overall.metric=="abundance change", "abundance change", metric))
+dat$new.metric <- with(dat, ifelse(dat$overall.metric=="abundance" | dat$overall.metric=="occupancy", "abundance/occupancy", ifelse(dat$overall.metric=="abundance change" | dat$overall.metric=="occupancy change", "abundance/occupancy change", metric)))
 
 ### Identify abundance/occupancy studies ###
 dat$biased.metric <- with(dat, ifelse(dat$overall.metric=="abundance" | dat$overall.metric=="occupancy", "Y", "N"))
