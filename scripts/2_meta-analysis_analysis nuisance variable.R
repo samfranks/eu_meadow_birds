@@ -75,6 +75,19 @@ source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
 
 #================================== Test effect of nuisance variables on success for the full dataset ===========================
 
+vars <- c("study.length","sample.size","analysis2","lit.type","score","biased.metric")
+
+m.global <- glmer(success ~ study.length + sample.size + analysis2 + lit.type + score + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+
+m <- list()
+for (i in 1:length(vars)) {
+  m[[i]] <- drop1(m.global, scope = as.formula(paste("~", vars[i], sep="")), test="Chisq")
+}
+
+
+m.nui0 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.nui0)
+
 m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.nui1)
 
@@ -90,6 +103,15 @@ summary(m.nui4)
 setwd(outputwd)
 sink(paste("model output_nuisance variables.txt", sep=" "))
 
+cat("\n########==========  Nuisance variables - Likelihood ratio tests for each variable in global model ==========########\n", sep="\n")
+print(summary(m.global))
+
+cat("\n###---  Likelihood Ratio Tests ---###\n", sep="\n")
+print(m)
+
+cat("\n########==========  Nuisance variables - set 0 - lit.type - lme4 models ==========########\n", sep="\n")
+print(summary(m.nui0))
+
 cat("\n########==========  Nuisance variables - set 1 - lit.type*score - lme4 models ==========########\n", sep="\n")
 print(summary(m.nui1))
 
@@ -104,7 +126,7 @@ print(summary(m.nui4))
 
 sink()
 
-# significance is given by Wald Z tests (default for summary.glmer())
+# significance is given by Wald t tests (default for summary.glmer())
 # only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
 # primary literature study is more likely to be unsuccessful than successful
 # controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis

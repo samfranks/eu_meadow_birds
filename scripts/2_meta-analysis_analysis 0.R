@@ -73,50 +73,9 @@ source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
 
 
 
-#================================== Test effect of nuisance variables on success for the full dataset ===========================
 
-m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui1)
 
-m.nui2 <- glmer(success ~ study.length + sample.size + analysis2 + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui2)
-
-m.nui3 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui3)
-
-m.nui4 <- glmer(success ~ study.length + sample.size + analysis2 + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui4)
-
-setwd(outputwd)
-sink(paste("model output_nuisance variables.txt", sep=" "))
-
-cat("\n########==========  Nuisance variables - set 1 - lit.type*score - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui1))
-
-cat("\n########==========  Nuisance variables - set 2 - score - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui2))
-
-cat("\n########==========  Nuisance variables - set 3 - lit.type*score + biased.metric - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui3))
-
-cat("\n########==========  Nuisance variables - set 4 - biased.metric - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui4))
-
-sink()
-
-# significance is given by Wald Z tests (default for summary.glmer())
-# only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
-# primary literature study is more likely to be unsuccessful than successful
-# controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
-# including score only, it's not significant
-# including a variable "biased metric" which includes the abundance/occupancy problem suggests no different in success between unbiased vs biased metrics
-
-# proportion of scores for each literature type
-#             good   medium     poor
-# grey    0.224299 0.485981 0.289720
-# primary 0.405350 0.465021 0.129630
-
-#=================================  ANALYSIS  1 ===============================
+#=================================  ANALYSIS  0 ===============================
 
 # Analysis evaluates whether one or several management interventions has a significantly positive outcome (i.e. is successful) compared to the baseline reference situation (which in most cases is no management)
 # reference level for all interventions is 'none', so management (either applied or reduced, depending on the intervention) is evaluated against the reference
