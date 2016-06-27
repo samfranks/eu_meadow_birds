@@ -182,8 +182,27 @@ d0.4$metric <- ifelse(grepl("productivity", d0.4$overall.metric), "productivity"
 
 temp <- d0.4[d0.4$reference=="5" | d0.4$reference=="10",]
 
+newtemp <- temp
+
+# change predator control to applied
+newtemp$predator.control <- "applied"
+
+# change positives to negatives and vice versa
+newtemp$effect.dir <- ifelse(newtemp$effect.dir=="positive","negative","positive")
+
+newtemp$metric.before <- temp$metric.after
+newtemp$metric.after <- temp$metric.before
+newtemp$stan.metric.before <- temp$stan.metric.after
+newtemp$stan.metric.after <- temp$stan.metric.before
+newtemp$stan.effect.size <- (newtemp$stan.metric.after - newtemp$stan.metric.before)/abs(newtemp$stan.metric.before)
+
+newtemp[,c("log.effect.size","percent.change.effect.size")] <- ""
+
+
 # remove all metric calculations from these records so there is no confusion
 temp[,c("metric.before","metric.after","stan.metric.before","stan.metric.after","stan.effect.size","log.effect.size","percent.change.effect.size")] <- ""
+
+
 
 # change predator control to applied
 temp[,"predator.control"] <- "applied"
