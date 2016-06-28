@@ -10,6 +10,6 @@
 "fertpest","(Intercept)","-3.569","2.67","0.18099"
 "fertpest","fertpestreduced"," 4.161","3.56","0.24254"
 "nest.protect","(Intercept)","-0.641","0.29","0.02650"
-"predator.control","(Intercept)","-2.018","1.78","0.25803"
+"predator.control","(Intercept)","-2.018","1.78","0.25804"
 "water","(Intercept)","-0.323","0.62","0.60125"
-"water","waterreduced","-1.607","1.18","0.17157"
+"water","waterreduced","-1.607","1.18","0.17158"

@@ -31,7 +31,7 @@ lapply(list.of.packages, library, character.only=TRUE)
 # this easy method produces similar width CIs to using the bootMer function in lme4, perhaps slightly wider CIs in some cases
 
 # can change to alpha=0.16, approximately equal to 84% CIs
-easyPredCI <- function(model,newdata,alpha=alphalevel) {
+easyPredCI <- function(model,newdata,alpha=0.05) {
   
   ## baseline prediction, on the linear predictor (logit) scale:
   pred0 <- predict(model,re.form=NA,newdata=newdata)
@@ -151,7 +151,7 @@ sink()
 saveRDS(m.high, file=paste(workspacewd, "models_2a_method 1.rds", sep="/"))
 
 ### Save dataset for 0b models
-saveRDS(mdat, file=paste(workspacewd, "model dataset_2a_method 2.rds", sep="/"))
+saveRDS(mdat, file=paste(workspacewd, "model dataset_2a_method 1.rds", sep="/"))
 
 
 ####---- Run AE*nature reserve models where none/none categories are included ----####
@@ -160,6 +160,8 @@ saveRDS(mdat, file=paste(workspacewd, "model dataset_2a_method 2.rds", sep="/"))
 # i.e. is success of AE applied-reserve applied greater than AE applied-reserve none or AE none-reserve applied? (we don't really care about AE none-reserve none)
 
 mdat <- subset(dat, species!="ruff")
+mdat <- droplevels(mdat)
+
 m.high <- glmer(success ~ AE*reserve.desig + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.high)
 
@@ -220,6 +222,19 @@ sink(paste("model output_2b.txt", sep=" "))
 cat("\n########==========  Success of specific interventions combined ==========########\n", sep="\n")
 print(summary(m.spec))
 
+cat("\n###----  Significance of each intervention (in the presence of others)  ---###\n", sep="\n")
+print(drop1(m.spec, scope = ~mowing, test="Chisq"))
+cat("\n")
+print(drop1(m.spec, scope = ~grazing, test="Chisq"))
+cat("\n")
+print(drop1(m.spec, scope = ~fertpest, test="Chisq"))
+cat("\n")
+print(drop1(m.spec, scope = ~nest.protect, test="Chisq"))
+cat("\n")
+print(drop1(m.spec, scope = ~predator.control, test="Chisq"))
+cat("\n")
+print(drop1(m.spec, scope = ~water, test="Chisq"))
+
 sink()
 
 ### Save individual interventions models
@@ -230,166 +245,57 @@ saveRDS(mdat, file=paste(workspacewd, "model dataset_2b.rds", sep="/"))
 
 
 
-# #-----------------   HIGH-LEVEL INTERVENTION SUCCESS by metric  ------------------
-# 
-# mdat <- subset(dat, high.int.used==1)
-# 
-# mdat <- subset(mdat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="productivity")
-# mdat <- droplevels(mdat)
-# 
-# newlevels <- data.frame(unique(mdat[,c("AE.level","reserve.desig")]), AE.reserve=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
-# mdat <- merge(mdat, newlevels, by=c("AE.level","reserve.desig"))
-# mdat$AE.reserve <- relevel(mdat$AE.reserve, ref="no AE-reserve")
-# 
-# m.high.metric <- lme(success ~ AE.reserve*new.metric + species, random = ~1|reference, data=mdat)
-# 
-# summary(m.high.metric)
-# 
-# setwd(outputwd)
-# sink(paste("model output_2c.txt", sep=" "))
-# cat("\n########==========  Success of higher-level interventions combined, by metric ==========########\n", sep="\n")
-# print(summary(m.high.metric))
-# 
-# sink()
-# 
-# ### Save individual interventions models
-# saveRDS(m.high.metric, file=paste(workspacewd, "models_2c.rds", sep="/"))
-# 
-# ### Save dataset for 0b models
-# saveRDS(mdat, file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
-# 
-# # had to remove productivity from the metrics evaluated because of singularities in model
-
-#-----------------   HIGH-LEVEL INTERVENTION SUCCESS by habitat  ------------------
-
-out <- list()
-for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
-}
-names(out) <- mgmtvars
-out
-
-# $AE
-# 
-# none applied
-# arable       55      46
-# pastoral    205     208
-# unenclosed   71       8
-# 
-# $AE.level
-# 
-# none basic higher
-# arable       55    11     35
-# pastoral    205   132     76
-# unenclosed   71     8      0
-# 
-# $reserve.desig
-# 
-# none applied
-# arable      101       0
-# pastoral    274     139
-# unenclosed   59      20
-
-# m.high.hab <- lme(success ~ AE*newhabitat + reserve.desig*newhabitat + species, random = ~1|reference, data=dat)
-
-##### model doesn't run because of singularities (probably due to low-no unenclosed habitats using AES and no arable habitats in reserves) ####
-
-#-----------------   SPECIFIC INTERVENTION SUCCESS by metric  ------------------
-
-##### model doesn't run because of singularities  ####
-
-# # remove categories with too few records, which make the model collapse
-# mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="occupancy" & new.metric!="abundance change")
-# mdat <- subset(mdat, grazing!="reduced" & mowing!="reduced" & fertpest!="applied" & water!="reduced")
-# 
-# # subset data to only use records where specific interventions were tested
-# mdat <- subset(mdat, spec.int.used==1)
-# mdat <- droplevels(mdat)
-# 
-# 
-# # identify which categories have low numbers
-# out <- list()
-# for(i in 1:length(mgmtvars)) {
-#   out[[i]] <- table(mdat$new.metric, mdat[,mgmtvars[i]])
-# }
-# names(out) <- mgmtvars
-# out
-# 
-# # m.spec.metric <- lme(success ~ new.metric*mowing + new.metric*grazing + new.metric*fertpest + new.metric*nest.protect + new.metric*predator.control + new.metric*water + species, random = ~1|reference, data=mdat)
 
 
 
-
-#-----------------   SPECIFIC INTERVENTION SUCCESS by habitat  ------------------
-
-##### model doesn't run because of singularities ####
-
-
-#=================================  PLOT OUTPUTS - ANALYSIS  2 ===============================
+#=================================  PLOT OUTPUTS  ===============================
 
 setwd(outputwd)
 
 
-### Read individual interventions models
-m.high <- readRDS(file=paste(workspacewd, "models_2a.rds", sep="/"))
-m.spec <- readRDS(file=paste(workspacewd, "models_2b.rds", sep="/"))
-m.high.metric <- readRDS(file=paste(workspacewd, "models_2c.rds", sep="/"))
-
-### Read dataset
-dat.high <- readRDS(file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
-dat.spec <- readRDS(file=paste(workspacewd, "model dataset_2b.rds", sep="/"))
-dat.high.metric <- readRDS(file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
-
-
-#-------------  HIGHER LEVEL INTERVENTIONS  -------------#
+#-------------  HIGHER LEVEL INTERVENTIONS - METHOD 1 -------------
 
 ###----  Produce plotting dataset predictions ----###
 
-plotmod <- m.high # model to plot results
-origdat <- dat.high # original dataset
+# Model
+plotmod <- readRDS(file=paste(workspacewd, "models_2a_method 1.rds", sep="/")) # model to plot results
+# Model dataset
+origdat <- readRDS(file=paste(workspacewd, "model dataset_2a_method 1.rds", sep="/")) # original dataset
 
 unique.mgmtvars <- unique(origdat$AE.reserve)
 
 newdat <- data.frame(AE.reserve=rep(unique.mgmtvars, times=length(levels(origdat$species))), species=rep(levels(origdat$species), each=length(unique.mgmtvars)))
 
-newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
-
-Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
-predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
-newdat$SE <- sqrt(predvar)
-newdat$lwr <- newdat$pred - (1.96*newdat$SE)
-newdat$upr <- newdat$pred + (1.96*newdat$SE)
-newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
-
-fits <- newdat[,c("AE.reserve","species","pred","SE","lwr","upr")]
-fits <- unique(fits)
+pred <- predict(plotmod, newdat, type="response", re.form=NA)
+pred.CI <- easyPredCI(plotmod, newdat)
+fits <- data.frame(newdat, pred, pred.CI)
 
 # produce mean population level prediction for interventions across species
-sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(AE.reserve=fits$AE.reserve), mean)
+sum.fits <- aggregate(fits[,c("pred","lwr","upr")], by=list(AE.reserve=fits$AE.reserve), mean)
 
 plotdat <- sum.fits
-
-plotdat <- merge(plotdat, unique(origdat[,c("AE.level","reserve.desig","AE.reserve")]), by="AE.reserve")
-plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE.level),]
+plotdat <- merge(plotdat, unique(origdat[,c("AE","reserve.desig","AE.reserve")]), by="AE.reserve")
+plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
 
 ###---- Output plot ----###
 
-setwd(outputwd)
-png("2a_high level combination intervention success.png", res=300, height=12, width=15, units="in", pointsize=20)
+png("2a_high level combination intervention success_method 1.png", res=300, height=12, width=12, units="in", pointsize=20)
 
 par(mar=c(6,6.5,2,3))
 
 x <- c(1:nrow(plotdat))
 
-plotdat$pch <- c(1,2,15,16,17)
+plotdat$pch <- c(16,16,16)
+# plotdat$pch <- c(1,2,15,16,17)
 
-plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(-0.2,1.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
+plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(0,1), xlim=c(0.8,3.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
 arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
 arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
 abline(h=0.05, lty=3, lwd=2)
 # axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
 axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
-text(x, par("usr")[3]*1.2, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES\n no nature reserve","higher-level AES\n no nature reserve", "no AES \n nature reserve", "basic-level AES\n nature reserve", "higher-level AES\n nature reserve"), cex=1)
+text(x, par("usr")[3]*2, srt = 0, pos=1, xpd = TRUE, labels=c("AES only","nature reserve only", "AES + nature reserve"), cex=1)
+# text(x, par("usr")[3]*1.2, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES\n no nature reserve","higher-level AES\n no nature reserve", "no AES \n nature reserve", "basic-level AES\n nature reserve", "higher-level AES\n nature reserve"), cex=1)
 # text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
 # text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
 title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
@@ -399,31 +305,217 @@ dev.off()
 
 
 
-#-------------  SPECIFIC INTERVENTIONS  -------------#
+#-------------  HIGHER LEVEL INTERVENTIONS - METHOD 2 -------------
 
 ###----  Produce plotting dataset predictions ----###
 
-plotmod <- m.spec # model to plot results
-origdat <- dat.spec # original dataset
+# Model
+plotmod <- readRDS(file=paste(workspacewd, "models_2a_method 2.rds", sep="/")) # model to plot results
+# Model dataset
+origdat <- readRDS(file=paste(workspacewd, "model dataset_2a_method 2.rds", sep="/")) # original dataset
+
+unique.mgmtvars <- unique(origdat[,c("AE","reserve.desig")])
+
+newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+
+pred <- predict(plotmod, newdat, type="response", re.form=NA)
+pred.CI <- easyPredCI(plotmod, newdat)
+fits <- data.frame(newdat, pred, pred.CI)
+
+# produce mean population level prediction for interventions across species
+sum.fits <- aggregate(fits[,c("pred","lwr","upr")], by=list(AE=fits$AE, reserve.desig=fits$reserve.desig), mean)
+
+plotdat <- sum.fits
+plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
+plotdat <- plotdat[-1,]
+
+###---- Output plot ----###
+
+setwd(outputwd)
+png("2a_high level combination intervention success_method 2.png", res=300, height=12, width=12, units="in", pointsize=20)
+
+par(mar=c(6,6.5,2,3))
+
+x <- c(1:nrow(plotdat))
+
+plotdat$pch <- c(16,16,16)
+# plotdat$pch <- c(1,2,15,16,17)
+
+plot(plotdat$pred~x, pch=plotdat$pch, cex=1.5, ylim=c(0,1), xlim=c(0.8,3.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2)
+# axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+text(x, par("usr")[3]*2, srt = 0, pos=1, xpd = TRUE, labels=c("AES only","nature reserve only", "AES + nature reserve"), cex=1)
+# text(x, par("usr")[3]*2, srt = 0, pos=1, xpd = TRUE, labels=c("no AES or reserves","AES only","nature reserve only", "AES + nature reserve"), cex=1)
+# text(x, par("usr")[3]*1.2, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES\n no nature reserve","higher-level AES\n no nature reserve", "no AES \n nature reserve", "basic-level AES\n nature reserve", "higher-level AES\n nature reserve"), cex=1)
+# text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
+# text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
+title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+title(xlab="Intervention combination", cex.lab=1.5, font=2, line=4.5)
+
+dev.off()
+
+
+#-------------  SPECIFIC INTERVENTIONS - main intervention effects -------------#
+
+###----  Produce plotting dataset predictions ----###
+
+### Read model
+plotmod <- readRDS(file=paste(workspacewd, "models_2b.rds", sep="/"))
+# Read model dataset
+origdat <- readRDS(file=paste(workspacewd, "model dataset_2b.rds", sep="/")) # original dataset
+
+unique.mgmtvars <- unique(origdat[,mgmtvars[4:9]]) # unique combination of mgmtvars appearing in the original dataset
+
+# unique.mgmtvars <- data.frame(mowing=c("applied","reduced","none","none","none","none","none","none","none"), grazing=c("none","none","applied","reduced","none","none","none","none","none"), fertpest=c("none","none","none","none","applied","reduced","none","none","none"), nest.protect=c("none","none","none","none","none","none","applied","none","none"), predator.control=c("none","none","none","none","none","none","none","applied","none"), water=c("none","none","none","none","none","none","none","none","water"))
+
+newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
+
+pred <- predict(plotmod, newdat, type="response", re.form=NA)
+pred.CI <- easyPredCI(plotmod, newdat)
+fits <- data.frame(newdat, pred, pred.CI)
+
+# produce mean population level prediction for all intervention combinations across species
+sum.fits <- aggregate(fits[,c("pred","lwr","upr")], by=list(mowing=fits$mowing, grazing=fits$grazing, fertpest=fits$fertpest, nest.protect=fits$nest.protect, predator.control=fits$predator.control, water=fits$water), mean)
+plotdat <- sum.fits
+plotdat <- plotdat[order(plotdat$mowing, plotdat$grazing, plotdat$fertpest, plotdat$nest.protect, plotdat$predator.control, plotdat$water),]
+
+# count up number of interventions applied at once and add sum to plotdat
+interventions.only <- plotdat[,1:6]
+num.interventions <- ifelse(interventions.only=="none",0,1)
+num.interventions.sum <- apply(num.interventions, 1, sum)
+
+plotdat <- data.frame(plotdat, num.interventions.sum)
+
+# add variable showing whether success is 'significant' (i.e. lwr does not overlap 0.05)
+plotdat$sig <- ifelse(plotdat$lwr > 0.05, "Y", "N")
+
+# order by 'significance' and magnitude of success
+plotdat <- plotdat[order(plotdat$sig, plotdat$pred),]
+
+saveRDS(plotdat, file=paste(workspacewd, "2b_all combinations plotting dataset.rds", sep="/"))
+
+
+# produce overall effect of intervention level, averaged across predicted values of other intervention levels, and also averaged across all species
+avg.fits <- list()
+for (i in 1:6) {
+  temp <- aggregate(sum.fits[,c("pred","lwr","upr")], by=list(level=sum.fits[,i]), mean)
+  temp <- data.frame(temp, intervention=names(sum.fits[i]))
+  avg.fits[[i]] <- temp[-which(temp[,1]=="none"),]
+}
+plotdat <- do.call(rbind, avg.fits)
+
+saveRDS(plotdat, file=paste(workspacewd, "2b_average intervention plotting dataset.rds", sep="/"))
+write.csv(plotdat, "2b_average intervention probabilities and CIs.csv", row.names=FALSE)
+
+
+
+###---- Output plot - combination effects ----###
+
+setwd(outputwd)
+png("2b_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
+
+par(mfrow=c(2,1))
+
+par(mar=c(1,8,1,2))
+
+plotdat <- readRDS(file=paste(workspacewd, "2b_all combinations plotting dataset.rds", sep="/"))
+
+x <- c(1:nrow(plotdat))-0.5 # gives an x axis to plot against
+
+plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(1,26))
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05) # add error bars, lwr and upr to each prediction
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2) # add a 'significance' line (what is the threshold for 'success'?)
+abline(v=max(which(plotdat$sig=="N")), lty=3, lwd=2) # add a line dividing 'successful' vs 'unsuccessful' intervention combos
+title(xlab="Intervention combination", cex.lab=1.5, font=2, line=0, xpd=TRUE)
+title(ylab="Predicted probability of success \n (significant positive impact) ", cex.lab=1.5, font=2, line=3)
+
+
+### Create a 'table' of intervention combinations to display below the plot showing the predicted success ###
+
+y <- length(mgmtvars[4:9]):1 # how many interventions there are (will be labels down the y-axis of the table starting at the top and working down)
+
+# create the table of coordinates for the table (centres of the grid cells for the table), which is 28 across (the number of different intervention combinations) x 6 down (the number of types of interventions)
+x <- c(1:nrow(plotdat))
+new.x <- rep(x, each=max(y))
+new.y <- rep(y, times=max(x))
+tab <- data.frame(x=new.x,y=new.y)
+tab <- tab[order(tab$y, decreasing=TRUE),]
+labs <- plotdat[,1:6]
+
+labs.long <- gather(labs, intervention, level, mowing:water) # convert the interventions from wide to long format using tidyr
+
+# merge the table of x,y coordinates with the intervention labels
+# replace all levels of 'none' with a blank
+tab.filled <- data.frame(tab, labs.long)
+tab.filled[4] <- apply(tab.filled[4], 2, function(x) {
+  gsub("none", "", x)
+})
+
+# create a dataframe with x,y coordinates for the locations of the total number of interventions used
+total.interventions <- data.frame(x, y=rep(0, times=length(x)), intervention=rep("", length(x)), sum=plotdat$num.interventions.sum)
+
+# set up the plot of the 'table'
+par(mar=c(1,8,1,2)) # give a big left margin to write the intervention names; margin for above plot needs to be exactly the same so everything lines up
+plot(tab, type="n", bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(0.2,6.8), xlim=c(1,26)) # plot a completely blank plot, with ylims and xlims only (will draw the table using abline; use exactly the same xlims as the actual data plot above so that everything lines up
+abline(v=c(min(x)-1,x,max(x)), h=c(7,y,0), lty=1) # draw the lines of the table (really the 'inner lines'), but adding 1 extra to each of top, bottom and sides to complete the outline of the table (otherwise will be inner lines only)
+abline(v=max(which(plotdat$sig=="N")), lty=1, lwd=4) # thick line showing division between 'successful' and 'unsuccessful' combinations of interventions
+axis(2, y+0.5, labels=c("mowing","grazing","fertiliser/\npesticides", "nest protection","predator control", "water"), las=1, cex.axis=1, font=2,tick=FALSE) # draw the labels for the rows, from top to bottom
+text(tab$x-0.5, tab$y+0.5, labels=ifelse(tab.filled$level=="applied", "\U2191", ifelse(tab.filled$level=="reduced", "\U2193", tab.filled$level)), cex=2) # fill in the values of the grid cells, but if an intervention was applied then use a unicode 'up' arrow, and if it was reduced than use a down arrow
+text(tab$x-0.5, 0.5, labels=total.interventions$sum, cex=1) # add the total number of interventions to the bottom 'row' of the table
+
+
+dev.off()
+
+
+
+###---- Output plot - averaged effects ----###
+
+setwd(outputwd)
+png("2b_specific combination intervention success_average.png", res=300, height=12, width=26, units="in", pointsize=20)
+
+plotdat <- readRDS(file=paste(workspacewd, "2b_average intervention plotting dataset.rds", sep="/"))
+
+par(mar=c(6,6,1,2))
+
+x <- c(1:nrow(plotdat)) # gives an x axis to plot against
+
+plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n")
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05) # add error bars, lwr and upr to each prediction
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2)
+axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+text(x, par("usr")[3]*2, srt = 0, pos=1, xpd = TRUE, labels=c("mowing \napplied","mowing \nreduced","grazing \napplied","grazing \nreduced","fertiliser/pesticides \napplied","fertiliser/pesticides \nreduced","nest protection \napplied","predator control \napplied","water \napplied", "water \nreduced"), cex=1)
+title(xlab="Intervention (controlling for other interventions used)", cex.lab=1.5, font=2, line=4, xpd=TRUE)
+title(ylab="Predicted probability of success \n (significant positive impact) ", cex.lab=1.5, font=2, line=3)
+
+dev.off()
+
+
+
+
+#-------------  SPECIFIC INTERVENTIONS - combination intervention effects -------------#
+
+###----  Produce plotting dataset predictions ----###
+
+### Read model
+plotmod <- readRDS(file=paste(workspacewd, "models_2b.rds", sep="/"))
+# Read model dataset
+origdat <- readRDS(file=paste(workspacewd, "model dataset_2b.rds", sep="/")) # original dataset
 
 unique.mgmtvars <- unique(origdat[,mgmtvars[4:9]]) # unique combination of mgmtvars appearing in the original dataset
 
 newdat <- data.frame(unique.mgmtvars[rep(seq_len(nrow(unique.mgmtvars)), times=length(levels(origdat$species))),], species=rep(levels(origdat$species), each=nrow(unique.mgmtvars)))
 
-newdat$pred <- as.numeric(predict(plotmod, level=0, newdat))
-
-Designmat <- model.matrix(eval(eval(plotmod$call$fixed)[-2]), newdat[-which(names(newdat) %in% "pred")])
-predvar <- diag(Designmat %*% plotmod$varFix %*% t(Designmat))
-newdat$SE <- sqrt(predvar)
-newdat$lwr <- newdat$pred - (1.96*newdat$SE)
-newdat$upr <- newdat$pred + (1.96*newdat$SE)
-newdat$SE2 <- sqrt(predvar + plotmod$sigma^2)
-
-fits <- newdat
-fits <- unique(fits)
+pred <- predict(plotmod, newdat, type="response", re.form=NA)
+pred.CI <- easyPredCI(plotmod, newdat)
+fits <- data.frame(newdat, pred, pred.CI)
 
 # produce mean population level prediction for interventions across species
-sum.fits <- aggregate(fits[,c("pred","SE","lwr","upr")], by=list(mowing=fits$mowing, grazing=fits$grazing, fertpest=fits$fertpest, nest.protect=fits$nest.protect, predator.control=fits$predator.control, water=fits$water), mean)
+sum.fits <- aggregate(fits[,c("pred","lwr","upr")], by=list(mowing=fits$mowing, grazing=fits$grazing, fertpest=fits$fertpest, nest.protect=fits$nest.protect, predator.control=fits$predator.control, water=fits$water), mean)
 
 plotdat <- sum.fits
 # plotdat <- plotdat[order(plotdat$mowing, plotdat$grazing, plotdat$fertpest, plotdat$nest.protect, plotdat$predator.control, plotdat$water),]
@@ -576,3 +668,108 @@ dev.off()
 
 
 
+
+######################################################
+######################################################
+######################################################
+######################################################
+######################################################
+######################################################
+######################################################
+######################################################
+
+
+
+# #-----------------   HIGH-LEVEL INTERVENTION SUCCESS by metric  ------------------
+# 
+# mdat <- subset(dat, high.int.used==1)
+# 
+# mdat <- subset(mdat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="productivity")
+# mdat <- droplevels(mdat)
+# 
+# newlevels <- data.frame(unique(mdat[,c("AE.level","reserve.desig")]), AE.reserve=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
+# mdat <- merge(mdat, newlevels, by=c("AE.level","reserve.desig"))
+# mdat$AE.reserve <- relevel(mdat$AE.reserve, ref="no AE-reserve")
+# 
+# m.high.metric <- lme(success ~ AE.reserve*new.metric + species, random = ~1|reference, data=mdat)
+# 
+# summary(m.high.metric)
+# 
+# setwd(outputwd)
+# sink(paste("model output_2c.txt", sep=" "))
+# cat("\n########==========  Success of higher-level interventions combined, by metric ==========########\n", sep="\n")
+# print(summary(m.high.metric))
+# 
+# sink()
+# 
+# ### Save individual interventions models
+# saveRDS(m.high.metric, file=paste(workspacewd, "models_2c.rds", sep="/"))
+# 
+# ### Save dataset for 0b models
+# saveRDS(mdat, file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
+# 
+# # had to remove productivity from the metrics evaluated because of singularities in model
+
+# #-----------------   HIGH-LEVEL INTERVENTION SUCCESS by habitat  ------------------
+# 
+# out <- list()
+# for(i in 1:length(mgmtvars)) {
+#   out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
+# }
+# names(out) <- mgmtvars
+# out
+#
+# $AE
+# 
+# none applied
+# arable       55      46
+# pastoral    205     208
+# unenclosed   71       8
+# 
+# $AE.level
+# 
+# none basic higher
+# arable       55    11     35
+# pastoral    205   132     76
+# unenclosed   71     8      0
+# 
+# $reserve.desig
+# 
+# none applied
+# arable      101       0
+# pastoral    274     139
+# unenclosed   59      20
+
+# m.high.hab <- lme(success ~ AE*newhabitat + reserve.desig*newhabitat + species, random = ~1|reference, data=dat)
+
+##### model doesn't run because of singularities (probably due to low-no unenclosed habitats using AES and no arable habitats in reserves) ####
+
+#-----------------   SPECIFIC INTERVENTION SUCCESS by metric  ------------------
+
+##### model doesn't run because of singularities  ####
+
+# # remove categories with too few records, which make the model collapse
+# mdat <- subset(dat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="occupancy" & new.metric!="abundance change")
+# mdat <- subset(mdat, grazing!="reduced" & mowing!="reduced" & fertpest!="applied" & water!="reduced")
+# 
+# # subset data to only use records where specific interventions were tested
+# mdat <- subset(mdat, spec.int.used==1)
+# mdat <- droplevels(mdat)
+# 
+# 
+# # identify which categories have low numbers
+# out <- list()
+# for(i in 1:length(mgmtvars)) {
+#   out[[i]] <- table(mdat$new.metric, mdat[,mgmtvars[i]])
+# }
+# names(out) <- mgmtvars
+# out
+# 
+# # m.spec.metric <- lme(success ~ new.metric*mowing + new.metric*grazing + new.metric*fertpest + new.metric*nest.protect + new.metric*predator.control + new.metric*water + species, random = ~1|reference, data=mdat)
+
+
+
+
+#-----------------   SPECIFIC INTERVENTION SUCCESS by habitat  ------------------
+
+##### model doesn't run because of singularities ####

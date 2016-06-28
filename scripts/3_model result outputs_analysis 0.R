@@ -12,11 +12,11 @@ set.seed(2)
 #=================================  SET LOGIC STATEMENTS  ====================
 
 # default to plot when all are FALSE is results from overall analysis (0a)
-species <- FALSE # plot the species-specific model results (0b)
+species <- TRUE # plot the species-specific model results (0b)
 metric <- FALSE # plot the metric-specific model results (0c)
 habitat <- FALSE # plot the habitat-specific model results (0d)
 
-bias <- TRUE
+bias <- FALSE
 
 alphalevel <- 0.05
 successlevel <- 0.05

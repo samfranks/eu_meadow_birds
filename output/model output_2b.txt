@@ -77,3 +77,59 @@ specislpwng  0.273
 spcsystrctc  0.200  0.581              
 specsrdshnk  0.241  0.682  0.551       
 speciessnip  0.152  0.476  0.364  0.422
+
+###----  Significance of each intervention (in the presence of others)  ---###
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
+    water + species + (1 | reference)
+       Df   AIC   LRT Pr(Chi)
+<none>    434.1              
+mowing  2 431.2 1.045   0.593
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
+    water + species + (1 | reference)
+        Df   AIC   LRT Pr(Chi)
+<none>     434.1              
+grazing  2 430.7 0.547   0.761
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
+    water + species + (1 | reference)
+         Df   AIC   LRT Pr(Chi)
+<none>      434.1              
+fertpest  2 432.8 2.645   0.266
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
+    water + species + (1 | reference)
+             Df   AIC   LRT Pr(Chi)
+<none>          434.1              
+nest.protect  1 433.0 0.903   0.342
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
+    water + species + (1 | reference)
+                 Df   AIC    LRT Pr(Chi)
+<none>              434.1               
+predator.control  1 432.4 0.2266   0.634
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
+    water + species + (1 | reference)
+       Df   AIC   LRT Pr(Chi)
+<none>    434.1              
+water   2 433.2 3.076   0.215
