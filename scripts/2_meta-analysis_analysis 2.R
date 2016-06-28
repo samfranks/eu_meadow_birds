@@ -102,38 +102,93 @@ source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
 
 #-----------------   HIGH-LEVEL INTERVENTION SUCCESS  ------------------
 
+####---- Run models using only those records which evaluate either AES and/or nature reserves ----####
+# this tells us the probability of success IF THESE INTERVENTIONS WERE ATTEMPTED (subtly different than below, which tells us the probability of success if they were used vs not used)
+# structured the data to combine AE and reserves into a single variable because otherwise lack of the none/none category produces rank deficiency in the model and it drops a coefficient
+
+# > table(mdat$AE,mdat$reserve.desig)
+# 
+# none applied
+# none       0      87
+# applied  190      72
+
 mdat <- subset(dat, high.int.used==1)
+mdat <- subset(mdat, species!="ruff" & species!="dunlin")
 mdat <- droplevels(mdat)
 
-newlevels <- data.frame(unique(mdat[,c("AE.level","reserve.desig")]), AE.reserve=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
+newlevels <- data.frame(AE=c("applied","none","applied"), reserve.desig=c("none","applied","applied"), AE.reserve=c("AE-no reserve","no AE-reserve","AE-reserve"))
 
-mdat <- merge(mdat, newlevels, by=c("AE.level","reserve.desig"))
+mdat <- merge(mdat, newlevels, by=c("AE","reserve.desig"))
 
 mdat$AE.reserve <- relevel(mdat$AE.reserve, ref="no AE-reserve")
-print(levels(mdat$AE.reserve))
+table(mdat$AE.reserve)
 
-m.high <- lme(success ~ AE.reserve + species, random = ~1|reference, data=mdat)
+newlevels2 <- data.frame(AE.level=c("basic","higher","none","basic","higher"), reserve.desig=c("none","none","applied","applied","applied"), AE.reserve2=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
 
+mdat <- merge(mdat, newlevels2, by=c("AE.level","reserve.desig"))
+
+mdat$AE.reserve2 <- relevel(mdat$AE.reserve2, ref="no AE-reserve")
+table(mdat$AE.reserve2)
+
+###--- Model ---###
+
+m.high <- glmer(success ~ AE.reserve + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.high)
 
+library(multcomp)
+
 setwd(outputwd)
-sink(paste("model output_2a.txt", sep=" "))
+sink(paste("model output_2a_method 1.txt", sep=" "))
 cat("\n########==========  Success of higher-level interventions combined ==========########\n", sep="\n")
 print(summary(m.high))
+
+cat("\n###----  Tukey contrasts  ---###\n", sep="\n")
+print(summary(glht(m.high, linfct = mcp(AE.reserve="Tukey"))))
 
 sink()
 
 ### Save individual interventions models
-saveRDS(m.high, file=paste(workspacewd, "models_2a.rds", sep="/"))
+saveRDS(m.high, file=paste(workspacewd, "models_2a_method 1.rds", sep="/"))
 
 ### Save dataset for 0b models
-saveRDS(mdat, file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
+saveRDS(mdat, file=paste(workspacewd, "model dataset_2a_method 2.rds", sep="/"))
+
+
+####---- Run AE*nature reserve models where none/none categories are included ----####
+# this tells us about probability of success for cases where these interventions are used vs not used
+# we want to know whether there is a greater prob of success when AE is applied together with reserves
+# i.e. is success of AE applied-reserve applied greater than AE applied-reserve none or AE none-reserve applied? (we don't really care about AE none-reserve none)
+
+mdat <- subset(dat, species!="ruff")
+m.high <- glmer(success ~ AE*reserve.desig + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+summary(m.high)
+
+
+setwd(outputwd)
+sink(paste("model output_2a_method 2.txt", sep=" "))
+cat("\n########==========  Success of higher-level interventions combined ==========########\n", sep="\n")
+print(summary(m.high))
+
+cat("\n###----  Significance of interaction term  ---###\n", sep="\n")
+print(drop1(m.high, scope = ~AE:reserve.desig, test="Chisq"))
+
+sink()
+
+### Save individual interventions models
+saveRDS(m.high, file=paste(workspacewd, "models_2a_method 2.rds", sep="/"))
+
+### Save dataset for 0b models
+saveRDS(mdat, file=paste(workspacewd, "model dataset_2a_method 2.rds", sep="/"))
 
 
 
 #-----------------   SPECIFIC INTERVENTION SUCCESS  ------------------
 
 # when every specific intervention type = none, we won't evaluate studies which don't explicitly test the effect of a specific intervention (i.e. remove these records from being included in the model evaluating success of different interventions)
+# this means that we are not evaluating the success of used vs not used, but rather if used, which interventions are most successful (while controlling for the use of other interventions), and also what combination of interventions are most successful?
+
+# need summary outputs showing the overall effect of each intervention (while controlling for the others)
+
 # For all other interventions, they may or may not be being used in combination with the focal intervention of the study, but often, this is not stated in the paper or is not tested explicitly in the study - ASSUMPTION is that these 'other interventions' which may be used are staying constant between the treatments of the focal intervention and the control (i.e. all else assumed equal between control + treatment)
 
 # identify studies where a specific intervention is evaluated (could be in combination with others, and also with higher-level interventions)
@@ -145,9 +200,18 @@ saveRDS(mdat, file=paste(workspacewd, "model dataset_2a.rds", sep="/"))
 
 # subset data to only use records where specific interventions were tested
 mdat <- subset(dat, spec.int.used==1)
+mdat <- subset(mdat, species!="ruff")
 mdat <- droplevels(mdat)
-m.spec <- lme(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + species, random = ~1|reference, data=mdat)
 
+# add a variable totalling the number of interventions tested at once
+interventions.only <- mdat[,c("mowing","grazing","fertpest","nest.protect","predator.control","water")]
+num.interventions <- ifelse(interventions.only=="none",0,1)
+num.interventions.sum <- apply(num.interventions, 1, sum)
+
+mdat <- data.frame(mdat, num.interventions.sum)
+
+# model which includes number of interventions tested at once is rank deficient, so omit this variable
+m.spec <- glmer(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.spec)
 
 setwd(outputwd)
@@ -166,35 +230,35 @@ saveRDS(mdat, file=paste(workspacewd, "model dataset_2b.rds", sep="/"))
 
 
 
-#-----------------   HIGH-LEVEL INTERVENTION SUCCESS by metric  ------------------
-
-mdat <- subset(dat, high.int.used==1)
-
-mdat <- subset(mdat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="productivity")
-mdat <- droplevels(mdat)
-
-newlevels <- data.frame(unique(mdat[,c("AE.level","reserve.desig")]), AE.reserve=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
-mdat <- merge(mdat, newlevels, by=c("AE.level","reserve.desig"))
-mdat$AE.reserve <- relevel(mdat$AE.reserve, ref="no AE-reserve")
-
-m.high.metric <- lme(success ~ AE.reserve*new.metric + species, random = ~1|reference, data=mdat)
-
-summary(m.high.metric)
-
-setwd(outputwd)
-sink(paste("model output_2c.txt", sep=" "))
-cat("\n########==========  Success of higher-level interventions combined, by metric ==========########\n", sep="\n")
-print(summary(m.high.metric))
-
-sink()
-
-### Save individual interventions models
-saveRDS(m.high.metric, file=paste(workspacewd, "models_2c.rds", sep="/"))
-
-### Save dataset for 0b models
-saveRDS(mdat, file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
-
-# had to remove productivity from the metrics evaluated because of singularities in model
+# #-----------------   HIGH-LEVEL INTERVENTION SUCCESS by metric  ------------------
+# 
+# mdat <- subset(dat, high.int.used==1)
+# 
+# mdat <- subset(mdat, new.metric!="survival" & new.metric!="recruitment" & new.metric!="productivity")
+# mdat <- droplevels(mdat)
+# 
+# newlevels <- data.frame(unique(mdat[,c("AE.level","reserve.desig")]), AE.reserve=c("AE.basic-no reserve","AE.higher-no reserve","no AE-reserve","AE.basic-reserve","AE.higher-reserve"))
+# mdat <- merge(mdat, newlevels, by=c("AE.level","reserve.desig"))
+# mdat$AE.reserve <- relevel(mdat$AE.reserve, ref="no AE-reserve")
+# 
+# m.high.metric <- lme(success ~ AE.reserve*new.metric + species, random = ~1|reference, data=mdat)
+# 
+# summary(m.high.metric)
+# 
+# setwd(outputwd)
+# sink(paste("model output_2c.txt", sep=" "))
+# cat("\n########==========  Success of higher-level interventions combined, by metric ==========########\n", sep="\n")
+# print(summary(m.high.metric))
+# 
+# sink()
+# 
+# ### Save individual interventions models
+# saveRDS(m.high.metric, file=paste(workspacewd, "models_2c.rds", sep="/"))
+# 
+# ### Save dataset for 0b models
+# saveRDS(mdat, file=paste(workspacewd, "model dataset_2c.rds", sep="/"))
+# 
+# # had to remove productivity from the metrics evaluated because of singularities in model
 
 #-----------------   HIGH-LEVEL INTERVENTION SUCCESS by habitat  ------------------
 

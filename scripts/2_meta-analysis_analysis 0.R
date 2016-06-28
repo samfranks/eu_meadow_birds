@@ -382,9 +382,9 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
 
 
 
-m <- m.ind.sp[[1]]
-m2 <- bglmer(formula = success ~ species + (1 | reference), data = mdat, family = binomial, control = glmerControl(optimizer = "bobyqa"), fixef.prior = normal(cov = matrix(9,6)))
-m2 <- drop1(m, scope = ~species, test="Chisq")
+# m <- m.ind.sp[[1]]
+# m2 <- bglmer(formula = success ~ species + (1 | reference), data = mdat, family = binomial, control = glmerControl(optimizer = "bobyqa"), fixef.prior = normal(cov = matrix(9,6)))
+# m2 <- drop1(m, scope = ~species, test="Chisq")
 
 
 #------------------------------ 0c) success of individual management types by metric -------------------------
@@ -425,21 +425,16 @@ for (i in 1:length(mgmtvars)) {
   #     mdat <- subset(mdat, mowing!="applied")
   #   }
   
-#   if (mgmtvars[i]=="grazing") {
-#     mdat <- subset(mdat, new.metric!="abundance change")
-#   }
+  if (mgmtvars[i]=="grazing") {
+    mdat <- subset(mdat, new.metric!="abundance/occupancy change")
+  }
   
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, fertpest!="applied")
-    # mdat <- subset(mdat, new.metric!="occupancy")
   }
 
   if (mgmtvars[i]=="water") {
-    # mdat <- subset(mdat, water!="reduced")
-    # mdat <- subset(mdat, new.metric!="abundance change" & new.metric!="occupancy")
-    # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
-    # mdat <- subset(mdat, species!="curlew" & species!="oystercatcher")
-    # mdat$species <- ifelse(mdat$species=="oystercatcher" | mdat$species=="curlew" | mdat$species=="snipe", "OC/CU/SN", as.character(mdat$species))
+    mdat <- subset(mdat, new.metric!="abundance/occupancy change")
   }
   
   mdat <- droplevels(mdat)
@@ -516,9 +511,7 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_0c.rds", sep="/"))
 #------------------------------ 0d) success of individual management types by habitat -------------------------
 
 ### NOTES on Analysis 0d ###
-
-# the effect of habitat type on intervention success won't be very applicable to certain habitat types (e.g. no mowing done in arable habitats, pastoral only), so look at only a select few management types used across habitats to gauge intervention effectiveness in different habitats
-# management types: AE, AE.level, reserve.desig, nest.protect, water
+# cannot include 1|species as a random effect as models produce convergence issues
 # reserve.desig model run without literature type because not enough observations in the different literature types to produce convergence (model with lit.type was rank deficient)
 
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
@@ -527,7 +520,7 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nes
 # identify which categories have low numbers
 out <- list()
 for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$habitat, dat[,mgmtvars[i]])
+  out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
 }
 names(out) <- mgmtvars
 out
