@@ -282,27 +282,82 @@ if (!bias & !species & !metric & !habitat) {
     
   }
   
-  plotfinal <- do.call(rbind, plotdat)
+  names(plotdat) <- mgmtvars
+  
+  plotfinal.policy <- do.call(rbind, plotdat[c("AE","reserve.desig")])
+  plotfinal.AE <- do.call(rbind, plotdat[c("AE.level")])
+  plotfinal.mgmt <- do.call(rbind, plotdat[4:9])
   
   ###-------- Output plot --------###
-  png("0a_overall model results.png", res=300, height=12, width=28, units="in", pointsize=20)
+  
+  ###---- Policy level interventions plot ----
+  png("0aA_overall model results.png", res=300, height=12, width=20, units="in", pointsize=20)
+  
+  par(mfrow=c(1,2))
+  
   par(mar=c(7,6,2,2))
+  
+  plotfinal <- plotfinal.policy
   
   x <- c(1:nrow(plotfinal))
   
-  plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
+  plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5))
   axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-  text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
+  text(x, par("usr")[3]-0.06, srt = 0, pos=1, xpd = TRUE, labels=c("AES","nature reserve"))
+  # text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
   arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
   arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  abline(h=successlevel, lty=3, lwd=2)
+  
+  # dev.off()
+  
+  
+  ###---- AES level interventions plot ----
+  # png("0aB_overall model results.png", res=300, height=12, width=12, units="in", pointsize=20)
+  
+  par(mar=c(7,6,2,2))
+  
+  plotfinal <- plotfinal.AE
+  
+  x <- c(1:nrow(plotfinal))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5))
+  axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+  text(x, par("usr")[3]-0.06, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"))
+  # text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+  title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  abline(h=successlevel, lty=3, lwd=2)
+  
+  dev.off()
+  
+  ###---- Specific management interventions plot ----
+  png("0aB_overall model results.png", res=300, height=12, width=30, units="in", pointsize=20)
+  
+  par(mar=c(7,6,2,2))
+  
+  plotfinal <- plotfinal.mgmt
+  
+  x <- c(1:nrow(plotfinal))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5))
+  axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+  text(x, par("usr")[3]-0.06, srt = 0, pos=1, xpd = TRUE, labels=c("mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
+  # text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied", "water \n reduced"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+  title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
   title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
   abline(h=successlevel, lty=3, lwd=2)
   
   dev.off()
   
   ###-------- Output table of predicted probabilities +/- CIs --------###
-  write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs.csv", row.names=FALSE)
+  write.csv(do.call(rbind,plotdat), "0a_overall probabilities and CIs.csv", row.names=FALSE)
   
 }
 
@@ -394,92 +449,133 @@ if (species & !metric & !habitat) {
     
   }
   
-  plotfinal <- do.call(rbind, plotdat)
+  names(plotdat) <- mgmtvars
   
-  set.seed(2)
+  plotfinal.policy <- do.call(rbind, plotdat[c("AE","reserve.desig")])
+  plotfinal.AE <- do.call(rbind, plotdat[c("AE.level")])
+  plotfinal.mgmt <- do.call(rbind, plotdat[4:9])
   
-  n <- length(levels(plotfinal$species))
+  ###-------- Output plot --------###
   
-  pch <- data.frame(species=levels(plotfinal$species), pch=rep(c(21,22,23,24,25),length.out=n), col=sample(grey(seq(from=0,to=1,length.out = n)), replace=TRUE, n))
-  pch
-  plotfinal <- merge(plotfinal,pch, by="species")
+  ###---- Policy level interventions plot ----
   
-  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
+  png("0bA_species-specific model results.png", res=300, height=20, width=20, units="in", pointsize=20)
   
-  plotfinal$rowid <- 1:nrow(plotfinal)
-  
-  
-  ###-------- Output plot 0b_A (AES to mowing) --------###
-  
-  if (alphalevel==0.05) {
-    png("0bA_species-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
-  } else {png("0bA_species-specific model results_84CIs.png", res=300, height=12, width=30, units="in", pointsize=20)}
+  par(mfrow=c(2,1))
   
   par(mar=c(7,6,4,2))
   
-  plotfinal.sub <- subset(plotfinal, mgmt.type < 5)
-  plotfinal.sub <- droplevels(plotfinal.sub)
+  plotfinal <- plotfinal.policy
+  maxspecies <- levels(do.call(rbind, plotdat)$species)
+  n <- length(maxspecies)
   
-  xloc.mgmtvars <- aggregate(plotfinal.sub$rowid, list(plotfinal.sub$mgmtvar), mean)$x
-  xloc.divide <- aggregate(plotfinal.sub$rowid, list(plotfinal.sub$mgmtvar), max)$x + 0.5
+  set.seed(2)
+  pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(grey(seq(from=0,to=1,length.out = n)), replace=TRUE, n))
+  pch
+  plotfinal <- merge(plotfinal,pch, by="species")
+  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
+  plotfinal$rowid <- 1:nrow(plotfinal)
+  
+  xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
+  xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
   xloc.divide <- xloc.divide[-length(xloc.divide)]
   
-  x <- c(min(plotfinal.sub$rowid):max(plotfinal.sub$rowid))
+  x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
   
-  plot(plotfinal.sub$pred~x, ylim=c(0,1), xlim=c(min(plotfinal.sub$rowid),max(plotfinal.sub$rowid)), pch=plotfinal.sub$pch, bg=as.character(plotfinal.sub$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
+  plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
   axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
   abline(v=xloc.divide, lty=3, lwd=1.5)
+  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","nature reserve"))
   # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
-  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced"))
-  arrows(x, plotfinal.sub$pred, x, plotfinal.sub$lwr, angle=90, length=0.05, col="grey30")
-  arrows(x, plotfinal.sub$pred, x, plotfinal.sub$upr, angle=90, length=0.05, col="grey30")
-  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+  title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
   title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
   abline(h=successlevel, lty=3, lwd=2)
   
+  legend(min(plotfinal$rowid),1.2, legend=levels(plotfinal$species), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
   
-  legend(min(plotfinal.sub$rowid)-1,1.2, legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+  # dev.off()
   
-  dev.off()
+  ###---- AES level interventions plot ----
   
-  ###-------- Output plot 0b_B (grazing to water) --------###
-  
-  if (alphalevel==0.05) {
-    png("0bB_species-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
-  } else {png("0bB_species-specific model results_84CIs.png", res=300, height=12, width=30, units="in", pointsize=20)}
-  
+  # png("0bB_species-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
+
   par(mar=c(7,6,4,2))
   
-  plotfinal.sub <- subset(plotfinal, mgmt.type >= 5)
-  plotfinal.sub <- droplevels(plotfinal.sub)
+  plotfinal <- plotfinal.AE
+  maxspecies <- levels(do.call(rbind, plotdat)$species)
+  n <- length(maxspecies)
   
-  xloc.mgmtvars <- aggregate(plotfinal.sub$rowid, list(plotfinal.sub$mgmtvar), mean)$x
-  xloc.divide <- aggregate(plotfinal.sub$rowid, list(plotfinal.sub$mgmtvar), max)$x + 0.5
+  set.seed(2)
+  pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(grey(seq(from=0,to=1,length.out = n)), replace=TRUE, n))
+  pch
+  plotfinal <- merge(plotfinal,pch, by="species")
+  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
+  plotfinal$rowid <- 1:nrow(plotfinal)
+  
+  xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
+  xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
   xloc.divide <- xloc.divide[-length(xloc.divide)]
   
-  x <- c(min(plotfinal.sub$rowid):max(plotfinal.sub$rowid))
+  x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
   
-  plot(plotfinal.sub$pred~x, ylim=c(0,1), xlim=c(min(plotfinal.sub$rowid),max(plotfinal.sub$rowid)), pch=plotfinal.sub$pch, bg=as.character(plotfinal.sub$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
+  plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
   axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
   abline(v=xloc.divide, lty=3, lwd=1.5)
   # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
-  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
-  arrows(x, plotfinal.sub$pred, x, plotfinal.sub$lwr, angle=90, length=0.05, col="grey30")
-  arrows(x, plotfinal.sub$pred, x, plotfinal.sub$upr, angle=90, length=0.05, col="grey30")
-  title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+  title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
   title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
   abline(h=0.05, lty=3, lwd=2)
   
+  # legend(min(plotfinal$rowid)-1,1.2, legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
   
-  legend(min(plotfinal.sub$rowid)-1,1.2, legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+  dev.off()
+  
+  ###---- Specific management interventions plot ----
+  png("0bB_species-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
+  
+  par(mar=c(7,6,4,2))
+  
+  plotfinal <- plotfinal.mgmt
+  maxspecies <- levels(do.call(rbind, plotdat)$species)
+  n <- length(maxspecies)
+  
+  set.seed(2)
+  pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(grey(seq(from=0,to=1,length.out = n)), replace=TRUE, n))
+  pch
+  plotfinal <- merge(plotfinal,pch, by="species")
+  plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
+  plotfinal$rowid <- 1:nrow(plotfinal)
+  
+  xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
+  xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
+  xloc.divide <- xloc.divide[-length(xloc.divide)]
+  
+  x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
+  
+  plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
+  axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
+  abline(v=xloc.divide, lty=3, lwd=1.5)
+  # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
+  text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("mowing reduced", "grazing applied", "grazing reduced","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied","water \n applied"))
+  arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
+  arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+  title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
+  title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+  abline(h=0.05, lty=3, lwd=2)
+  
+  legend(min(plotfinal$rowid),1.2, legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
   
   dev.off()
   
   ###-------- Output table of predicted probabilities +/- CIs for all 0b --------###
-  if (alphalevel==0.05) {
-    write.csv(plotfinal[,c("species","pred","lwr","upr","mgmtvar")], "0b_species-specific probabilities and CIs.csv", row.names=FALSE)
-  } else {write.csv(plotfinal[,c("species","pred","lwr","upr","mgmtvar")], "0b_species-specific probabilities and 84CIs.csv", row.names=FALSE)}
-  
+  write.csv(do.call(rbind,plotdat), "0b_species-specific probabilities and CIs.csv", row.names=FALSE)
+
 }
 
 #------------------------------ 0c) success of individual management types by metric -------------------------

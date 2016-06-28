@@ -358,7 +358,7 @@ title(xlab="Intervention combination", cex.lab=1.5, font=2, line=4.5)
 dev.off()
 
 
-#-------------  SPECIFIC INTERVENTIONS - main intervention effects -------------#
+#-------------  SPECIFIC INTERVENTIONS - main intervention effects -------------
 
 ###----  Produce plotting dataset predictions ----###
 
