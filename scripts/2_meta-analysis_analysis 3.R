@@ -1,6 +1,6 @@
 #################################################################
 #
-#     Step 2: EU meadow birds meta-analysis - models evaluating success
+#     Step 2: EU meadow birds meta-analysis - models evaluating FAILURES
 #
 #################################################################
 
@@ -265,10 +265,10 @@ x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
 axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n appliied","water \n applied", "water \n reduced"))
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic AES","higher AES","nature reserve", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","water applied", "water reduced"))
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
+title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 title(ylab="Predicted probability of failure \n (significant negative impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
 

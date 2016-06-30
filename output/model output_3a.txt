@@ -2,7 +2,8 @@
 ########==========  3a) failure of individual management types - lme4 models ==========########
 
 $AE
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ 1 + (1 | reference) + (1 | species)
    Data: mdat
@@ -28,7 +29,8 @@ Fixed effects:
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $AE.level
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ AE.level + (1 | reference) + (1 | species)
    Data: mdat
@@ -59,7 +61,8 @@ Correlation of Fixed Effects:
 AE.levlhghr -0.049
 
 $reserve.desig
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ 1 + (1 | reference) + (1 | species)
    Data: mdat
@@ -85,7 +88,8 @@ Fixed effects:
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $mowing
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ mowing + (1 | reference) + (1 | species)
    Data: mdat
@@ -114,7 +118,8 @@ Correlation of Fixed Effects:
 mowingredcd -0.791
 
 $grazing
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ grazing + (1 | reference) + (1 | species)
    Data: mdat
@@ -145,7 +150,8 @@ Correlation of Fixed Effects:
 grazingrdcd -0.133
 
 $fertpest
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ fertpest + (1 | reference) + (1 | species)
    Data: mdat
@@ -174,7 +180,8 @@ Correlation of Fixed Effects:
 fertpstrdcd -0.419
 
 $nest.protect
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ 1 + (1 | reference) + (1 | species)
    Data: mdat
@@ -200,7 +207,8 @@ Fixed effects:
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $water
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+Generalized linear mixed model fit by maximum likelihood (Laplace  Approximation)
+ [glmerMod]
  Family: binomial  ( logit )
 Formula: failure ~ water + (1 | reference) + (1 | species)
    Data: mdat
