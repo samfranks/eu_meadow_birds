@@ -13,8 +13,8 @@ set.seed(2)
 
 # default to plot when all are FALSE is results from overall analysis (0a)
 species <- FALSE # plot the species-specific model results (0b)
-metric <- TRUE # plot the metric-specific model results (0c)
-habitat <- FALSE # plot the habitat-specific model results (0d)
+metric <- FALSE # plot the metric-specific model results (0c)
+habitat <- TRUE # plot the habitat-specific model results (0d)
 
 bias <- FALSE
 
@@ -149,6 +149,12 @@ if (!bias & !species & !metric & !habitat) {
   partable <- partable[,c(6,5,1,2,4)] # omit z value column
   names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
   
+  n <- unlist(lapply(moddat, nrow))
+  n <- data.frame(management=names(n), n)
+  names(n) <- c("Management intervention","n")
+  
+  partable <- merge(partable, n)
+  
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0a_overall parameter table.csv", row.names=FALSE)
   
@@ -170,6 +176,12 @@ if (bias & !species & !habitat & !metric) {
   partable <- coeftab3
   partable <- partable[,c(6,5,1,2,4)] # omit z value column
   names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+  
+  n <- unlist(lapply(moddat, nrow))
+  n <- data.frame(management=names(n), n)
+  names(n) <- c("Management intervention","n")
+  
+  partable <- merge(partable, n)
   
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0a_overall parameter table_bias.csv", row.names=FALSE)
@@ -198,6 +210,12 @@ if (species & !metric & !habitat) {
   partable <- partable[,c(6,5,1,2,4)] # omit z value column
   names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
   
+  n <- unlist(lapply(moddat, nrow))
+  n <- data.frame(management=names(n), n)
+  names(n) <- c("Management intervention","n")
+  
+  partable <- merge(partable, n)
+  
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0b_species-specific parameter table.csv", row.names=FALSE)
   
@@ -224,6 +242,12 @@ if (!species & metric & !habitat) {
   partable <- partable[,c(6,5,1,2,4)] # omit z value column
   names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
   
+  n <- unlist(lapply(moddat, nrow))
+  n <- data.frame(management=names(n), n)
+  names(n) <- c("Management intervention","n")
+  
+  partable <- merge(partable, n)
+  
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0c_metric-specific parameter table.csv", row.names=FALSE)
   
@@ -249,6 +273,12 @@ if (!species & !metric & habitat) {
   partable <- coeftab3
   partable <- partable[,c(6,5,1,2,4)] # omit z value column
   names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+  
+  n <- unlist(lapply(moddat, nrow))
+  n <- data.frame(management=names(n), n)
+  names(n) <- c("Management intervention","n")
+  
+  partable <- merge(partable, n)
   
   # Write the parameter table
   write.csv(format(partable, scientific=FALSE, digits=2),  "0d_habitat-specific parameter table.csv", row.names=FALSE)
