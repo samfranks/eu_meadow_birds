@@ -287,3 +287,24 @@ legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="bla
 dev.off()
 
 
+#---------- Summary statistics text output  ----------
+
+setwd(outputwd)
+sink(paste("summary statistics output.txt", sep=" "))
+
+cat("\n\n####### Literature summary #######\n")
+print(litsum.prop)
+cat("\n\n####### Country summary #######\n")
+print(countrysum.prop)
+cat("\n\n####### Intervention summary #######\n")
+print(intervensum.prop)
+cat("\n\n####### Species summary #######\n")
+print(speciessum.prop)
+cat("\n\n####### Metric summary #######\n")
+print(metricsum.prop)
+cat("\n\n####### Habitat summary #######\n")
+print(habsum.prop)
+
+sink()
+
+
