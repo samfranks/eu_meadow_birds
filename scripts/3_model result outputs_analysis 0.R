@@ -9,7 +9,7 @@
 
 set.seed(2)
 
-#=================================  SET LOGIC STATEMENTS  ====================
+# =================================  SET LOGIC STATEMENTS  ====================
 
 # default to plot when all are FALSE is results from overall analysis (0a)
 species <- FALSE # plot the species-specific model results (0b)
@@ -21,7 +21,7 @@ bias <- FALSE
 alphalevel <- 0.05
 successlevel <- 0.05
 
-#=================================  LOAD PACKAGES =================================
+# =================================  LOAD PACKAGES =================================
 
 list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme")
 
@@ -32,7 +32,7 @@ if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, library, character.only=TRUE)
 
 
-#=================================  LOAD FUNCTIONS =================================
+# =================================  LOAD FUNCTIONS =================================
 
 ### Ben Bolker's function for calculating CIs on predictions from a merMod object and plotting the results from his RPubs GLMM worked examples
 # http://rpubs.com/bbolker/glmmchapter
@@ -61,7 +61,7 @@ easyPredCI <- function(model,newdata,alpha=alphalevel) {
   
 }
 
-#=================================  SET DIRECTORY STRUCTURE  ================================
+# =================================  SET DIRECTORY STRUCTURE  ================================
 
 # LOCAL
 if(.Platform$OS =='windows') {
@@ -101,7 +101,7 @@ workspacewd <- paste(parentwd, "workspaces", sep="/")
 options(digits=6)
 
 
-#=================================  LOAD DATA & MODELS  ===============================
+# =================================  LOAD DATA & MODELS  ===============================
 
 
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
@@ -126,11 +126,11 @@ if (bias & !species & !habitat & !metric) mod <- readRDS(paste(workspacewd, "mod
 
 if (bias) mod <- mod[-8] # remove predator control model (huge variance)
 
-#=================================  OUTPUT PARAMETER TABLES  ===============================
+# =================================  OUTPUT PARAMETER TABLES  ===============================
 
 setwd(outputwd)
 
-#------------------------------ 0a) success of individual management types -------------------------
+# ------------------------------ 0a) success of individual management types -------------------------
 
 if (!bias & !species & !metric & !habitat) {
   
@@ -189,7 +189,7 @@ if (bias & !species & !habitat & !metric) {
   
 }
 
-#------------------------------ 0b) success of individual management types by species -------------------------
+# ------------------------------ 0b) success of individual management types by species -------------------------
 
 
 if (species & !metric & !habitat) {
@@ -221,7 +221,7 @@ if (species & !metric & !habitat) {
   
 }
 
-#------------------------------ 0c) success of individual management types by metric -------------------------
+# ------------------------------ 0c) success of individual management types by metric -------------------------
 
 
 if (!species & metric & !habitat) {
@@ -253,7 +253,7 @@ if (!species & metric & !habitat) {
   
 }
 
-#------------------------------ 0d) success of individual management types by habitat -------------------------
+# ------------------------------ 0d) success of individual management types by habitat -------------------------
 
 
 if (!species & !metric & habitat) {
@@ -286,12 +286,12 @@ if (!species & !metric & habitat) {
 }
 
 
-#=================================  PLOT MODEL OUTPUTS  ===============================
+# =================================  PLOT MODEL OUTPUTS  ===============================
 
 # set the wd to output to
 setwd(outputwd)
 
-#------------------------------ 0a) success of individual management types -------------------------
+# ------------------------------ 0a) success of individual management types -------------------------
 
 if (!bias & !species & !metric & !habitat) {
   
@@ -318,9 +318,9 @@ if (!bias & !species & !metric & !habitat) {
   plotfinal.AE <- do.call(rbind, plotdat[c("AE.level")])
   plotfinal.mgmt <- do.call(rbind, plotdat[4:9])
   
-  ###-------- Output plot --------###
+  ### -------- Output plot --------###
   
-  ###---- Policy level interventions plot ----
+  ### ---- Policy level interventions plot ----
   png("0aA_overall model results.png", res=300, height=12, width=20, units="in", pointsize=20)
   
   par(mfrow=c(1,2))
@@ -343,7 +343,7 @@ if (!bias & !species & !metric & !habitat) {
   # dev.off()
   
   
-  ###---- AES level interventions plot ----
+  ### ---- AES level interventions plot ----
   # png("0aB_overall model results.png", res=300, height=12, width=12, units="in", pointsize=20)
   
   par(mar=c(7,6,2,2))
@@ -363,7 +363,7 @@ if (!bias & !species & !metric & !habitat) {
   
   dev.off()
   
-  ###---- Specific management interventions plot ----
+  ### ---- Specific management interventions plot ----
   
   png("0aB_overall model results.png", res=300, height=12, width=30, units="in", pointsize=20)
   
@@ -385,7 +385,7 @@ if (!bias & !species & !metric & !habitat) {
   
   dev.off()
   
-  ###-------- Output table of predicted probabilities +/- CIs --------###
+  ### -------- Output table of predicted probabilities +/- CIs --------###
   write.csv(do.call(rbind,plotdat), "0a_overall probabilities and CIs.csv", row.names=FALSE)
   
 }
@@ -426,7 +426,7 @@ if (bias & !species & !metric & !habitat) {
   xloc.divide <- xloc.divide[-length(xloc.divide)]
   
   
-  ###-------- Output plot --------###
+  ### -------- Output plot --------###
   
   if (alphalevel==0.05) {
     png("0a_overall model results_bias.png", res=300, height=12, width=30, units="in", pointsize=20)
@@ -451,7 +451,7 @@ if (bias & !species & !metric & !habitat) {
   
   dev.off()
   
-  ###-------- Output table of predicted probabilities +/- CIs --------###
+  ### -------- Output table of predicted probabilities +/- CIs --------###
   if (alphalevel==0.05) {
     write.csv(plotfinal[,c("biased.metric","pred","lwr","upr","mgmtvar")], "0a_overall probabilities and CIs_bias.csv", row.names=FALSE)
   } else {write.csv(plotfinal[,c("biased.metric","pred","lwr","upr","mgmtvar")], "0a_overall probabilities and 84CIs_bias.csv", row.names=FALSE)}
@@ -459,7 +459,7 @@ if (bias & !species & !metric & !habitat) {
   
 }
 
-#------------------------------ 0b) success of individual management types by species -------------------------
+# ------------------------------ 0b) success of individual management types by species -------------------------
 
 if (species & !metric & !habitat) {
   
@@ -484,9 +484,9 @@ if (species & !metric & !habitat) {
   plotfinal.AE <- do.call(rbind, plotdat[c("AE.level")])
   plotfinal.mgmt <- do.call(rbind, plotdat[4:9])
   
-  ###-------- Output plot --------###
+  ### -------- Output plot --------###
   
-  ###---- Policy level interventions plot ----
+  ### ---- Policy level interventions plot ----
   
   png("0bA_species-specific model results.png", res=300, height=20, width=20, units="in", pointsize=20)
   
@@ -525,7 +525,7 @@ if (species & !metric & !habitat) {
   
   # dev.off()
   
-  ###---- AES level interventions plot ----
+  ### ---- AES level interventions plot ----
   
   # png("0bB_species-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
 
@@ -563,7 +563,7 @@ if (species & !metric & !habitat) {
   
   dev.off()
   
-  ###---- Specific management interventions plot ----
+  ### ---- Specific management interventions plot ----
   png("0bB_species-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
   
   par(mar=c(7,6,4,2))
@@ -600,12 +600,12 @@ if (species & !metric & !habitat) {
   
   dev.off()
   
-  ###-------- Output table of predicted probabilities +/- CIs for all 0b --------###
+  ### -------- Output table of predicted probabilities +/- CIs for all 0b --------###
   write.csv(do.call(rbind,plotdat), "0b_species-specific probabilities and CIs.csv", row.names=FALSE)
 
 }
 
-#------------------------------ 0c) success of individual management types by metric -------------------------
+# ------------------------------ 0c) success of individual management types by metric -------------------------
 
 if (!species & metric & !habitat) {
   
@@ -630,9 +630,9 @@ if (!species & metric & !habitat) {
   plotfinal.AE <- do.call(rbind, plotdat[c("AE.level")])
   plotfinal.mgmt <- do.call(rbind, plotdat[4:9])
   
-  ###-------- Output plot --------###
+  ### -------- Output plot --------###
   
-  ###---- Policy level interventions plot ----
+  ### ---- Policy level interventions plot ----
   
   png("0cA_metric-specific model results.png", res=300, height=20, width=18, units="in", pointsize=20)
   
@@ -672,7 +672,7 @@ if (!species & metric & !habitat) {
   # dev.off()
   
   
-  ###---- AES level interventions plot ----
+  ### ---- AES level interventions plot ----
   
 
   par(mar=c(7,6,2,2))
@@ -710,7 +710,7 @@ if (!species & metric & !habitat) {
   
   
   
-  ###---- Specific management interventions plot ----
+  ### ---- Specific management interventions plot ----
   
   png("0cB_metric-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
   
@@ -747,13 +747,13 @@ if (!species & metric & !habitat) {
   
   dev.off()
   
-  ###-------- Output table of predicted probabilities +/- CIs --------###
+  ### -------- Output table of predicted probabilities +/- CIs --------###
   write.csv(do.call(rbind, plotdat), "0c_metric-specific probabilities and CIs.csv", row.names=FALSE)
 
   
 }
 
-#------------------------------ 0d) success of individual management types by habitat -------------------------
+# ------------------------------ 0d) success of individual management types by habitat -------------------------
 
 if (!species & !metric & habitat) {
   
@@ -779,9 +779,9 @@ if (!species & !metric & habitat) {
   plotfinal.AE <- do.call(rbind, plotdat[c("AE.level")])
   plotfinal.mgmt <- do.call(rbind, plotdat[4:9])
   
-  ###-------- Output plot --------###
+  ### -------- Output plot --------###
   
-  ###---- Policy level interventions plot ----
+  ### ---- Policy level interventions plot ----
   
   png("0dA_habitat-specific model results.png", res=300, height=20, width=16, units="in", pointsize=20)
   
@@ -821,7 +821,7 @@ if (!species & !metric & habitat) {
   # dev.off()
   
   
-  ###---- AES level interventions plot ----
+  ### ---- AES level interventions plot ----
   
   
   par(mar=c(7,6,2,2))
@@ -859,7 +859,7 @@ if (!species & !metric & habitat) {
   
   
   
-  ###---- Specific management interventions plot ----
+  ### ---- Specific management interventions plot ----
   
   png("0dB_habitat-specific model results.png", res=300, height=12, width=30, units="in", pointsize=20)
   
@@ -897,7 +897,7 @@ if (!species & !metric & habitat) {
   dev.off()
   
   
-  ###-------- Output table of predicted probabilities +/- CIs --------###
+  ### -------- Output table of predicted probabilities +/- CIs --------###
   write.csv(do.call(rbind, plotdat), "0d_habitat-specific probabilities and CIs.csv", row.names=FALSE)
 
   
