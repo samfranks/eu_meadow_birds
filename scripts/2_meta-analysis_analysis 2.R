@@ -102,8 +102,9 @@ source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
 
 #-----------------   HIGH-LEVEL INTERVENTION SUCCESS  ------------------
 
-####---- Run models using only those records which evaluate either AES and/or nature reserves ----####
-# this tells us the probability of success IF THESE INTERVENTIONS WERE ATTEMPTED (subtly different than below, which tells us the probability of success if they were used vs not used)
+####---- Method 1: Run models using only those records which evaluate either AES and/or nature reserves ----####
+
+# this tells us the probability of success IF THESE INTERVENTIONS WERE ATTEMPTED (subtly different than below Method 2, which tells us the probability of success if they were used vs not used)
 # structured the data to combine AE and reserves into a single variable because otherwise lack of the none/none category produces rank deficiency in the model and it drops a coefficient
 
 # > table(mdat$AE,mdat$reserve.desig)
@@ -154,7 +155,8 @@ saveRDS(m.high, file=paste(workspacewd, "models_2a_method 1.rds", sep="/"))
 saveRDS(mdat, file=paste(workspacewd, "model dataset_2a_method 1.rds", sep="/"))
 
 
-####---- Run AE*nature reserve models where none/none categories are included ----####
+####---- Method 2: Run AE*nature reserve models where none/none categories are included ----####
+
 # this tells us about probability of success for cases where these interventions are used vs not used
 # we want to know whether there is a greater prob of success when AE is applied together with reserves
 # i.e. is success of AE applied-reserve applied greater than AE applied-reserve none or AE none-reserve applied? (we don't really care about AE none-reserve none)
