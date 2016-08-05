@@ -336,9 +336,9 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
 
-mtext("a)", side=3, adj=0)
+mtext("a)", side=3, adj=0, line=1)
 
-legend("topleft", legend=levels(plotfinal$species), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+legend("topleft", legend=levels(plotfinal$species), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.05))
 
 mtext("Intervention", side=1, outer=TRUE, line=1.5, cex=1.2)
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5)
@@ -375,7 +375,7 @@ arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
 abline(h=0.05, lty=3, lwd=2)
 
-mtext("b)", side=3, adj=0)
+mtext("b)", side=3, adj=0, line=1)
 
 
 
@@ -445,9 +445,9 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
 
-legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.05))
 
-mtext("c)", side=3, adj=0)
+mtext("c)", side=3, adj=0, line=1)
 
 
 ### ---- Fig 2d: AES level interventions plot ----
@@ -483,7 +483,7 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=0.05, lty=3, lwd=2)
 
-mtext("d)", side=3, adj=0)
+mtext("d)", side=3, adj=0, line=1)
 
 
 dev.off()
@@ -498,7 +498,7 @@ dev.off()
 
 
 
-png("Fig3_specifc management_overall_species_metric.png", res=300, height=50, width=50, units="in", pointsize=60)
+png("Fig3_specifc management_overall_species_metric.png", res=300, height=18, width=18, units="in", pointsize=22)
 
 par(mfrow=c(3,1), oma=c(3,5,1,1))
 
@@ -540,7 +540,7 @@ fig3a <- do.call(rbind, plotdat[4:9])
 ### ---- Fig 3a: Specific management interventions plot ----
 
 
-par(mar=c(4,3,2,2))
+par(mar=c(5,3,3,2))
 
 plotfinal <- fig3a
 
@@ -556,7 +556,7 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
 
-mtext("a)", side=3, adj=0)
+mtext("a)", side=3, adj=0, line=2)
 
 mtext("Intervention", side=1, outer=TRUE, line=1.5, cex=1.2)
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5)
@@ -596,7 +596,7 @@ fig3b <- do.call(rbind, plotdat[4:9])
 ### ---- Fig 3b: Specific management interventions plot - SPECIES ----
 
 
-par(mar=c(4,3,2,2))
+par(mar=c(5,3,3,2))
 
 plotfinal <- fig3b
 maxspecies <- levels(do.call(rbind, plotdat)$species)
@@ -626,12 +626,13 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=0.05, lty=3, lwd=2)
 
-mtext("b)", side=3, adj=0)
+mtext("b)", side=3, adj=0, line=2.5)
 
-legend("topleft", legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+legend("topleft", legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.15))
 
+# legend(, legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
 
-
+# dev.off()
 
 # ==== Fig 3b - METRIC ====
 
@@ -666,7 +667,7 @@ fig3c <- do.call(rbind, plotdat[4:9])
 ### ---- Fig 3c: Specific management interventions plot - METRIC ----
 
 
-par(mar=c(4,3,2,2))
+par(mar=c(5,3,3,2))
 
 plotfinal <- fig3c
 maxmetric <- levels(do.call(rbind, plotdat)$metric)
@@ -695,9 +696,9 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=0.05, lty=3, lwd=2)
 
-mtext("c)", side=3, adj=0)
+mtext("c)", side=3, adj=0, line=2.5)
 
-legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE)
+legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.2))
 
 
 
