@@ -711,7 +711,7 @@ dev.off()
 
 setwd(outputwd)
 
-png("FigS4b_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
+png("FigS5b_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
 
 par(mfrow=c(2,1))
 
@@ -769,12 +769,12 @@ text(tab$x-0.5, 0.5, labels=total.interventions$sum, cex=1) # add the total numb
 dev.off()
 
 
-# ===============  FIGURE S4a - Average invervention combination success rates  ==================
+# ===============  FIGURE S5a - Average invervention combination success rates  ==================
 
 
 setwd(outputwd)
 
-png("FigS4a_specific combination intervention success_average.png", res=300, height=12, width=26, units="in", pointsize=20)
+png("FigS5a_specific combination intervention success_average.png", res=300, height=12, width=26, units="in", pointsize=20)
 
 plotdat <- readRDS(file=paste(workspacewd, "2b_average intervention plotting dataset.rds", sep="/"))
 
@@ -796,3 +796,52 @@ mtext("a)", side=3, adj=0, line=1, cex=1.2)
 
 dev.off()
 
+
+# ===============  FIGURE S6 - Failed intervention probability ==================
+
+
+setwd(outputwd)
+
+moddat <- readRDS(paste(workspacewd, "model dataset_3a.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_3a_lme4.rds", sep="/"))
+alphalevel <- 0.05
+successlevel <- 0.05
+
+
+
+plotdat <- list()
+n <- list()
+
+for (i in 1:length(mod)) {
+  
+  # dataset to predict over is the same as the original dataset
+  pred <- predict(mod[[i]], type="response", re.form=NA)
+  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
+  n[i] <- nrow(moddat[[i]])
+  
+  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
+  unique.fits <- unique(fits)
+  
+  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
+  
+}
+
+plotfinal <- do.call(rbind, plotdat)
+
+
+###-------- Output plot --------###
+png("FigS6_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
+par(mar=c(7,6,2,2))
+
+x <- c(1:nrow(plotfinal))
+
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
+# axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+text(x, par("usr")[3]-0.06, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic \nAES","higher \nAES","site \nprotection", "mowing \napplied", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/\npesticides \n applied","fertiliser/\npesticides \n reduced","nest \nprotection \n applied","water \napplied", "water \nreduced"))
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
+title(ylab="Predicted probability of failure \n (significant negative impact)", cex.lab=1.5, font=2, line=3)
+abline(h=successlevel, lty=3, lwd=2)
+
+dev.off()
