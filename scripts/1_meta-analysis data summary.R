@@ -56,7 +56,7 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
+outputwd <- paste(parentwd, "output/submission", sep="/")
 workspacewd <- paste(parentwd, "workspaces", sep="/")
 
 options(digits=6)
@@ -170,6 +170,33 @@ text(x, metricsum.prop+0.02, metricsum) # sample sizes for each metric
 
 dev.off()
 
+#---------- Proportion of studies by specific metric (for productivity)----------
+
+# create an ordered factor of metrics for this summary (particularly for productivity so it's nest, chick, nest+chick)
+
+d1.metric <- dat
+
+# pool abundance/occupancy and change metrics
+# show different productivity metrics separately
+d1.metric$prod.metric <- with(d1.metric, ifelse(d1.metric$overall.metric=="abundance" | d1.metric$overall.metric=="occupancy", "abundance/occupancy", ifelse(d1.metric$overall.metric=="abundance change" | d1.metric$overall.metric=="occupancy change", "abundance/occupancy change", as.character(overall.metric))))
+
+# create ordered factor
+d1.metric$prod.metric <- factor(d1.metric$prod.metric, c("abundance/occupancy","abundance/occupancy change","productivity (nest level)", "productivity (chick level)", "productivity (nest + chick)","recruitment","survival"), ordered=TRUE)
+
+metricsum <- table(unique(d1.metric[,c("reference","prod.metric")])$prod.metric)
+metricsumprod.prop <- metricsum/num.studies
+
+png(paste(outputwd, "summary_proportion of studies by productivity metric.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(metricsumprod.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
+text(x, par("usr")[3]-0.01, srt = 0, pos=1, xpd = TRUE, labels = c("abundance/\noccupancy","abundance/\noccupancy \nchange","productivity \n(nest)", "productivity \n(chick)", "productivity \n(nest+chick)","recruitment","survival"))
+title(xlab="Study metric", font=2, cex.lab=1.2, line=4.5)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
+text(x, metricsumprod.prop+0.02, metricsum) # sample sizes for each metric
+
+dev.off()
+
 #---------- Proportion of studies examining the effect of an intervention type ----------
 
 ### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
@@ -229,6 +256,8 @@ cat("\n\n####### Species summary #######\n")
 print(speciessum.prop)
 cat("\n\n####### Metric summary #######\n")
 print(metricsum.prop)
+cat("\n\n####### Metric summary (specific productivity metrics) #######\n")
+print(metricsumprod.prop)
 cat("\n\n####### Habitat summary #######\n")
 print(habsum.prop)
 
@@ -236,78 +265,75 @@ sink()
 
 
 
-#---------- Proportion of studies by intervention level  ----------
-
-### plot levels of different management types attempted (e.g. applied/reduced)
-level.prop.all <- as.data.frame(do.call(rbind, intervensum.level.prop))
-
-level.prop.all$level1 <- level.prop.all$basic
-level.prop.all$level2 <- level.prop.all$higher
-# level.prop.all$level2 <- ifelse(level.prop.all$basic==level.prop.all$higher, 0, level.prop.all$higher)
-
-level.prop.all <- level.prop.all[-which(rownames(level.prop.all) %in% c("AE","reserve.desig","nest.protect")),]
-
-level.all <- as.data.frame(do.call(rbind, intervensum.level))
-level.all <- level.all[-which(rownames(level.all) %in% c("AE","reserve.desig","nest.protect")),]
-
-level.sum <- apply(level.all,1,sum) # sum the number of studies which examine impact of different levels of each intervention (the same study could look at 2 levels of the same intervention, so totals will not equal above, which is the proportion of studies examining each intervention type; in fact, this is only the case for one study that looks at both basic and higher level AES effects)
-
-# level.prop.all <- level.prop.all[-which(rownames(level.prop.all) %in% "AE.level"),]
-
-(level.prop.all <- t(level.prop.all[,c("level1","level2")]))
-
-
-png(paste(outputwd, "summary_proportion of studies by intervention_level.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
-
-par(mar=c(6,5,2,1))
-x <- barplot(level.prop.all, las=1, col=c("grey90","grey30"), beside=FALSE, ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES level","mowing","grazing","fertiliser/ \n pesticides","predator \n control","water \n management"))
-title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
-text(x, apply(level.prop.all,2,sum)+0.02, level.sum) # sample sizes for each intervention type
-
-dev.off()
-
-#---------- Proportion of studies examining the effect of an intervention type, by species ----------
-
-### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
-# create blank objects
-intervensum <- list()
-intervensum.prop <- list()
-
-# mgmtvars to evluate, minus AE.level
-eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% "AE.level")]
-
-for (i in 1:length(eval.mgmtvars)) {
-  
-  # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
-  x <- unique(dat[,c("reference","species",eval.mgmtvars[i])]) # unique references and levels of the intervention
-  y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
-  intervensum[[i]] <- table(y$species)
-}
-
-intervensum.all <- do.call(cbind, intervensum)
-colnames(intervensum.all) <- eval.mgmtvars
-
-intervensum.prop.all <- intervensum.all/num.studies
-
-# creates grey-scale colour vector for plotting, but randomly shuffled so darks don't end up next to each other
-set.seed(3)
-# colourvec <- sample(grey(seq(from=0,to=1,length.out = 8)), 8)
-colourvec <- grey(seq(from=1,to=0,length.out = 8))
-
-png(paste(outputwd, "summary_proportion of studies by intervention by species.png", sep="/"), res=300, height=12, width=20, units="in", pointsize=20)
-
-par(mar=c(6,5,2,1))
-x <- barplot(intervensum.prop.all, beside=TRUE, las=1, col=colourvec, ylim=c(0,0.4), xaxt="n")
-text(apply(x,2,mean), par("usr")[3]-0.02, srt = 0, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predator \n control","water \n management"))
-title(xlab="Management intervention", font=2, cex.lab=1.2, line=3)
-title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
-legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1, pt.cex=1.5, bty="n")
-# text(x, intervensum.prop.all+0.02, intervensum.all) # sample sizes for each intervention type
-
-dev.off()
-
-
-s
+# #---------- Proportion of studies by intervention level  ----------
+# 
+# ### plot levels of different management types attempted (e.g. applied/reduced)
+# level.prop.all <- as.data.frame(do.call(rbind, intervensum.level.prop))
+# 
+# level.prop.all$level1 <- level.prop.all$basic
+# level.prop.all$level2 <- level.prop.all$higher
+# # level.prop.all$level2 <- ifelse(level.prop.all$basic==level.prop.all$higher, 0, level.prop.all$higher)
+# 
+# level.prop.all <- level.prop.all[-which(rownames(level.prop.all) %in% c("AE","reserve.desig","nest.protect")),]
+# 
+# level.all <- as.data.frame(do.call(rbind, intervensum.level))
+# level.all <- level.all[-which(rownames(level.all) %in% c("AE","reserve.desig","nest.protect")),]
+# 
+# level.sum <- apply(level.all,1,sum) # sum the number of studies which examine impact of different levels of each intervention (the same study could look at 2 levels of the same intervention, so totals will not equal above, which is the proportion of studies examining each intervention type; in fact, this is only the case for one study that looks at both basic and higher level AES effects)
+# 
+# # level.prop.all <- level.prop.all[-which(rownames(level.prop.all) %in% "AE.level"),]
+# 
+# (level.prop.all <- t(level.prop.all[,c("level1","level2")]))
+# 
+# 
+# png(paste(outputwd, "summary_proportion of studies by intervention_level.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+# 
+# par(mar=c(6,5,2,1))
+# x <- barplot(level.prop.all, las=1, col=c("grey90","grey30"), beside=FALSE, ylim=c(0,0.6), xaxt="n")
+# text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES level","mowing","grazing","fertiliser/ \n pesticides","predator \n control","water \n management"))
+# title(xlab="Management intervention", font=2, cex.lab=1.2, line=4.5)
+# title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
+# text(x, apply(level.prop.all,2,sum)+0.02, level.sum) # sample sizes for each intervention type
+# 
+# dev.off()
+# 
+# #---------- Proportion of studies examining the effect of an intervention type, by species ----------
+# 
+# ### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
+# # create blank objects
+# intervensum <- list()
+# intervensum.prop <- list()
+# 
+# # mgmtvars to evluate, minus AE.level
+# eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% "AE.level")]
+# 
+# for (i in 1:length(eval.mgmtvars)) {
+#   
+#   # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
+#   x <- unique(dat[,c("reference","species",eval.mgmtvars[i])]) # unique references and levels of the intervention
+#   y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
+#   intervensum[[i]] <- table(y$species)
+# }
+# 
+# intervensum.all <- do.call(cbind, intervensum)
+# colnames(intervensum.all) <- eval.mgmtvars
+# 
+# intervensum.prop.all <- intervensum.all/num.studies
+# 
+# # creates grey-scale colour vector for plotting, but randomly shuffled so darks don't end up next to each other
+# set.seed(3)
+# # colourvec <- sample(grey(seq(from=0,to=1,length.out = 8)), 8)
+# colourvec <- grey(seq(from=1,to=0,length.out = 8))
+# 
+# png(paste(outputwd, "summary_proportion of studies by intervention by species.png", sep="/"), res=300, height=12, width=20, units="in", pointsize=20)
+# 
+# par(mar=c(6,5,2,1))
+# x <- barplot(intervensum.prop.all, beside=TRUE, las=1, col=colourvec, ylim=c(0,0.4), xaxt="n")
+# text(apply(x,2,mean), par("usr")[3]-0.02, srt = 0, xpd = TRUE, labels = c("AES","nature reserve/ \n designation", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predator \n control","water \n management"))
+# title(xlab="Management intervention", font=2, cex.lab=1.2, line=3)
+# title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
+# legend("topright",legend=rownames(intervensum.prop.all), pch=rep(22,8), col="black",pt.bg=colourvec, cex=1, pt.cex=1.5, bty="n")
+# # text(x, intervensum.prop.all+0.02, intervensum.all) # sample sizes for each intervention type
+# 
+# dev.off()
 

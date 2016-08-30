@@ -8,28 +8,36 @@
 
 ####### Country summary #######
 
-       Denmark        Finland         France        Germany        Hungary    Netherlands 
-     0.0789474      0.0263158      0.0263158      0.0526316      0.0131579      0.2500000 
-        Sweden    Switzerland United Kingdom 
-     0.0657895      0.0263158      0.4605263 
+       Denmark        Finland         France        Germany        Hungary 
+     0.0789474      0.0263158      0.0263158      0.0526316      0.0131579 
+   Netherlands         Sweden    Switzerland United Kingdom 
+     0.2500000      0.0657895      0.0263158      0.4605263 
 
 
 ####### Intervention summary #######
-              AE    reserve.desig           mowing          grazing         fertpest     nest.protect 
-        0.407895         0.171053         0.236842         0.368421         0.210526         0.210526 
-predator.control            water 
-        0.157895         0.289474 
+              AE    reserve.desig           mowing          grazing         fertpest 
+        0.407895         0.171053         0.236842         0.368421         0.210526 
+    nest.protect predator.control            water 
+        0.210526         0.157895         0.289474 
 
 
 ####### Species summary #######
 
-black-tailed godwit              curlew              dunlin             lapwing       oystercatcher 
-          0.2894737           0.2105263           0.0394737           0.7368421           0.2500000 
-           redshank                ruff               snipe 
-          0.3815789           0.0263158           0.1973684 
+black-tailed godwit              curlew              dunlin             lapwing 
+          0.2894737           0.2105263           0.0394737           0.7368421 
+      oystercatcher            redshank                ruff               snipe 
+          0.2500000           0.3815789           0.0263158           0.1973684 
 
 
 ####### Metric summary #######
+
+       abundance/occupancy abundance/occupancy change               productivity 
+                 0.5000000                  0.2894737                  0.4868421 
+               recruitment                   survival 
+                 0.0263158                  0.0394737 
+
+
+####### Metric summary (specific productivity metrics) #######
 
        abundance/occupancy abundance/occupancy change               productivity 
                  0.5000000                  0.2894737                  0.4868421 
