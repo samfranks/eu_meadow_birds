@@ -54,7 +54,7 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
+# outputwd <- paste(parentwd, "output", sep="/")
 workspacewd <- paste(parentwd, "workspaces", sep="/")
 
 options(digits=6)

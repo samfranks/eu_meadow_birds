@@ -39,10 +39,12 @@ black-tailed godwit              curlew              dunlin             lapwing
 
 ####### Metric summary (specific productivity metrics) #######
 
-       abundance/occupancy abundance/occupancy change               productivity 
-                 0.5000000                  0.2894737                  0.4868421 
-               recruitment                   survival 
-                 0.0263158                  0.0394737 
+        abundance/occupancy  abundance/occupancy change   productivity (nest level) 
+                  0.5000000                   0.2894737                   0.3815789 
+ productivity (chick level) productivity (nest + chick)                 recruitment 
+                  0.1184211                   0.1315789                   0.0263158 
+                   survival 
+                  0.0394737 
 
 
 ####### Habitat summary #######

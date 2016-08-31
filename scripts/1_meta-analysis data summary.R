@@ -121,7 +121,7 @@ png(paste(outputwd, "summary_proportion of studies by species.png", sep="/"), re
 
 par(mar=c(6,5,2,1))
 x <- barplot(speciessum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
-text(x, par("usr")[3]-0.03, srt = 30, adj=1, xpd = TRUE, labels = c( "black-tailed \n godwit",names(speciessum.prop)[-which(names(speciessum.prop) %in% "black-tailed godwit")]))
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels = c( "black-tailed \n godwit",names(speciessum.prop)[-which(names(speciessum.prop) %in% "black-tailed godwit")]))
 title(xlab="Species", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, speciessum.prop+0.02, speciessum) # sample sizes for each species
