@@ -22,7 +22,7 @@ successlevel <- 0.05
 
 # =================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","tidyr")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -843,5 +843,6 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 title(ylab="Predicted probability of failure \n (significant negative impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
+abline(v=4.5, lty=3, lwd=2)
 
 dev.off()

@@ -14,7 +14,7 @@
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal")
+list.of.packages <- c("MASS","reshape")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -100,11 +100,11 @@ countrysum <- table(unique(dat[,c("reference","country")])$country)
 countrysum.prop <- countrysum/num.studies
 
 
-png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), res=300, height=12, width=16, units="in", pointsize=20)
 
 par(mar=c(6,5,2,1))
 x <- barplot(countrysum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
 title(xlab="Country", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
@@ -183,17 +183,17 @@ d1.metric$prod.metric <- with(d1.metric, ifelse(d1.metric$overall.metric=="abund
 # create ordered factor
 d1.metric$prod.metric <- factor(d1.metric$prod.metric, c("abundance/occupancy","abundance/occupancy change","productivity (nest level)", "productivity (chick level)", "productivity (nest + chick)","recruitment","survival"), ordered=TRUE)
 
-metricsum <- table(unique(d1.metric[,c("reference","prod.metric")])$prod.metric)
-metricsumprod.prop <- metricsum/num.studies
+metricsumprod <- table(unique(d1.metric[,c("reference","prod.metric")])$prod.metric)
+metricsumprod.prop <- metricsumprod/num.studies
 
-png(paste(outputwd, "summary_proportion of studies by productivity metric.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+png(paste(outputwd, "summary_proportion of studies by productivity metric.png", sep="/"), res=300, height=12, width=16, units="in", pointsize=20)
 
 par(mar=c(6,5,2,1))
-x <- barplot(metricsumprod.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
-text(x, par("usr")[3]-0.01, srt = 0, pos=1, xpd = TRUE, labels = c("abundance/\noccupancy","abundance/\noccupancy \nchange","productivity \n(nest)", "productivity \n(chick)", "productivity \n(nest+chick)","recruitment","survival"))
+x <- barplot(c(metricsumprod.prop[1:2], metricsum.prop["productivity"], metricsumprod.prop[3:7]), space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
+text(x, par("usr")[3]-0.01, srt = 0, pos=1, xpd = TRUE, labels = c("abundance/\noccupancy","abundance/\noccupancy \nchange", "productivity \n(all)", "productivity \n(nest)", "productivity \n(chick)", "productivity \n(nest+chick)","recruitment","survival"))
 title(xlab="Study metric", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
-text(x, metricsumprod.prop+0.02, metricsum) # sample sizes for each metric
+text(x, c(metricsumprod.prop[1:2]+0.02, metricsum.prop["productivity"]+0.02, metricsumprod.prop[3:7]+0.02), c(metricsumprod[1:2], metricsum["productivity"], metricsumprod[3:7])) # sample sizes for each metric
 
 dev.off()
 
@@ -229,11 +229,11 @@ names(intervensum.level.prop) <- mgmtvars
 intervensum.prop <- intervensum.prop[-which(names(intervensum.prop) %in% "AE.level")]
 intervensum <- intervensum[-which(names(intervensum) %in% "AE.level")]
 
-png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"), res=300, height=12, width=16, units="in", pointsize=20)
 
 par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 30, adj=1, xpd = TRUE, labels = c("AES","nature reserve", "mowing","grazing","fertiliser/ \n pesticides","nest \n protection","predator \n control","water \n management"))
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","fertiliser/\npesticides","nest\nprotection","predator\ncontrol","water\nmanagement"))
 title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
