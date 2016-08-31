@@ -14,7 +14,7 @@
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
+list.of.packages <- c("MASS","reshape","dplyr","lme4","car","blme","tidyr","nlme")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -85,20 +85,20 @@ for (i in 1:length(vars)) {
 }
 
 
-m.nui0 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui0)
-
-m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui1)
-
-m.nui2 <- glmer(success ~ study.length + sample.size + analysis2 + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui2)
-
-m.nui3 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui3)
-
-m.nui4 <- glmer(success ~ study.length + sample.size + analysis2 + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-summary(m.nui4)
+# m.nui0 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# summary(m.nui0)
+# 
+# m.nui1 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# summary(m.nui1)
+# 
+# m.nui2 <- glmer(success ~ study.length + sample.size + analysis2 + score + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# summary(m.nui2)
+# 
+# m.nui3 <- glmer(success ~ study.length + sample.size + analysis2 + lit.type*score + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# summary(m.nui3)
+# 
+# m.nui4 <- glmer(success ~ study.length + sample.size + analysis2 + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+# summary(m.nui4)
 
 setwd(outputwd)
 sink(paste("model output_nuisance variables.txt", sep=" "))
@@ -109,22 +109,29 @@ print(summary(m.global))
 cat("\n###---  Likelihood Ratio Tests ---###\n", sep="\n")
 print(m)
 
-cat("\n########==========  Nuisance variables - set 0 - lit.type - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui0))
-
-cat("\n########==========  Nuisance variables - set 1 - lit.type*score - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui1))
-
-cat("\n########==========  Nuisance variables - set 2 - score - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui2))
-
-cat("\n########==========  Nuisance variables - set 3 - lit.type*score + biased.metric - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui3))
-
-cat("\n########==========  Nuisance variables - set 4 - biased.metric - lme4 models ==========########\n", sep="\n")
-print(summary(m.nui4))
+# cat("\n########==========  Nuisance variables - set 0 - lit.type - lme4 models ==========########\n", sep="\n")
+# print(summary(m.nui0))
+# 
+# cat("\n########==========  Nuisance variables - set 1 - lit.type*score - lme4 models ==========########\n", sep="\n")
+# print(summary(m.nui1))
+# 
+# cat("\n########==========  Nuisance variables - set 2 - score - lme4 models ==========########\n", sep="\n")
+# print(summary(m.nui2))
+# 
+# cat("\n########==========  Nuisance variables - set 3 - lit.type*score + biased.metric - lme4 models ==========########\n", sep="\n")
+# print(summary(m.nui3))
+# 
+# cat("\n########==========  Nuisance variables - set 4 - biased.metric - lme4 models ==========########\n", sep="\n")
+# print(summary(m.nui4))
 
 sink()
+
+# output table of nuisance variable LRT results
+lapply(m, function(x) {data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2]) %>% return
+}) %>%
+  do.call(rbind, .) %>%
+  mutate(vars) %>%
+  write.csv(paste(outputwd, "model output_nuisance variables table.csv", sep="/"), row.names=FALSE)
 
 # significance is given by Wald t tests (default for summary.glmer())
 # only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
