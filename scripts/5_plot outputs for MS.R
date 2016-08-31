@@ -804,10 +804,6 @@ setwd(outputwd)
 
 moddat <- readRDS(paste(workspacewd, "model dataset_3a.rds", sep="/"))
 mod <- readRDS(paste(workspacewd, "models_3a_lme4.rds", sep="/"))
-alphalevel <- 0.05
-successlevel <- 0.05
-
-
 
 plotdat <- list()
 n <- list()
