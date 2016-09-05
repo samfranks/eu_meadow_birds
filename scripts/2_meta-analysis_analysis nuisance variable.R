@@ -130,8 +130,27 @@ sink()
 lapply(m, function(x) {data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2]) %>% return
 }) %>%
   do.call(rbind, .) %>%
-  mutate(vars) %>%
+  data.frame(vars) %>%
   write.csv(paste(outputwd, "model output_nuisance variables table.csv", sep="/"), row.names=FALSE)
+
+save(m,vars, file=paste(workspacewd, "example variables.rda", sep="/"))
+
+ls()
+
+load(file=paste(workspacewd, "example variables.rda", sep="/"))
+
+
+# extract df, chi-square, and p-values from each dropped term into a data.frame
+# output data.frame to a csv file
+# old way
+mout.list <- lapply(m, function(x) {
+  modout <-data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2])
+  return(modout)
+})
+
+mout.all <- do.call(rbind, mout.list)
+mout.all <- data.frame(mout.all, vars) # append name of variable dropped to its relevant output
+write.csv(mout.all, paste(outputwd, "model output_nuisance variables table.csv", sep="/"), row.names=FALSE)
 
 # significance is given by Wald t tests (default for summary.glmer())
 # only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
