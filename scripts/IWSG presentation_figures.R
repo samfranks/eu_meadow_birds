@@ -73,25 +73,6 @@ source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
 # total number of studies in dataset
 num.studies <- length(unique(dat$reference))
 
-#---------- Proportion of studies by literature type (grey or primary) ----------
-
-# summarize proportions of studies of different lit types
-# create based on a unique dataset of reference id and lit.type
-litsum <- table(unique(dat[,c("reference","lit.type")])$lit.type)
-litsum.prop <- litsum/num.studies
-
-
-png(paste(outputwd, "summary_proportion of studies by lit type.png", sep="/"), res=300, height=12, width=12, units="in", pointsize=20)
-
-par(mar=c(6,5,2,1))
-x <- barplot(litsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
-text(x, par("usr")[3]-0.04, srt = 0, adj=1, xpd = TRUE, labels = c(names(litsum.prop)))
-title(xlab="Literature type", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
-text(x, litsum.prop+0.02, litsum) # sample sizes for each lit type
-
-dev.off()
-
 #---------- Proportion of studies by country ----------
 
 # summarize proportions of studies from different countries
@@ -100,20 +81,27 @@ countrysum <- table(unique(dat[,c("reference","country")])$country)
 countrysum.prop <- countrysum/num.studies
 
 
-png(paste(outputwd, "summary_proportion of studies by country + species.png", sep="/"), res=300, height=20, width=16, units="in", pointsize=20)
+png(paste(outputwd, "summary_proportion of studies by country species.png", sep="/"), res=300, height=20, width=16, units="in", pointsize=20, bg="transparent")
 
 # png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), res=300, height=12, width=16, units="in", pointsize=20)
 
 par(mfrow=c(2,1))
 
-par(mar=c(6,5,2,1))
-x <- barplot(countrysum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
-title(xlab="Country", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
-text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
+# par(mar=c(6,5,2,1))
+# x <- barplot(countrysum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
+# text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"))
+# title(xlab="Country", font=2, cex.lab=1.2, line=4.5)
+# title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
+# text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
 
 # dev.off()
+
+x <- barplot(countrysum.prop, space=0.1, las=1, col=rgb(252,234,197,maxColorValue=255), xaxt="n", ylim=c(0,0.6), col.axis=rgb(252,234,197,maxColorValue=255), fg=rgb(252,234,197,maxColorValue=255))
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c(names(countrysum.prop)[-which(names(countrysum.prop) %in% "United Kingdom")], "United \n Kingdom"), col=rgb(252,234,197,maxColorValue=255))
+title(xlab="Country", font=2, cex.lab=1.2, line=4, col.lab=rgb(252,234,197,maxColorValue=255))
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3, col.lab=rgb(252,234,197,maxColorValue=255))
+text(x, countrysum.prop+0.02, countrysum, col=rgb(252,234,197,maxColorValue=255)) # sample sizes for each country
+
 
 
 #---------- Proportion of studies by species ----------
@@ -132,24 +120,6 @@ text(x, speciessum.prop+0.02, speciessum) # sample sizes for each species
 
 dev.off()
 
-
-#---------- Proportion of studies by habitat ----------
-
-d1.hab <- dat
-d1.hab$newhabitat <- factor(d1.hab$newhabitat, c("arable","pastoral","unenclosed"), ordered=TRUE)
-habsum <- table(unique(d1.hab[,c("reference","newhabitat")])$newhabitat)
-habsum.prop <- habsum/num.studies
-
-png(paste(outputwd, "summary_proportion of studies by habitat.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
-
-par(mar=c(6,5,2,1))
-x <- barplot(habsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
-text(x, par("usr")[3]-0.04, srt = 0, xpd = TRUE, labels = c("arable","pastoral","unenclosed"))
-title(xlab="Habitat", font=2, cex.lab=1.2, line=4.5)
-title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
-text(x, habsum.prop+0.02, habsum) # sample sizes for each habitat
-
-dev.off()
 
 
 #---------- Proportion of studies by overall metric ----------
