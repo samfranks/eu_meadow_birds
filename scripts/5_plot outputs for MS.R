@@ -314,7 +314,7 @@ maxspecies <- levels(do.call(rbind, plotdat)$species)
 n <- length(maxspecies)
 
 set.seed(2)
-pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(grey(seq(from=0,to=1,length.out = n)), replace=TRUE, n))
+pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(grey(seq(from=0.2,to=1,length.out = n)), replace=TRUE, n))
 pch
 plotfinal <- merge(plotfinal,pch, by="species")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
