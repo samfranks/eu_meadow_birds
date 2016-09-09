@@ -8,12 +8,8 @@
 # 11 March 2016
 
 
-#=================================  SET LOGIC STATEMENTS  ====================
-
-
 
 #=================================  LOAD PACKAGES =================================
-# =================================  LOAD PACKAGES =================================
 
 list.of.packages <- c("MASS","reshape","lme4","tidyr")
 
@@ -589,7 +585,7 @@ arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
-abline(h=successlevel, lty=3, lwd=2)
+abline(h=successlevel, lty=3, lwd=2, col="white")
 
 legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.05), text.col="white", col="white")
 
