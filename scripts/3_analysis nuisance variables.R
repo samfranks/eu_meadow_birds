@@ -9,11 +9,27 @@
 # 22 Dec 2016
 
 
-#=================================  SET LOGIC STATEMENTS  ====================
+# ----------- NOTES ABOUT ANALYSIS -----------------
+
+# significance is given by Wald t tests (default for summary.glmer()) - these are not the greatest measure of significance according to the GLMM wiki, so use the results from the LRT tests instead which compare models with and without each dropped covariate
+# the only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
+# primary literature study is more likely to be unsuccessful than successful
+# controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
+# including score only, it's not significant
+# including a variable "biased metric" which includes the abundance/occupancy problem suggests no different in success between unbiased vs biased metrics
+
+# proportion of scores for each literature type
+#             good   medium     poor
+# grey    0.224299 0.485981 0.289720
+# primary 0.405350 0.465021 0.129630
 
 
 
-#=================================  LOAD PACKAGES =================================
+# =================================  SET LOGIC STATEMENTS  ====================
+
+
+
+# =================================  LOAD PACKAGES =================================
 
 list.of.packages <- c("MASS","reshape","dplyr","lme4","car","blme","tidyr","nlme")
 
@@ -24,11 +40,11 @@ if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, library, character.only=TRUE)
 
 
-#=================================  LOAD FUNCTIONS =================================
+# =================================  LOAD FUNCTIONS =================================
 
 
 
-#=================================  SET DIRECTORY STRUCTURE  ================================
+# =================================  SET DIRECTORY STRUCTURE  ================================
 
 # LOCAL
 if(.Platform$OS =='windows') {
@@ -68,13 +84,13 @@ workspacewd <- paste(parentwd, "workspaces", sep="/")
 options(digits=6)
 
 
-#=================================  LOAD DATA  ===============================
+# =================================  LOAD DATA  ===============================
 
-source(paste(scriptswd, "source_meta-analysis_model data preparation.R", sep="/"))
+source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
-#================================== Test effect of nuisance variables on success for the full dataset ===========================
+# ================================== Test effect of nuisance variables on success for the full dataset ===========================
 
 vars <- c("study.length","sample.size","analysis2","lit.type","score","biased.metric")
 
@@ -101,6 +117,9 @@ for (i in 1:length(vars)) {
 # m.nui4 <- glmer(success ~ study.length + sample.size + analysis2 + biased.metric + (1|reference), data=dat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 # summary(m.nui4)
 
+
+# --------- OUTPUT MODEL RESULTS --------
+
 setwd(outputwd)
 sink(paste("model output_nuisance variables.txt", sep=" "))
 
@@ -110,60 +129,35 @@ print(summary(m.global))
 cat("\n###---  Likelihood Ratio Tests ---###\n", sep="\n")
 print(m)
 
-# cat("\n########==========  Nuisance variables - set 0 - lit.type - lme4 models ==========########\n", sep="\n")
-# print(summary(m.nui0))
-# 
-# cat("\n########==========  Nuisance variables - set 1 - lit.type*score - lme4 models ==========########\n", sep="\n")
-# print(summary(m.nui1))
-# 
-# cat("\n########==========  Nuisance variables - set 2 - score - lme4 models ==========########\n", sep="\n")
-# print(summary(m.nui2))
-# 
-# cat("\n########==========  Nuisance variables - set 3 - lit.type*score + biased.metric - lme4 models ==========########\n", sep="\n")
-# print(summary(m.nui3))
-# 
-# cat("\n########==========  Nuisance variables - set 4 - biased.metric - lme4 models ==========########\n", sep="\n")
-# print(summary(m.nui4))
-
 sink()
 
-# output table of nuisance variable LRT results
+
+
+# ---------- OUTPUT TABLE of nuisance variable LRT results (dplyr/piping way) -------
+
 lapply(m, function(x) {data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2]) %>% return
 }) %>%
   do.call(rbind, .) %>%
   data.frame(vars) %>%
   write.csv(paste(outputwd, "model output_nuisance variables table.csv", sep="/"), row.names=FALSE)
 
-save(m,vars, file=paste(workspacewd, "example variables.rda", sep="/"))
 
-ls()
+# # ---------- OUTPUT TABLE of nuisance variable LRT results (old school way) -------
+# 
+# # extract df, chi-square, and p-values from each dropped term into a data.frame
+# # output data.frame to a csv file
+# # old way
+# mout.list <- lapply(m, function(x) {
+#   modout <-data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2])
+#   return(modout)
+# })
+# 
+# mout.all <- do.call(rbind, mout.list)
+# mout.all <- data.frame(mout.all, vars) # append name of variable dropped to its relevant output
+# write.csv(mout.all, paste(outputwd, "model output_nuisance variables table.csv", sep="/"), row.names=FALSE)
 
-load(file=paste(workspacewd, "example variables.rda", sep="/"))
 
 
-# extract df, chi-square, and p-values from each dropped term into a data.frame
-# output data.frame to a csv file
-# old way
-mout.list <- lapply(m, function(x) {
-  modout <-data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2])
-  return(modout)
-})
-
-mout.all <- do.call(rbind, mout.list)
-mout.all <- data.frame(mout.all, vars) # append name of variable dropped to its relevant output
-write.csv(mout.all, paste(outputwd, "model output_nuisance variables table.csv", sep="/"), row.names=FALSE)
-
-# significance is given by Wald t tests (default for summary.glmer())
-# only significant effect of a nuisance variable is literature type (when 'score' is not included as a variable)
-# primary literature study is more likely to be unsuccessful than successful
-# controlling for interaction between lit.type and score removes significant effect of lit.type, suggesting that variance in the data explained by literature type could be accounted for by the quality of the analysis
-# including score only, it's not significant
-# including a variable "biased metric" which includes the abundance/occupancy problem suggests no different in success between unbiased vs biased metrics
-
-# proportion of scores for each literature type
-#             good   medium     poor
-# grey    0.224299 0.485981 0.289720
-# primary 0.405350 0.465021 0.129630
 
 
 
