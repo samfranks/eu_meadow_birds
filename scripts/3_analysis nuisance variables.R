@@ -1,11 +1,12 @@
 #################################################################
 #
-#     Step 2: EU meadow birds meta-analysis - models evaluating success
+#     Step 3: EU meadow birds meta-analysis - NUISANCE VARIABLE ANALYSIS
 #
 #################################################################
 
 # Samantha Franks
 # 11 March 2016
+# 22 Dec 2016
 
 
 #=================================  SET LOGIC STATEMENTS  ====================
@@ -61,7 +62,7 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
+outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
 workspacewd <- paste(parentwd, "workspaces", sep="/")
 
 options(digits=6)
@@ -69,7 +70,7 @@ options(digits=6)
 
 #=================================  LOAD DATA  ===============================
 
-source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
+source(paste(scriptswd, "source_meta-analysis_model data preparation.R", sep="/"))
 
 
 

@@ -1,0 +1,43 @@
+
+
+####### Literature summary #######
+
+    grey  primary 
+0.210526 0.789474 
+
+
+####### Country summary #######
+
+       Denmark        Finland         France        Germany        Hungary    Netherlands         Sweden    Switzerland United Kingdom 
+     0.0789474      0.0263158      0.0263158      0.0526316      0.0131579      0.2500000      0.0657895      0.0263158      0.4605263 
+
+
+####### Intervention summary #######
+              AE    reserve.desig           mowing          grazing         fertpest     nest.protect predator.control            water 
+        0.407895         0.171053         0.236842         0.368421         0.210526         0.210526         0.157895         0.289474 
+
+
+####### Species summary #######
+
+black-tailed godwit              curlew              dunlin             lapwing       oystercatcher            redshank                ruff               snipe 
+          0.2894737           0.2105263           0.0394737           0.7368421           0.2500000           0.3815789           0.0263158           0.1973684 
+
+
+####### Metric summary #######
+
+       abundance/occupancy abundance/occupancy change               productivity                recruitment                   survival 
+                 0.5000000                  0.2894737                  0.4868421                  0.0263158                  0.0394737 
+
+
+####### Metric summary (specific productivity metrics) #######
+
+        abundance/occupancy  abundance/occupancy change   productivity (nest level)  productivity (chick level) productivity (nest + chick)                 recruitment 
+                  0.5000000                   0.2894737                   0.3815789                   0.1184211                   0.1315789                   0.0263158 
+                   survival 
+                  0.0394737 
+
+
+####### Habitat summary #######
+
+    arable   pastoral unenclosed 
+  0.289474   0.592105   0.197368 

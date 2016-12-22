@@ -1,12 +1,12 @@
-#######################################################
+############################################################################################
 #
-#     Step 1: EU meadow birds meta-analysis - DATA PREPARATION
+#     Step 1: EU meadow birds meta-analysis - DATA PREPARATION FROM EXTRACTED DATABASE
 #
-#######################################################
+############################################################################################
 
 # Samantha Franks
 # 11 March 2016
-
+# 22 Dec 2016
 
 #=================================  SET LOGIC STATEMENTS  ====================
 
@@ -56,7 +56,7 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
+outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
 workspacewd <- paste(parentwd, "workspaces", sep="/")
 
 options(digits=6)
@@ -235,5 +235,6 @@ d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
 ### Save definitive dataset
 saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
 write.table(d1, file=paste(datawd, "meadow birds analysis dataset_full.txt", sep="/"), row.names=FALSE, quote=FALSE, sep="\t")
+write.csv(d1, file=paste(datawd, "meadow birds analysis dataset_full.csv", sep="/"), row.names=FALSE)
 
 
