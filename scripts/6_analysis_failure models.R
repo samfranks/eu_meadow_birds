@@ -1,11 +1,12 @@
 #################################################################
 #
-#     Step 2: EU meadow birds meta-analysis - models evaluating FAILURES
+#     Step 6: EU meadow birds analysis - FAILURE MODELS
 #
 #################################################################
 
 # Samantha Franks
 # 11 March 2016
+# 22 Dec 2016
 
 
 #=================================  SET LOGIC STATEMENTS  ====================
