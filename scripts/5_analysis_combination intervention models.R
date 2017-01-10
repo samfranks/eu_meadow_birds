@@ -9,12 +9,12 @@
 # 22 Dec 2016
 
 
-#=================================  SET LOGIC STATEMENTS  ====================
+# =================================  SET LOGIC STATEMENTS  ====================
 
 
-#=================================  LOAD PACKAGES =================================
+# =================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme","dplyr")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -23,7 +23,7 @@ if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, library, character.only=TRUE)
 
 
-#=================================  LOAD FUNCTIONS =================================
+# =================================  LOAD FUNCTIONS =================================
 
 ### Ben Bolker's function for calculating CIs on predictions from a merMod object and plotting the results from his RPubs GLMM worked examples
 # http://rpubs.com/bbolker/glmmchapter
@@ -52,7 +52,7 @@ easyPredCI <- function(model,newdata,alpha=0.05) {
   
 }
 
-#=================================  SET DIRECTORY STRUCTURE  ================================
+# =================================  SET DIRECTORY STRUCTURE  ================================
 
 # LOCAL
 if(.Platform$OS =='windows') {
@@ -86,27 +86,43 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
-workspacewd <- paste(parentwd, "workspaces", sep="/")
+outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
+workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
 
-#=================================  LOAD DATA  ===============================
 
-source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
+# =================================  LOAD DATA  ===============================
 
-
-
-#=================================  ANALYSIS  2 ===============================
-
-
-#-----------------   HIGH-LEVEL INTERVENTION SUCCESS  ------------------
+source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
-####---- Method 1: Run models using only those records which evaluate either AES and/or nature reserves ----####
+# =================================  ANALYSIS  3 - INTERVENTIONS IN COMBINATION ===============================
 
+
+
+with(dat, tapply(order, year, function(X) length(unique(X))))
+
+library(plyr)
+temp <- count(dat, vars = c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water"))
+
+temp2 <- subset(temp, AE=="applied")#
+temp2[with(temp2, order(AE, AE.level, mowing)),]
+
+subset(dat, AE=="none" & AE.level=="none" & reserve.desig=="none" & mowing=="none" & grazing=="none" & fertpest=="none" & nest.protect=="none" & predator.control=="none" & water=="none")
+
+all(dat[mgmtvars]=="none")
+
+
+
+
+#-----------------   3a) POLICY INTERVENTION SUCCESS  ------------------
+
+
+
+#### ---- Method 1 (USED IN SUBMISSION): Run models using only those records which evaluate either AES and/or nature reserves ---- ####
 
 
 # this tells us the probability of success IF THESE INTERVENTIONS WERE ATTEMPTED (subtly different than below Method 2, which tells us the probability of success if they were used vs not used)
@@ -136,15 +152,21 @@ mdat <- merge(mdat, newlevels2, by=c("AE.level","reserve.desig"))
 mdat$AE.reserve2 <- relevel(mdat$AE.reserve2, ref="no AE-reserve")
 table(mdat$AE.reserve2)
 
-###--- Model ---###
+
+
+# --------  MODEL ---------
 
 m.high <- glmer(success ~ AE.reserve + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.high)
 
-library(multcomp)
+
+# -------------- Output model results ----------------------
+
+library(multcomp) # contains the ghlt function
 
 setwd(outputwd)
-sink(paste("model output_2a_method 1.txt", sep=" "))
+sink(paste("model output_analysis 3a_method 1.txt", sep=" "))
+
 cat("\n########==========  Success of higher-level interventions combined ==========########\n", sep="\n")
 print(summary(m.high))
 
