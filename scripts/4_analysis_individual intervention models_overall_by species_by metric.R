@@ -9,11 +9,12 @@
 # 22 Dec 2016
 
 
-#=================================  SET LOGIC STATEMENTS  ====================
+# =================================  SET LOGIC STATEMENTS  ====================
 
-bias <- FALSE
+bias <- FALSE # setting this logic control variable to true means introducing the confounding covariate fixed effect 'biased.metric' into the intervention models
+# we have decided not to do this, so this control variable is set permanently to 'FALSE'
 
-#=================================  LOAD PACKAGES =================================
+# =================================  LOAD PACKAGES =================================
 
 list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
 
@@ -24,11 +25,11 @@ if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, library, character.only=TRUE)
 
 
-#=================================  LOAD FUNCTIONS =================================
+# =================================  LOAD FUNCTIONS =================================
 
 
 
-#=================================  SET DIRECTORY STRUCTURE  ================================
+# =================================  SET DIRECTORY STRUCTURE  ================================
 
 # LOCAL
 if(.Platform$OS =='windows') {
@@ -62,13 +63,13 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
-workspacewd <- paste(parentwd, "workspaces", sep="/")
+outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
+workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
 
-#=================================  LOAD DATA  ===============================
+# =================================  LOAD DATA  ===============================
 
 source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
@@ -76,24 +77,18 @@ source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
-#=================================  ANALYSIS  0 ===============================
-
-# Analysis evaluates whether one or several management interventions has a significantly positive outcome (i.e. is successful) compared to the baseline reference situation (which in most cases is no management)
-# reference level for all interventions is 'none', so management (either applied or reduced, depending on the intervention) is evaluated against the reference
-
-# 0a) success of individual management types overall
-# 0b) success of individual management types by species
-# 0c) success of individual management types by metric
-# 0d) success of individual management types by habitat
-
-### Nuisance explanatory variables and random effects
-# 'nuisance explanatory variables: study duration (continuous), sample size (categorical: small, medium, large), multivariate/univariate (categorical)
-# Random effects: study id - habitat will be included later on - have taken out country as a random effect since it causes problems in the analysis
+# =================================  ANALYSIS  1 - INDIVIDUAL INTERVENTIONS OVERALL ===============================
 
 
+### NOTES
+# Analysis evaluates the overall success rate (probability that an intervention has a significant positive outcome) of each intervention individually
+
+### Confounding covariates
+# Literature type was the only significant confounding covariate in the nuisance variable analysis, but inclusion as a fixed effect causes issues with model convergence
+# instead, include study ID as a random effect to account for some of this variation
 
 
-#------------------------------ 0a) success of individual management types -------------------------
+# ---------------- Models ------------------
 
 # identify which categories have low numbers
 out <- list()
@@ -145,19 +140,19 @@ for (i in 1:length(mgmtvars)) {
     }
   }
   
-  if (bias) {
-    # create different formulas to use depending on whether management variable is 1 or 2 levels
-    if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-      modform <- as.formula(paste("success ~ ", mgmtvars[i], " + biased.metric + (1|reference) + (1|species)", sep=""))
-    }
-    
-    if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-      modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
-    }
-  }
-  
-  # run a normal glmer model
-  m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+  # if (bias) {
+  #   # create different formulas to use depending on whether management variable is 1 or 2 levels
+  #   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+  #     modform <- as.formula(paste("success ~ ", mgmtvars[i], " + biased.metric + (1|reference) + (1|species)", sep=""))
+  #   }
+  #   
+  #   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+  #     modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
+  #   }
+  # }
+  # 
+  # # run a normal glmer model
+  # m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
   
 }
@@ -180,13 +175,15 @@ warningmessages.lme4
 # max(abs(sc_grad1))
 # max(pmin(abs(sc_grad1),abs(derivs1$gradient)))
 
-### Output model results ###
+
+
+# -------------- Output model results ----------------------
 
 if (!bias) {
   setwd(outputwd)
-  sink(paste("model output_0a.txt", sep=" "))
+  sink(paste("model output_analysis 1.txt", sep=" "))
   
-  cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
+  cat("\n########==========  Analysis 1) success of individual management types - lme4 models ==========########\n", sep="\n")
   print(lapply(m.ind, summary))
   
   cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
@@ -194,32 +191,34 @@ if (!bias) {
   sink()
   
   ### Save individual interventions models
-  saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4.rds", sep="/"))
+  saveRDS(m.ind, file=paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
   
   ### Save dataset for 0a models
-  saveRDS(usedat, file=paste(workspacewd, "model dataset_0a.rds", sep="/"))
-}
-
-if (bias) {
-  setwd(outputwd)
-  sink(paste("model output_0a_bias.txt", sep=" "))
-  
-  cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
-  print(lapply(m.ind, summary))
-  
-  cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
-  print(warningmessages.lme4)
-  sink()
-  
-  ### Save individual interventions models
-  saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4_bias.rds", sep="/"))
-  
-  ### Save dataset for 0a models
-  saveRDS(usedat, file=paste(workspacewd, "model dataset_0a_bias.rds", sep="/"))
+  saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 1.rds", sep="/"))
 }
 
 
-#------------------------------ 0b) success of individual management types by species -------------------------
+# if (bias) {
+#   setwd(outputwd)
+#   sink(paste("model output_0a_bias.txt", sep=" "))
+#   
+#   cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
+#   print(lapply(m.ind, summary))
+#   
+#   cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
+#   print(warningmessages.lme4)
+#   sink()
+#   
+#   ### Save individual interventions models
+#   saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4_bias.rds", sep="/"))
+#   
+#   ### Save dataset for 0a models
+#   saveRDS(usedat, file=paste(workspacewd, "model dataset_0a_bias.rds", sep="/"))
+# }
+
+
+
+# ===========================  ANALYSIS  2 - INTERVENTIONS BY SPECIES and METRIC-SPECIFIC RESPONSE  ===========================
 
 ### ANALYTICAL ISSUES ###
 
@@ -241,7 +240,8 @@ if (bias) {
 
 
 
-### ANALYSIS ###
+
+# ------------------- MODELS:  2a) success of individual management types by species  ----------------
 
 sppdat <- dat
 
@@ -266,6 +266,7 @@ for (i in 1:length(mgmtvars)) {
   
   # for the following categories, subset further because there aren't enough observations of either 0,1 or both
   # dunlin and ruff will need to be removed from most categories due to lack of observations, but there may be some with sufficient, or ok if combined
+  
   if (mgmtvars[i]=="AE") {
     mdat <- subset(mdat, species!="dunlin" & species!="ruff")
   }
@@ -310,7 +311,6 @@ for (i in 1:length(mgmtvars)) {
   
   if (mgmtvars[i]=="water") {
     mdat <- subset(mdat, species!="dunlin" & species!="ruff")
-    
     mdat <- subset(mdat, water!="reduced")
     # model runs ok without 2 of curlew, oystercatcher and snipe, but model won't converge and has a very high max|grad| value when more than 1 of these species is included. Since they all have no successes for this management intervention and similar levels of failure, then combine together for the water analysis
     mdat <- subset(mdat, species!="curlew" & species!="snipe")
@@ -334,7 +334,7 @@ for (i in 1:length(mgmtvars)) {
   # run a normal glmer model
   m.ind.sp[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
-  # if ANY checkzeros==0, then there are categories which are missing any observations whatsoever, so will have problems with complete separation and/or convergence
+  # if ANY checkzeros==0, then there are categories which are missing  observations, so will have problems with complete separation and/or convergence
   # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
   # calculate the dimensions of the covariance matrix for bglmer, based on the dimensions of the covariance matrix from the regular glmer model
   
@@ -344,9 +344,6 @@ for (i in 1:length(mgmtvars)) {
   
 }
 
-
-# m <- bglmer(success ~ species + lit.type + (1|reference), data=usedat[[1]], family=binomial, fixef.prior = normal(sd=3), control=glmerControl(optimizer="bobyqa"))
-# anova(m,update(m,~.-species))
 
 names(m.ind.sp) <- mgmtvars
 names(m.ind.sp.blme) <- mgmtvars
@@ -359,12 +356,16 @@ warningmessages.blme <- lapply(m.ind.sp.blme, function(x) slot(x, "optinfo")$con
 warningmessages.blme
 
 
+
+# -------------- Output model results ----------------------
+
 setwd(outputwd)
-sink(paste("model output_0b.txt", sep=" "))
-cat("\n########==========  0b) success of individual management types by species - BLME models (good) ==========########\n", sep="\n")
+sink(paste("model output_analysis 2a.txt", sep=" "))
+
+cat("\n########==========  Analysis 2a) success of individual management types by species - BLME models (good) ==========########\n", sep="\n")
 print(lapply(m.ind.sp.blme, summary))
 
-cat("\n########==========  0b) success of individual management types by species - lme4 models (convergence issues) ==========########\n", sep="\n")
+cat("\n########==========  Analysis 2a) success of individual management types by species - lme4 models (convergence issues) ==========########\n", sep="\n")
 print(lapply(m.ind.sp, summary))
 
 cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
@@ -375,22 +376,19 @@ print(warningmessages.lme4)
 sink()
 
 ### Save individual interventions models
-saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_0b_blme.rds", sep="/"))
-saveRDS(m.ind.sp, file=paste(workspacewd, "models_0b_lme4.rds", sep="/"))
+saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_analysis 2a_blme.rds", sep="/"))
+saveRDS(m.ind.sp, file=paste(workspacewd, "models_analysis 2a_lme4.rds", sep="/"))
 
 ### Save dataset for 0b models
-saveRDS(usedat, file=paste(workspacewd, "model dataset_0b.rds", sep="/"))
+saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 2a.rds", sep="/"))
 
 
 
-# m <- m.ind.sp[[1]]
-# m2 <- bglmer(formula = success ~ species + (1 | reference), data = mdat, family = binomial, control = glmerControl(optimizer = "bobyqa"), fixef.prior = normal(cov = matrix(9,6)))
-# m2 <- drop1(m, scope = ~species, test="Chisq")
 
 
-#------------------------------ 0c) success of individual management types by metric -------------------------
 
-### ANALYSIS ###
+# ------------------- MODELS:  2b) success of individual management types by metric  ----------------
+
 
 # subset dataset to remove recruitment and survival metrics, too few observations
 metricdat <- subset(dat, new.metric!="recruitment" & new.metric!="survival")
@@ -480,12 +478,16 @@ warningmessages.blme <- lapply(m.ind.sp.blme, function(x) slot(x, "optinfo")$con
 warningmessages.blme
 
 
+# -------------- Output model results ----------------------
+
+
 setwd(outputwd)
-sink(paste("model output_0c.txt", sep=" "))
-cat("\n########==========  0b) success of individual management types by metric - BLME models (good) ==========########\n", sep="\n")
+sink(paste("model output_analysis 2b.txt", sep=" "))
+
+cat("\n########==========  Analysis 2b) success of individual management types by metric - BLME models (good) ==========########\n", sep="\n")
 print(lapply(m.ind.sp.blme, summary))
 
-cat("\n########==========  0b) success of individual management types by metric - lme4 models (convergence issues) ==========########\n", sep="\n")
+cat("\n########==========  Analysis 2b) success of individual management types by metric - lme4 models (convergence issues) ==========########\n", sep="\n")
 print(lapply(m.ind.sp, summary))
 
 cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
@@ -496,145 +498,15 @@ print(warningmessages.lme4)
 sink()
 
 ### Save individual interventions models
-saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_0c_blme.rds", sep="/"))
-saveRDS(m.ind.sp, file=paste(workspacewd, "models_0c_lme4.rds", sep="/"))
+saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_analysis 2b_blme.rds", sep="/"))
+saveRDS(m.ind.sp, file=paste(workspacewd, "models_analysis 2b_lme4.rds", sep="/"))
 
 ### Save dataset for 0b models
-saveRDS(usedat, file=paste(workspacewd, "model dataset_0c.rds", sep="/"))
-
-#######################################################
-#######################################################
-#######################################################        End of analysis for 18 March report delivery
-#######################################################
-#######################################################
+saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 2b.rds", sep="/"))
 
 
-#------------------------------ 0d) success of individual management types by habitat -------------------------
 
-### NOTES on Analysis 0d ###
-# cannot include 1|species as a random effect as models produce convergence issues
-# reserve.desig model run without literature type because not enough observations in the different literature types to produce convergence (model with lit.type was rank deficient)
-
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
-
-
-# identify which categories have low numbers
-out <- list()
-for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
-}
-names(out) <- mgmtvars
-out
-
-# mgmtvars <- c("AE","AE.level","reserve.desig","nest.protect","water")
-
-
-### ANALYSIS ###
-
-# identify which categories have low numbers
-out <- list()
-for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$newhabitat, dat[,mgmtvars[i]])
-}
-names(out) <- mgmtvars
-out
-
-# set up list to output models and model datasets to
-m.ind.sp <- list()
-m.ind.sp.blme <- list()
-usedat <- list() # data subset used to run a model
-
-
-for (i in 1:length(mgmtvars)) {
-  
-  
-  mgmtvars[i]
-  mdat <- dat[dat[,mgmtvars[i]]!="none",]
-  table(mdat[,mgmtvars[i]], mdat$newhabitat, mdat$success)
-  
-  if (mgmtvars[i]=="AE.level") {
-    mdat <- subset(mdat, newhabitat!="unenclosed")
-  }
-  
-  if (mgmtvars[i]=="mowing") {
-    mdat <- subset(mdat, newhabitat!="unenclosed")
-  }
-  
-  if (mgmtvars[i]=="fertpest") {
-    mdat <- subset(mdat, newhabitat!="unenclosed")
-    mdat <- subset(mdat, fertpest!="applied")
-  }
-  
-  if (mgmtvars[i]=="water") {
-    mdat <- subset(mdat, water!="reduced")
-  }
-  
-  mdat <- droplevels(mdat)
-  usedat[[i]] <- mdat
-  
-  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$newhabitat, mdat$success))
-  
-  
-  
-  # create different formulas to use depending on whether management variable is 1 or 2 levels
-  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("success ~ ", mgmtvars[i], "*newhabitat + (1|reference)", sep=""))
-  }
-  
-  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("success ~ newhabitat + (1|reference)")
-  }
-  
-  # run a normal glmer model
-  m.ind.sp[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-  
-  # if ANY checkzeros==0, then there are categories which are missing any observations whatsoever, so will have problems with complete separation and/or convergence
-  # use bglmer since there are some cases of singularity produced by 0/1 not having any observations for some of the categorical variables
-  # calculate the dimensions of the covariance matrix for bglmer, based on the dimensions of the covariance matrix from the regular glmer model
-  
-  # if (any(checkzeros==0)) {
-  vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
-  m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
-  # }
-  summary(m.ind.sp.blme[[i]])
-  
-  
-  
-}
-
-names(m.ind.sp) <- mgmtvars
-names(m.ind.sp.blme) <- mgmtvars
-names(usedat) <- mgmtvars
-
-warningmessages.lme4 <- lapply(m.ind.sp, function(x) slot(x, "optinfo")$conv$lme4$messages)
-warningmessages.lme4
-
-warningmessages.blme <- lapply(m.ind.sp.blme, function(x) slot(x, "optinfo")$conv$lme4$messages)
-warningmessages.blme
-
-
-setwd(outputwd)
-sink(paste("model output_0d.txt", sep=" "))
-cat("\n########==========  0d) success of individual management types (subset only) by habitat - BLME models (good) ==========########\n", sep="\n")
-print(lapply(m.ind.sp.blme, summary))
-
-cat("\n########==========  0d) success of individual management types (subset only) by habitat - lme4 models (convergence issues) ==========########\n", sep="\n")
-print(lapply(m.ind.sp, summary))
-
-cat("\n########==========  Warning messages BLME models (good) ==========########\n", sep="\n")
-print(warningmessages.blme)
-
-cat("\n########==========  Warning messages lme4 models (convergence issues) ==========########\n", sep="\n")
-print(warningmessages.lme4)
-sink()
-
-### Save individual interventions models
-saveRDS(m.ind.sp.blme, file=paste(workspacewd, "models_0d_blme.rds", sep="/"))
-saveRDS(m.ind.sp, file=paste(workspacewd, "models_0d_lme4.rds", sep="/"))
-
-### Save dataset for 0b models
-saveRDS(usedat, file=paste(workspacewd, "model dataset_0d.rds", sep="/"))
-
+##########################         END OF ANALYSIS FOR J Applied Ecology submission/revision     ##################
 
 
 

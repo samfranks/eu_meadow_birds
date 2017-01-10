@@ -1,0 +1,706 @@
+
+########==========  Analysis 2b) success of individual management types by metric - BLME models (good) ==========########
+
+$AE
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 12.686
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   315.8    330.0   -153.9    307.8      257 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.435 -0.694 -0.469  0.838  2.520 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.834    0.913   
+Number of obs: 261, groups:  reference, 31
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)   
+(Intercept)                            -1.061      0.332   -3.20   0.0014 **
+new.metricabundance/occupancy change    0.222      0.389    0.57   0.5682   
+new.metricproductivity                  1.263      0.640    1.97   0.0483 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.513       
+nw.mtrcprdc -0.499  0.322
+
+$AE.level
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 24.946
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ AE.level * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   307.3    332.2   -146.6    293.3      254 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.804 -0.651 -0.397  0.678  2.682 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.963    0.981   
+Number of obs: 261, groups:  reference, 31
+
+Fixed effects:
+                                                    Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                                           -1.455      0.389   -3.74  0.00018 ***
+AE.levelhigher                                         0.656      0.453    1.45  0.14750    
+new.metricabundance/occupancy change                  -0.228      0.497   -0.46  0.64633    
+new.metricproductivity                                 1.096      1.075    1.02  0.30791    
+AE.levelhigher:new.metricabundance/occupancy change    1.502      0.745    2.02  0.04383 *  
+AE.levelhigher:new.metricproductivity                  0.232      1.215    0.19  0.84845    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) AE.lvl nw.m/c nw.mtr AE.:.c
+AE.levlhghr -0.431                            
+nw.mtrcbn/c -0.457  0.358                     
+nw.mtrcprdc -0.292  0.082  0.145              
+AE.lvlh:./c  0.122 -0.501 -0.591 -0.038       
+AE.lvlhgh:.  0.108 -0.281 -0.101 -0.786  0.187
+
+$reserve.desig
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 13.652
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   214.4    226.7   -103.2    206.4      154 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.593 -0.740 -0.667  0.966  1.499 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.381    0.617   
+Number of obs: 158, groups:  reference, 13
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                            -0.284      0.400   -0.71    0.477  
+new.metricabundance/occupancy change    0.800      0.469    1.71    0.088 .
+new.metricproductivity                 -0.412      0.927   -0.44    0.657  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.609       
+nw.mtrcprdc -0.479  0.345
+
+$mowing
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 27.386
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ mowing * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    97.3    115.0    -41.7     83.3       85 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.559 -0.472 -0.315 -0.220  3.174 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.748    0.865   
+Number of obs: 92, groups:  reference, 18
+
+Fixed effects:
+                                                   Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                                          -1.838      1.219   -1.51    0.132  
+mowingreduced                                         0.131      1.275    0.10    0.918  
+new.metricabundance/occupancy change                  2.483      1.438    1.73    0.084 .
+new.metricproductivity                               -1.050      1.523   -0.69    0.491  
+mowingreduced:new.metricabundance/occupancy change   -2.168      1.536   -1.41    0.158  
+mowingreduced:new.metricproductivity                  3.050      1.626    1.88    0.061 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) mwngrd nw.m/c nw.mtr mw:./c
+mowingredcd -0.872                            
+nw.mtrcbn/c -0.600  0.481                     
+nw.mtrcprdc -0.495  0.386  0.370              
+mwngrdc:./c  0.476 -0.566 -0.800 -0.253       
+mwngrdcd:n.  0.373 -0.458 -0.263 -0.820  0.301
+
+$grazing
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 15.909
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ grazing * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   129.8    143.2    -59.9    119.8      104 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.842 -0.506 -0.419 -0.285  2.311 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.55     1.24    
+Number of obs: 109, groups:  reference, 27
+
+Fixed effects:
+                                      Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                             -0.867      0.526   -1.65    0.099 .
+grazingreduced                          -0.408      0.910   -0.45    0.654  
+new.metricproductivity                  -0.980      0.900   -1.09    0.276  
+grazingreduced:new.metricproductivity    1.383      1.429    0.97    0.333  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) grzngr nw.mtr
+grazingrdcd -0.515              
+nw.mtrcprdc -0.496  0.188       
+grzngrdcd:.  0.249 -0.496 -0.411
+
+$fertpest
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 8.245
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    38.9     44.1    -15.4     30.9       23 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.914 -0.313 -0.156  0.212  1.592 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 30.5     5.52    
+Number of obs: 27, groups:  reference, 11
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)                              1.73       2.33    0.74     0.46
+new.metricabundance/occupancy change    -2.56       1.74   -1.47     0.14
+new.metricproductivity                   1.36       2.54    0.53     0.59
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.162       
+nw.mtrcprdc -0.116  0.008
+
+$nest.protect
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 13.037
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   115.8    125.6    -53.9    107.8       82 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.129 -0.697 -0.429  0.904  2.329 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.695    0.834   
+Number of obs: 86, groups:  reference, 16
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                            -1.349      0.713   -1.89    0.058 .
+new.metricabundance/occupancy change    0.718      0.938    0.76    0.444  
+new.metricproductivity                  1.065      0.776    1.37    0.170  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.537       
+nw.mtrcprdc -0.863  0.478
+
+$predator.control
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 9.921
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    53.8     60.8    -22.9     45.8       38 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.287 -0.302 -0.189  0.394  1.049 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 11       3.32    
+Number of obs: 42, groups:  reference, 12
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                            -2.578      1.430   -1.80    0.072 .
+new.metricabundance/occupancy change    0.262      1.717    0.15    0.879  
+new.metricproductivity                  2.448      1.298    1.89    0.059 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.329       
+nw.mtrcprdc -0.545  0.400
+
+$water
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 14.109
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ water * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   112.5    125.2    -51.3    102.5       89 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.154 -0.440 -0.247  0.462  2.722 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 4.42     2.1     
+Number of obs: 94, groups:  reference, 21
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                           -0.209      0.737   -0.28     0.78
+waterreduced                          -0.958      1.583   -0.60     0.55
+new.metricproductivity                -0.248      0.944   -0.26     0.79
+waterreduced:new.metricproductivity   -0.875      1.910   -0.46     0.65
+
+Correlation of Fixed Effects:
+            (Intr) wtrrdc nw.mtr
+waterreducd -0.306              
+nw.mtrcprdc -0.491  0.081       
+wtrrdcd:nw.  0.057 -0.460 -0.253
+
+
+########==========  Analysis 2b) success of individual management types by metric - lme4 models (convergence issues) ==========########
+
+$AE
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   315.4    329.7   -153.7    307.4      257 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.419 -0.665 -0.475  0.890  2.419 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.534    0.731   
+Number of obs: 261, groups:  reference, 31
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                            -1.109      0.301   -3.68  0.00023 ***
+new.metricabundance/occupancy change    0.297      0.379    0.78  0.43355    
+new.metricproductivity                  1.414      0.602    2.35  0.01878 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.539       
+nw.mtrcprdc -0.497  0.325
+
+$AE.level
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ AE.level * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   307.0    332.0   -146.5    293.0      254 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.680 -0.622 -0.412  0.714  2.629 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.687    0.829   
+Number of obs: 261, groups:  reference, 31
+
+Fixed effects:
+                                                    Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                                           -1.476      0.372   -3.97  7.2e-05 ***
+AE.levelhigher                                         0.632      0.458    1.38    0.168    
+new.metricabundance/occupancy change                  -0.205      0.502   -0.41    0.683    
+new.metricproductivity                                 1.302      1.137    1.15    0.252    
+AE.levelhigher:new.metricabundance/occupancy change    1.492      0.765    1.95    0.051 .  
+AE.levelhigher:new.metricproductivity                  0.100      1.316    0.08    0.939    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) AE.lvl nw.m/c nw.mtr AE.:.c
+AE.levlhghr -0.469                            
+nw.mtrcbn/c -0.474  0.375                     
+nw.mtrcprdc -0.319  0.144  0.169              
+AE.lvlh:./c  0.151 -0.529 -0.623 -0.070       
+AE.lvlhgh:.  0.164 -0.333 -0.136 -0.825  0.213
+
+$reserve.desig
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   213.3    225.5   -102.6    205.3      154 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.368 -0.747 -0.706  0.823  1.417 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.0394   0.199   
+Number of obs: 158, groups:  reference, 13
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                           -0.5501     0.3758   -1.46    0.143  
+new.metricabundance/occupancy change   1.0877     0.4910    2.21    0.027 *
+new.metricproductivity                 0.0123     0.8770    0.01    0.989  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.773       
+nw.mtrcprdc -0.526  0.415
+
+$mowing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ mowing * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    94.1    111.8    -40.1     80.1       85 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.0000 -0.5270 -0.4027 -0.0001  2.4833 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0        0       
+Number of obs: 92, groups:  reference, 18
+
+Fixed effects:
+                                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                                        -1.96e+01   2.54e+02   -0.08     0.94
+mowingreduced                                       1.77e+01   2.54e+02    0.07     0.94
+new.metricabundance/occupancy change                2.10e+01   2.54e+02    0.08     0.93
+new.metricproductivity                              8.38e-06   6.49e+02    0.00     1.00
+mowingreduced:new.metricabundance/occupancy change -2.04e+01   2.54e+02   -0.08     0.94
+mowingreduced:new.metricproductivity                2.16e+00   6.49e+02    0.00     1.00
+
+Correlation of Fixed Effects:
+            (Intr) mwngrd nw.m/c nw.mtr mw:./c
+mowingredcd -1.000                            
+nw.mtrcbn/c -1.000  1.000                     
+nw.mtrcprdc  0.059 -0.059 -0.059              
+mwngrdc:./c  1.000 -1.000 -1.000  0.059       
+mwngrdcd:n. -0.059  0.059  0.059 -1.000 -0.059
+convergence code: 0
+Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+
+
+$grazing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ grazing * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   129.1    142.5    -59.5    119.1      104 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.867 -0.512 -0.483 -0.355  2.165 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.599    0.774   
+Number of obs: 109, groups:  reference, 27
+
+Fixed effects:
+                                      Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                             -0.842      0.439   -1.92    0.055 .
+grazingreduced                          -0.564      0.784   -0.72    0.472  
+new.metricproductivity                  -0.881      0.857   -1.03    0.304  
+grazingreduced:new.metricproductivity    1.833      1.382    1.33    0.185  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) grzngr nw.mtr
+grazingrdcd -0.567              
+nw.mtrcprdc -0.564  0.333       
+grzngrdcd:.  0.325 -0.560 -0.558
+
+$fertpest
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    37.9     43.1    -15.0     29.9       23 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.008 -0.344 -0.162  0.269  1.463 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 14       3.75    
+Number of obs: 27, groups:  reference, 11
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)
+(Intercept)                              1.67       2.48    0.67     0.50
+new.metricabundance/occupancy change    -3.65       3.22   -1.14     0.26
+new.metricproductivity                   1.40       3.81    0.37     0.71
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.617       
+nw.mtrcprdc -0.090 -0.194
+
+$nest.protect
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   114.3    124.1    -53.1    106.3       82 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-0.923 -0.923 -0.459  1.083  2.179 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0        0       
+Number of obs: 86, groups:  reference, 16
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)   
+(Intercept)                            -1.558      0.550   -2.83   0.0046 **
+new.metricabundance/occupancy change    0.747      0.815    0.92   0.3591   
+new.metricproductivity                  1.398      0.619    2.26   0.0239 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.675       
+nw.mtrcprdc -0.889  0.600
+
+$predator.control
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    52.9     59.8    -22.4     44.9       38 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.260 -0.336 -0.188  0.455  1.058 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 7.04     2.65    
+Number of obs: 42, groups:  reference, 12
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(>|z|)  
+(Intercept)                             -3.50       2.10   -1.67    0.096 .
+new.metricabundance/occupancy change     1.59       2.20    0.72    0.469  
+new.metricproductivity                   3.46       2.06    1.68    0.094 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) nw.m/c
+nw.mtrcbn/c -0.666       
+nw.mtrcprdc -0.842  0.693
+
+$water
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ water * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   112.1    124.9    -51.1    102.1       89 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.139 -0.458 -0.261  0.581  2.640 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 2.66     1.63    
+Number of obs: 94, groups:  reference, 21
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                           -0.316      0.666   -0.47     0.64
+waterreduced                          -0.946      1.728   -0.55     0.58
+new.metricproductivity                -0.103      0.917   -0.11     0.91
+waterreduced:new.metricproductivity   -0.987      2.360   -0.42     0.68
+
+Correlation of Fixed Effects:
+            (Intr) wtrrdc nw.mtr
+waterreducd -0.378              
+nw.mtrcprdc -0.550  0.208       
+wtrrdcd:nw.  0.159 -0.627 -0.358
+
+
+########==========  Warning messages BLME models (good) ==========########
+
+$AE
+NULL
+
+$AE.level
+NULL
+
+$reserve.desig
+NULL
+
+$mowing
+NULL
+
+$grazing
+NULL
+
+$fertpest
+NULL
+
+$nest.protect
+NULL
+
+$predator.control
+NULL
+
+$water
+NULL
+
+
+########==========  Warning messages lme4 models (convergence issues) ==========########
+
+$AE
+NULL
+
+$AE.level
+NULL
+
+$reserve.desig
+NULL
+
+$mowing
+$mowing[[1]]
+[1] "Model is nearly unidentifiable: large eigenvalue ratio\n - Rescale variables?"
+
+
+$grazing
+NULL
+
+$fertpest
+NULL
+
+$nest.protect
+NULL
+
+$predator.control
+NULL
+
+$water
+NULL
+
