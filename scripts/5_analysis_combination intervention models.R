@@ -98,23 +98,21 @@ options(digits=6)
 source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
-
-# =================================  ANALYSIS  3 - INTERVENTIONS IN COMBINATION ===============================
-
-
-
 with(dat, tapply(order, year, function(X) length(unique(X))))
 
+
+# =================== Study frequency of unique interventions/intervention combinations ====================
+
 library(plyr)
-temp <- count(dat, vars = c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water"))
 
-temp2 <- subset(temp, AE=="applied")#
-temp2[with(temp2, order(AE, AE.level, mowing)),]
+# select only the unique combinations of interventions tested by a study (i.e. some studies may assess interventions across multiple species/metrics)
+# use count() in plyr to count the number of occurrences of unique combinations of variable values in a dataset
+subdat <- unique(subset(dat, select=c("reference",mgmtvars)))
+temp <- count(subdat, vars = c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water"))
 
-subset(dat, AE=="none" & AE.level=="none" & reserve.desig=="none" & mowing=="none" & grazing=="none" & fertpest=="none" & nest.protect=="none" & predator.control=="none" & water=="none")
+write.csv(temp, paste(outputwd, "intervention combination frequency by study.csv", sep="/"), row.names=FALSE)
 
-all(dat[mgmtvars]=="none")
-
+# =================================  ANALYSIS  3 - INTERVENTIONS IN COMBINATION ===============================
 
 
 
