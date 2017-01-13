@@ -150,9 +150,9 @@ for (i in 1:length(mgmtvars)) {
   #     modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
   #   }
   # }
-  # 
-  # # run a normal glmer model
-  # m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+
+  # run a normal glmer model
+  m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
   
 }

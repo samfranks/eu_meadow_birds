@@ -9,10 +9,10 @@
 # 22 Dec 2016
 
 
-#=================================  SET LOGIC STATEMENTS  ====================
+# =================================  SET LOGIC STATEMENTS  ====================
 
 
-#=================================  LOAD PACKAGES =================================
+# =================================  LOAD PACKAGES =================================
 
 list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","lme4","car","blme","tidyr","nlme")
 
@@ -23,7 +23,7 @@ if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, library, character.only=TRUE)
 
 
-#=================================  LOAD FUNCTIONS =================================
+# =================================  LOAD FUNCTIONS =================================
 
 ### Ben Bolker's function for calculating CIs on predictions from a merMod object and plotting the results from his RPubs GLMM worked examples
 # http://rpubs.com/bbolker/glmmchapter
@@ -52,7 +52,7 @@ easyPredCI <- function(model,newdata,alpha=alphalevel) {
   
 }
 
-#=================================  SET DIRECTORY STRUCTURE  ================================
+# =================================  SET DIRECTORY STRUCTURE  ================================
 
 # LOCAL
 if(.Platform$OS =='windows') {
@@ -86,21 +86,20 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output", sep="/")
-workspacewd <- paste(parentwd, "workspaces", sep="/")
+outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
+workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
 
-#=================================  LOAD DATA  ===============================
+# =================================  LOAD DATA  ===============================
 
-source(paste(scriptswd, "2_meta-analysis_data preparation.R", sep="/"))
+source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
-#=================================  ANALYSIS  3 - failures of management interventions ===============================
+#=================================  ANALYSIS  1b - failures of management interventions ===============================
 
-#------------------------------ 3a) overall failure of individual management types -------------------------
 
 # identify which categories have low numbers
 out <- list()
@@ -117,6 +116,8 @@ usedat <- list() # data subset used to run a model
 # remove predator control from list of interventions because it causes unsolvable convergence issues and huge SEs
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 mgmtvars <- mgmtvars[-which(mgmtvars %in% "predator.control")]  # even if 'reduced' predator control is converted to applied, model outputs are still way off with really large variance on the random effects and huge error on the parameter estimate. Continue to leave this intervention out.
+
+# ---------------- Models ------------------
 
 for (i in 1:length(mgmtvars)) {
   
@@ -181,12 +182,12 @@ warningmessages.lme4
 # max(abs(sc_grad1))
 # max(pmin(abs(sc_grad1),abs(derivs1$gradient)))
 
-### Output model results ###
+# -------------- Output model results ----------------------
 
 setwd(outputwd)
-sink(paste("model output_3a.txt", sep=" "))
+sink(paste("model output_analysis 1b_failure.txt", sep=" "))
 
-cat("\n########==========  3a) failure of individual management types - lme4 models ==========########\n", sep="\n")
+cat("\n########==========  Analysis 1b) failure of individual management types - lme4 models ==========########\n", sep="\n")
 print(lapply(m.ind, summary))
 
 cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
@@ -194,10 +195,10 @@ print(warningmessages.lme4)
 sink()
 
 ### Save individual interventions models
-saveRDS(m.ind, file=paste(workspacewd, "models_3a_lme4.rds", sep="/"))
+saveRDS(m.ind, file=paste(workspacewd, "models_analysis 1b_lme4.rds", sep="/"))
 
 ### Save dataset for 0a models
-saveRDS(usedat, file=paste(workspacewd, "model dataset_3a.rds", sep="/"))
+saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 1b.rds", sep="/"))
 
 
 
@@ -205,13 +206,13 @@ saveRDS(usedat, file=paste(workspacewd, "model dataset_3a.rds", sep="/"))
 
 setwd(outputwd)
 
-moddat <- readRDS(paste(workspacewd, "model dataset_3a.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_3a_lme4.rds", sep="/"))
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1b.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_analysis 1b_lme4.rds", sep="/"))
 alphalevel <- 0.05
 successlevel <- 0.05
 
 
-#------------------------------ 3a) failure of individual management types -------------------------
+#------------------------------ 1b) failure of individual management types -------------------------
 
 # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
 coeftab <- lapply(mod, function(x) summary(x)$coefficients)
@@ -229,13 +230,13 @@ partable <- partable[,c(6,5,1,2,4)] # omit z value column
 names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
 
 # Write the parameter table
-write.csv(format(partable, scientific=FALSE, digits=2),  "3a_overall parameter table.csv", row.names=FALSE)
+write.csv(format(partable, scientific=FALSE, digits=2),  "1b_failure_overall parameter table.csv", row.names=FALSE)
 
 
 # set the wd to output to
 setwd(outputwd)
 
-#------------------------------ 3a) failure of individual management types -------------------------
+#------------------------------ 1b) failure of individual management types -------------------------
 
 
 plotdat <- list()
@@ -259,14 +260,14 @@ plotfinal <- do.call(rbind, plotdat)
 
 
 ###-------- Output plot --------###
-png("3a_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
+png("1b_failure_overall model results.png", res=300, height=12, width=28, units="in", pointsize=20)
 par(mar=c(7,6,2,2))
 
 x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
 axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic AES","higher AES","nature reserve", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","water applied", "water reduced"))
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic AES","higher AES","nature reserve", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "agrochemicals \napplied","agrochemicals \nreduced","nest protection \n applied","water applied", "water reduced"))
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
@@ -276,189 +277,8 @@ abline(h=successlevel, lty=3, lwd=2)
 dev.off()
 
 ###-------- Output table of predicted probabilities +/- CIs --------###
-write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "3a_overall probabilities and CIs.csv", row.names=FALSE)
+write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "1b_failure_overall probabilities and CIs.csv", row.names=FALSE)
 
 
-
-#=================================  ANALYSIS  4 - no effect of management interventions ===============================
-
-
-dat$neutral <- ifelse(dat$outcome==0, 1, 0)
-
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
-
-
-#------------------------------ 4a) overall no effect of individual management types -------------------------
-
-# identify which categories have low numbers
-out <- list()
-for(i in 1:length(mgmtvars)) {
-  out[[i]] <- table(dat$neutral, dat[,mgmtvars[i]])
-}
-names(out) <- mgmtvars
-out
-
-# set up list to output models and model datasets to
-m.ind <- list()
-usedat <- list() # data subset used to run a model
-
-for (i in 1:length(mgmtvars)) {
-  
-  print(mgmtvars[i])
-  mdat <- dat[dat[,mgmtvars[i]]!="none",]
-  mdat <- subset(mdat, species!="ruff") # subset out ruff because there are too few studies
-  
-  # for the following categories, subset further because there aren't enough observations of either 0,1 or both
-  #   if (mgmtvars[i]=="mowing") {
-  #     mdat <- subset(mdat, mowing!="applied")
-  #   }
-  #   if (mgmtvars[i]=="fertpest") {
-  #     mdat <- subset(mdat, fertpest!="applied")
-  #   }
-  #     if (mgmtvars[i]=="predator.control") {
-  #       mdat <- subset(mdat, predator.control!="reduced")
-  #     }
-  #   if (mgmtvars[i]=="water") {
-  #     mdat <- subset(mdat, water!="reduced")
-  #   }
-  
-  mdat <- droplevels(mdat)
-  usedat[[i]] <- mdat
-  
-  (checkzeros <- table(mdat[,mgmtvars[i]], mdat$neutral))
-  
-  # create different formulas to use depending on whether management variable is 1 or 2 levels
-  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-    modform <- as.formula(paste("neutral ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
-  }
-  
-  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-    modform <- as.formula("neutral ~ 1 + (1|reference) + (1|species)")
-  }
-  
-  # run a normal glmer model
-  m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
-  
-  # run a bglmer model  
-  #   vcov.dim <- nrow(vcov(m.ind[[i]]))
-  #   m.ind.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
-  
-  
-}
-
-names(m.ind) <- mgmtvars
-# names(m.ind.blme) <- mgmtvars
-names(usedat) <- mgmtvars
-
-warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
-warningmessages.lme4
-
-# ### lme4 convergence troubleshooting
-# # check singularity
-# tt <- getME(m.ind.blme[[5]],"theta")
-# ll <- getME(m.ind.blme[[5]],"lower")
-# min(tt[ll==0])
-# 
-# # check gradient calculations
-# derivs1 <- m.ind.blme[[5]]@optinfo$derivs
-# sc_grad1 <- with(derivs1,solve(Hessian,gradient))
-# max(abs(sc_grad1))
-# max(pmin(abs(sc_grad1),abs(derivs1$gradient)))
-
-### Output model results ###
-
-setwd(outputwd)
-sink(paste("model output_4a.txt", sep=" "))
-
-cat("\n########==========  4a) no effect of individual management types - lme4 models ==========########\n", sep="\n")
-print(lapply(m.ind, summary))
-
-cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
-print(warningmessages.lme4)
-sink()
-
-### Save individual interventions models
-saveRDS(m.ind, file=paste(workspacewd, "models_4a_lme4.rds", sep="/"))
-
-### Save dataset for 0a models
-saveRDS(usedat, file=paste(workspacewd, "model dataset_4a.rds", sep="/"))
-
-
-
-#=================================  OUTPUT PARAMETER TABLES  ===============================
-
-setwd(outputwd)
-
-moddat <- readRDS(paste(workspacewd, "model dataset_4a.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_4a_lme4.rds", sep="/"))
-alphalevel <- 0.05
-successlevel <- 0.05
-
-
-#------------------------------ 4a) no effect of individual management types -------------------------
-
-# Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
-coeftab <- lapply(mod, function(x) summary(x)$coefficients)
-coeftab <- lapply(coeftab, function(x) {
-  out <- as.data.frame(x)
-  out$parameter <- rownames(out)
-  rownames(out) <- 1:nrow(out)
-  return(out) })
-coeftab2 <- do.call(rbind, coeftab)
-coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
-coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
-rownames(coeftab3) <- c(1:nrow(coeftab3))
-partable <- coeftab3
-partable <- partable[,c(6,5,1,2,4)] # omit z value column
-names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
-
-# Write the parameter table
-write.csv(format(partable, scientific=FALSE, digits=2),  "4a_overall parameter table.csv", row.names=FALSE)
-
-
-# set the wd to output to
-setwd(outputwd)
-
-#------------------------------ 4a) no effect of individual management types -------------------------
-
-
-plotdat <- list()
-n <- list()
-
-for (i in 1:length(mod)) {
-  
-  # dataset to predict over is the same as the original dataset
-  pred <- predict(mod[[i]], type="response", re.form=NA)
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
-  n[i] <- nrow(moddat[[i]])
-  
-  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
-  
-}
-
-plotfinal <- do.call(rbind, plotdat)
-
-###-------- Output plot --------###
-png("4a_overall model results_neutral.png", res=300, height=12, width=28, units="in", pointsize=20)
-par(mar=c(7,6,2,2))
-
-x <- c(1:nrow(plotfinal))
-
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
-axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic-level \n AES","higher-level \n AES","nature reserve/ \n designation", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "fertiliser/pesticides \n applied","fertiliser/pesticides \n reduced","nest protection \n applied","predator control \n applied", "water \n applied", "water \n reduced"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-title(xlab="Management intervention evaluated", cex.lab=1.5, font=2, line=5)
-title(ylab="Predicted probability of neutral effect \n (neither positive nor negative significant impact)", cex.lab=1.5, font=2, line=3)
-abline(h=successlevel, lty=3, lwd=2)
-
-dev.off()
-
-###-------- Output table of predicted probabilities +/- CIs --------###
-write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "4a_overall probabilities and CIs.csv", row.names=FALSE)
 
 
