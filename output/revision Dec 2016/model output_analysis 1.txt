@@ -171,6 +171,35 @@ Correlation of Fixed Effects:
             (Intr)
 fertpstrdcd -0.942
 
+$water
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ water + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   126.0    136.6    -59.0    118.0      101 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.345 -0.527 -0.315  0.687  3.228 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.695    1.302   
+ species   (Intercept) 0.259    0.509   
+Number of obs: 105, groups:  reference, 22; species, 7
+
+Fixed effects:
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)    -0.323      0.618   -0.52     0.60
+waterreduced   -1.607      1.176   -1.37     0.17
+
+Correlation of Fixed Effects:
+            (Intr)
+waterreducd -0.337
+
 $nest.protect
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
@@ -221,35 +250,6 @@ Fixed effects:
             Estimate Std. Error z value Pr(>|z|)
 (Intercept)    -2.02       1.78   -1.13     0.26
 
-$water
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
- Family: binomial  ( logit )
-Formula: success ~ water + (1 | reference) + (1 | species)
-   Data: mdat
-Control: glmerControl(optimizer = "bobyqa")
-
-     AIC      BIC   logLik deviance df.resid 
-   126.0    136.6    -59.0    118.0      101 
-
-Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.345 -0.527 -0.315  0.687  3.228 
-
-Random effects:
- Groups    Name        Variance Std.Dev.
- reference (Intercept) 1.695    1.302   
- species   (Intercept) 0.259    0.509   
-Number of obs: 105, groups:  reference, 22; species, 7
-
-Fixed effects:
-             Estimate Std. Error z value Pr(>|z|)
-(Intercept)    -0.323      0.618   -0.52     0.60
-waterreduced   -1.607      1.176   -1.37     0.17
-
-Correlation of Fixed Effects:
-            (Intr)
-waterreducd -0.337
-
 
 ########==========  Warning messages lme4 models ==========########
 
@@ -271,12 +271,12 @@ NULL
 $fertpest
 NULL
 
+$water
+NULL
+
 $nest.protect
 NULL
 
 $predator.control
-NULL
-
-$water
 NULL
 

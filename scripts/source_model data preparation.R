@@ -55,7 +55,7 @@ if (!cluster) {
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
 # outputwd <- paste(parentwd, "output", sep="/")
-workspacewd <- paste(parentwd, "workspaces", sep="/")
+workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
@@ -64,7 +64,7 @@ options(digits=6)
 
 dat0 <- readRDS(paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
 
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","water","nest.protect","predator.control")
 
 # subset dataset for analysis to desired columns only
 dat <- subset(dat0, select=c("reference","lit.type","score","country","study.length","habitat","species","overall.metric","metric","sample.size","analysis2","success","failure","outcome",mgmtvars))

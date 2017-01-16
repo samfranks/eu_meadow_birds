@@ -229,6 +229,42 @@ Correlation of Fixed Effects:
 nw.mtrcbn/c -0.162       
 nw.mtrcprdc -0.116  0.008
 
+$water
+Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
+Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
+Prior dev  : 14.109
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ water * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   112.5    125.2    -51.3    102.5       89 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.154 -0.440 -0.247  0.462  2.722 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 4.42     2.1     
+Number of obs: 94, groups:  reference, 21
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                           -0.209      0.737   -0.28     0.78
+waterreduced                          -0.958      1.583   -0.60     0.55
+new.metricproductivity                -0.248      0.944   -0.26     0.79
+waterreduced:new.metricproductivity   -0.875      1.910   -0.46     0.65
+
+Correlation of Fixed Effects:
+            (Intr) wtrrdc nw.mtr
+waterreducd -0.306              
+nw.mtrcprdc -0.491  0.081       
+wtrrdcd:nw.  0.057 -0.460 -0.253
+
 $nest.protect
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
 Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
@@ -300,42 +336,6 @@ Correlation of Fixed Effects:
             (Intr) nw.m/c
 nw.mtrcbn/c -0.329       
 nw.mtrcprdc -0.545  0.400
-
-$water
-Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
-Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 14.109
-
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
- Family: binomial  ( logit )
-Formula: success ~ water * new.metric + (1 | reference)
-   Data: mdat
-Control: glmerControl(optimizer = "bobyqa")
-
-     AIC      BIC   logLik deviance df.resid 
-   112.5    125.2    -51.3    102.5       89 
-
-Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.154 -0.440 -0.247  0.462  2.722 
-
-Random effects:
- Groups    Name        Variance Std.Dev.
- reference (Intercept) 4.42     2.1     
-Number of obs: 94, groups:  reference, 21
-
-Fixed effects:
-                                    Estimate Std. Error z value Pr(>|z|)
-(Intercept)                           -0.209      0.737   -0.28     0.78
-waterreduced                          -0.958      1.583   -0.60     0.55
-new.metricproductivity                -0.248      0.944   -0.26     0.79
-waterreduced:new.metricproductivity   -0.875      1.910   -0.46     0.65
-
-Correlation of Fixed Effects:
-            (Intr) wtrrdc nw.mtr
-waterreducd -0.306              
-nw.mtrcprdc -0.491  0.081       
-wtrrdcd:nw.  0.057 -0.460 -0.253
 
 
 ########==========  Analysis 2b) success of individual management types by metric - lme4 models (convergence issues) ==========########
@@ -546,6 +546,38 @@ Correlation of Fixed Effects:
 nw.mtrcbn/c -0.617       
 nw.mtrcprdc -0.090 -0.194
 
+$water
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ water * new.metric + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   112.1    124.9    -51.1    102.1       89 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.139 -0.458 -0.261  0.581  2.640 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 2.66     1.63    
+Number of obs: 94, groups:  reference, 21
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(>|z|)
+(Intercept)                           -0.316      0.666   -0.47     0.64
+waterreduced                          -0.946      1.728   -0.55     0.58
+new.metricproductivity                -0.103      0.917   -0.11     0.91
+waterreduced:new.metricproductivity   -0.987      2.360   -0.42     0.68
+
+Correlation of Fixed Effects:
+            (Intr) wtrrdc nw.mtr
+waterreducd -0.378              
+nw.mtrcprdc -0.550  0.208       
+wtrrdcd:nw.  0.159 -0.627 -0.358
+
 $nest.protect
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
@@ -610,38 +642,6 @@ Correlation of Fixed Effects:
 nw.mtrcbn/c -0.666       
 nw.mtrcprdc -0.842  0.693
 
-$water
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
- Family: binomial  ( logit )
-Formula: success ~ water * new.metric + (1 | reference)
-   Data: mdat
-Control: glmerControl(optimizer = "bobyqa")
-
-     AIC      BIC   logLik deviance df.resid 
-   112.1    124.9    -51.1    102.1       89 
-
-Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.139 -0.458 -0.261  0.581  2.640 
-
-Random effects:
- Groups    Name        Variance Std.Dev.
- reference (Intercept) 2.66     1.63    
-Number of obs: 94, groups:  reference, 21
-
-Fixed effects:
-                                    Estimate Std. Error z value Pr(>|z|)
-(Intercept)                           -0.316      0.666   -0.47     0.64
-waterreduced                          -0.946      1.728   -0.55     0.58
-new.metricproductivity                -0.103      0.917   -0.11     0.91
-waterreduced:new.metricproductivity   -0.987      2.360   -0.42     0.68
-
-Correlation of Fixed Effects:
-            (Intr) wtrrdc nw.mtr
-waterreducd -0.378              
-nw.mtrcprdc -0.550  0.208       
-wtrrdcd:nw.  0.159 -0.627 -0.358
-
 
 ########==========  Warning messages BLME models (good) ==========########
 
@@ -663,13 +663,13 @@ NULL
 $fertpest
 NULL
 
+$water
+NULL
+
 $nest.protect
 NULL
 
 $predator.control
-NULL
-
-$water
 NULL
 
 
@@ -695,12 +695,12 @@ NULL
 $fertpest
 NULL
 
+$water
+NULL
+
 $nest.protect
 NULL
 
 $predator.control
-NULL
-
-$water
 NULL
 

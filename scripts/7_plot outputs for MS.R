@@ -95,8 +95,8 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output/submission", sep="/")
-workspacewd <- paste(parentwd, "workspaces", sep="/")
+outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
+workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
@@ -107,30 +107,25 @@ setwd(outputwd)
 # ================================    MANAGEMENT VARIABLE NAMES    ===============================
 
 
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","water","nest.protect","predator.control")
 
 
 
-# ==============================  FIGURE 1  ===================================
-
-# Fig 1a = AES, site protection (Analysis 0a)
-# Fig 1b = basic vs higher AES (Analysis 0a)
-# Fig 1c = combined effects of AES and site protection (Analysis 2a)
+# ==============================  FIGURE 1 - overall success of interventions ===================================
 
 
-png("Fig1_AES_site protection.png", res=300, height=15, width=17, units="in", pointsize=24)
-
-par(mfrow=c(2,2), oma=c(3,5,1,1))
 
 
-# ==== Fig 1a and 1b ====
+png("Fig1_overall success of interventions.png", res=300, height=12, width=28, units="in", pointsize=24)
+
+par(oma=c(3,5,1,1))
 
 
 # -------    Load data and model   -----------
 
 
-moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/")) #[c("AE","reserve.desig")]
-mod <- readRDS(paste(workspacewd, "models_0a_lme4.rds", sep="/")) #[c("AE","reserve.desig")]
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1.rds", sep="/")) 
+mod <- readRDS(paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
 
 
 # -------   Produce plotting dataset predictions   ---------
@@ -153,59 +148,85 @@ for (i in 1:length(mod)) {
 }
 
 names(plotdat) <- mgmtvars #c("AE","reserve.desig")
+fig1 <- do.call(rbind, plotdat)
 
-fig1a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
-fig1b <- do.call(rbind, plotdat[c("AE.level")])
+# -------- Plot all interventions ---------
 
+par(mar=c(4,2,2,2))
 
-
-
-### ---- Fig 1a: Policy level interventions plot ----
-
-
-par(mar=c(3,2,2,2))
-
-plotfinal <- fig1a
+plotfinal <- fig1
 
 x <- c(1:nrow(plotfinal))
 
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5))
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x), max(x)))
 # axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"))
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic\nAES","higher\nAES","site\nprotection","mowing\napplied", "mowing\nreduced", "grazing\napplied", "grazing\nreduced", "agro-\nchemicals\napplied","agro-\nchemicals\nreduced","water\napplied","water\nreduced","nest\nprotection\napplied", "predator\ncontrol\napplied"))
+# text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
 
-mtext("a)", side=3, adj=0)
-
-
-### ---- Fig 1b: AES level interventions plot ----
-
-
-par(mar=c(3,2,2,2))
-
-plotfinal <- fig1b
-
-x <- c(1:nrow(plotfinal))
-
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5))
-# axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES","higher-level AES"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1, line=3)
-abline(h=successlevel, lty=3, lwd=2)
-
-mtext("b)", side=3, adj=0)
-
 mtext("Intervention", side=1, outer=TRUE, line=1.5, cex=1.2)
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5)
 
+dev.off()
 
-# ==== Fig 1c ====
+
+
+# ==============================  FIGURE 2  - species & metric-specific success of interventions ===================================
+
+
+# ================= FIGURE 2a - species ===============
+
+
+png("Fig2_intervention success_species_metric.png", res=300, height=15, width=20, units="in", pointsize=20)
+
+par(mfcol=c(2,2), oma=c(3,5,3,1))
+
+
+# -------    Load data and model   -----------
+
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 2.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
+
+
+# -------   Produce plotting dataset predictions   ---------
+
+plotdat <- list()
+
+for (i in 1:length(mod)) {
+  
+  # dataset to predict over is the same as the original dataset
+  pred <- predict(mod[[i]], type="response", re.form=NA)
+  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
+  
+  fits <- data.frame(pred, pred.CI, species=moddat[[i]]$species, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
+  unique.fits <- unique(fits)
+  
+  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, species=unique.fits$species), mean)
+  
+}
+
+names(plotdat) <- mgmtvars
+
+fig2a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
+fig2b <- do.call(rbind, plotdat[c("AE.level")])
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ==== Fig 3a ====
 
 
 # -------    Load data and model   -----------

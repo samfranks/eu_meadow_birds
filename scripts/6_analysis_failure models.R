@@ -267,7 +267,7 @@ x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
 axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic AES","higher AES","nature reserve", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "agrochemicals \napplied","agrochemicals \nreduced","nest protection \n applied","water applied", "water reduced"))
+text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic AES","higher AES","site protection", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "agrochemicals \napplied","agrochemicals \nreduced","nest protection \n applied","water applied", "water reduced"))
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
