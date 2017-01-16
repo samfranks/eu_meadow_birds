@@ -1,0 +1,62 @@
+
+########==========  3a) Success of policy interventions combined ==========########
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ AE.reserve + species + (1 | reference)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   432.3    466.9   -207.1    414.3      338 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.545 -0.727 -0.439  0.911  3.475 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.682    0.826   
+Number of obs: 347, groups:  reference, 34
+
+Fixed effects:
+                        Estimate Std. Error z value Pr(>|z|)   
+(Intercept)                0.373      0.458    0.82   0.4149   
+AE.reserveAE-no reserve   -0.601      0.335   -1.79   0.0732 . 
+AE.reserveAE-reserve      -0.600      0.410   -1.46   0.1437   
+speciescurlew             -2.293      0.746   -3.07   0.0021 **
+specieslapwing            -0.341      0.446   -0.76   0.4448   
+speciesoystercatcher      -0.887      0.554   -1.60   0.1095   
+speciesredshank           -0.225      0.451   -0.50   0.6185   
+speciessnipe              -0.585      0.529   -1.11   0.2689   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+             (Intr) AE.AEr AE.AE- spcscr spcslp spcsys spcsrd
+AE.rsrvAE-nr -0.516                                          
+AE.rsrvAE-rs -0.345  0.446                                   
+speciescrlw  -0.400  0.016  0.034                            
+specislpwng  -0.633 -0.032  0.020  0.477                     
+spcsystrctc  -0.488  0.013  0.041  0.366  0.549              
+specsrdshnk  -0.613  0.016  0.018  0.472  0.723  0.545       
+speciessnip  -0.560  0.018  0.019  0.454  0.684  0.486  0.677
+
+###----  Tukey contrasts  ---###
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: glmer(formula = success ~ AE.reserve + species + (1 | reference), 
+    data = mdat, family = binomial, control = glmerControl(optimizer = "bobyqa"))
+
+Linear Hypotheses:
+                                    Estimate Std. Error z value Pr(>|z|)
+AE-no reserve - no AE-reserve == 0 -0.600752   0.335312   -1.79     0.17
+AE-reserve - no AE-reserve == 0    -0.600135   0.410472   -1.46     0.31
+AE-reserve - AE-no reserve == 0     0.000616   0.397625    0.00     1.00
+(Adjusted p values reported -- single-step method)
+
