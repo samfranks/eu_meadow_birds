@@ -114,8 +114,9 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","wat
 
 # ==============================  FIGURE 1 - overall success of interventions ===================================
 
-png("Fig1_overall success of interventions.png", res=300, height=12, width=28, units="in", pointsize=24)
+png("Fig1_overall success of interventions.png", res=300, height=15, width=18, units="in", pointsize=22)
 
+layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
 par(oma=c(3,5,1,1))
 
 
@@ -146,25 +147,75 @@ for (i in 1:length(mod)) {
 }
 
 names(plotdat) <- mgmtvars #c("AE","reserve.desig")
-fig1 <- do.call(rbind, plotdat)
 
-# -------- Plot all interventions ---------
+fig1a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
+fig1b <- do.call(rbind, plotdat[c("AE.level")])
+fig1c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
-par(mar=c(4,2,2,2))
 
-plotfinal <- fig1
+# -------- Plot policy (AES, site protection) interventions ---------
 
-x <- c(1:nrow(plotfinal))
+par(mar=c(3,3,3,4))
 
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x), max(x)))
+plotfinal <- fig1a
+
+x <- c(2:3)
+
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(1.5,3.5))
 # axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic\nAES","higher\nAES","site\nprotection","mowing\napplied", "mowing\nreduced", "grazing\napplied", "grazing\nreduced", "agro-\nchemicals\napplied","agro-\nchemicals\nreduced","water\napplied","water\nreduced","nest\nprotection\napplied", "predator\ncontrol\napplied"))
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site\nprotection"))
 # text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
+
+mtext("a)", side=3, adj=0, line=1)
+
+
+
+# -------- Fig 1b: plot AES levels ---------
+
+par(mar=c(3,3,3,4))
+
+plotfinal <- fig1b
+
+x <- c(2:3)
+
+plot(plotfinal$pred~x, xlim=c(1.5,3.5), ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
+# axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("basic\nAES","higher\nAES"))
+# text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
+# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
+abline(h=successlevel, lty=3, lwd=2)
+
+mtext("b)", side=3, adj=0, line=1)
+
+
+
+# -------- Fig 1c: Plot management interventions ---------
+
+par(mar=c(5,3,3,2))
+
+plotfinal <- fig1c
+
+x <- c(1:nrow(plotfinal))
+
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x), max(x)))
+# axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\napplied", "mowing\nreduced", "grazing\napplied", "grazing\nreduced", "agro-\nchemicals\napplied","agro-\nchemicals\nreduced","water\napplied","water\nreduced","nest\nprotection\napplied", "predator\ncontrol\napplied"))
+# text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
+# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
+# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
+abline(h=successlevel, lty=3, lwd=2)
+
+mtext("c)", side=3, adj=0, line=1)
 
 mtext("Intervention", side=1, outer=TRUE, line=1.5, cex=1.2)
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5)
@@ -500,86 +551,78 @@ mtext("Predicted probability of success \n (significant positive impact)", side=
 
 dev.off()
 
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
 
 
+# ==========================  FIGURE 4  - success of AES*site protection combined  ============================
 
-# ==== Fig 3b - METRIC ====
+
 
 # -------    Load data and model   -----------
 
-moddat <- readRDS(paste(workspacewd, "model dataset_0c.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
+plotmod <- readRDS(file=paste(workspacewd, "models_analysis 3a_method 1.rds", sep="/")) # model to plot results
+origdat <- readRDS(file=paste(workspacewd, "model dataset_analysis 3a_method 1.rds", sep="/")) # original dataset
+
+unique.mgmtvars <- unique(origdat$AE.reserve)
+
+newdat <- data.frame(AE.reserve=rep(unique.mgmtvars, times=length(levels(origdat$species))), species=rep(levels(origdat$species), each=length(unique.mgmtvars)))
+
+pred <- predict(plotmod, newdat, type="response", re.form=NA)
+pred.CI <- easyPredCI(plotmod, newdat)
+fits <- data.frame(newdat, pred, pred.CI)
+# produce mean population level prediction for interventions across species
+sum.fits <- aggregate(fits[,c("pred","lwr","upr")], by=list(AE.reserve=fits$AE.reserve), mean)
+
+plotdat <- sum.fits
+plotdat <- merge(plotdat, unique(origdat[,c("AE","reserve.desig","AE.reserve")]), by="AE.reserve")
+plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
 
 
-# -------   Produce plotting dataset predictions   ---------
 
-plotdat <- list()
+# ----- Figure 4 ----------
 
-for (i in 1:length(mod)) {
-  
-  # dataset to predict over is the same as the original dataset
-  pred <- predict(mod[[i]], type="response", re.form=NA)
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
-  
-  fits <- data.frame(pred, pred.CI, metric=moddat[[i]]$new.metric, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, metric=unique.fits$metric), mean)
-  
-}
+png("Fig4_intervention success_AES x site protection.png", res=300, height=12, width=14, units="in", pointsize=20)
 
-names(plotdat) <- mgmtvars
+par(oma=c(3,5,0,1))
+par(mar=c(3,2,2,2))
 
-fig3c <- do.call(rbind, plotdat[4:9])
+x <- c(1:nrow(plotdat))
 
-
-### ---- Fig 3c: Specific management interventions plot - METRIC ----
-
-
-par(mar=c(5,3,3,2))
-
-plotfinal <- fig3c
-maxmetric <- levels(do.call(rbind, plotdat)$metric)
-n <- length(maxmetric)
-
-set.seed(2)
-pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(grey(seq(from=0,to=1,length.out = n)), n))
-pch
-plotfinal <- merge(plotfinal,pch, by="metric")
-plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$metric),]
-plotfinal$rowid <- 1:nrow(plotfinal)
-
-xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
-xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
-xloc.divide <- xloc.divide[-length(xloc.divide)]
-
-x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
-
-plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
-# axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
-text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("mowing \napplied","mowing \nreduced", "grazing \napplied", "grazing \nreduced","fertiliser/\npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","water \napplied", "water \nreduced"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
-# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+plotdat$pch <- c(16,16,16)
+# plotdat$pch <- c(1,2,15,16,17)
+plot(plotdat$pred~x, pch=plotdat$pch, cex=2, ylim=c(0,1), xlim=c(0.8,3.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
 abline(h=0.05, lty=3, lwd=2)
+# axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
+# axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+text(x, par("usr")[3]-0.01, srt = 0, pos=1, xpd = TRUE, labels=c("AES only","site protection \nonly", "AES +\nsite protection"), cex=1)
+# text(x, par("usr")[3]*1.2, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES\n no nature reserve","higher-level AES\n no nature reserve", "no AES \n nature reserve", "basic-level AES\n nature reserve", "higher-level AES\n nature reserve"), cex=1)
+# text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
+# text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
+# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
+# title(xlab="Intervention combination", cex.lab=1.2, line=4.5)
 
-mtext("c)", side=3, adj=0, line=2.5)
-
-legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.2))
-
-
+mtext("Intervention", side=1, outer=TRUE, line=0.5, cex=1.2)
+mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5)
 
 dev.off()
 
 
 
-# ===============  FIGURE S4b - Ranked invervention combination success rates  ==================
+
+######################################################
+######################################################
+######################################################
+######################################################
+######################################################
+
+
+
+
+
+
+
+# ===============  FIGURE S5b - Ranked invervention combination success rates  ==================
 
 
 setwd(outputwd)
