@@ -12,12 +12,6 @@ set.seed(2)
 
 # =================================  SET LOGIC STATEMENTS  ====================
 
-# default to plot when all are FALSE is results from overall analysis (0a)
-species <- FALSE # plot the species-specific model results (0b)
-metric <- FALSE # plot the metric-specific model results (0c)
-habitat <- FALSE # plot the habitat-specific model results (0d)
-
-
 alphalevel <- 0.05
 successlevel <- 0.05
 
@@ -108,8 +102,6 @@ setwd(outputwd)
 
 
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","water","nest.protect","predator.control")
-
-
 
 
 # ==============================  FIGURE 1 - overall success of interventions ===================================
@@ -578,7 +570,7 @@ plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
 
 
 
-# ----- Figure 4 ----------
+# ----- Fig 4 ----------
 
 png("Fig4_intervention success_AES x site protection.png", res=300, height=12, width=14, units="in", pointsize=20)
 
