@@ -114,7 +114,7 @@ m.ind <- list()
 usedat <- list() # data subset used to run a model
 
 # remove predator control from list of interventions because it causes unsolvable convergence issues and huge SEs
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","water","nest.protect","predator.control")
 mgmtvars <- mgmtvars[-which(mgmtvars %in% "predator.control")]  # even if 'reduced' predator control is converted to applied, model outputs are still way off with really large variance on the random effects and huge error on the parameter estimate. Continue to leave this intervention out.
 
 # ---------------- Models ------------------
@@ -233,51 +233,7 @@ names(partable) <- c("Management intervention","Parameter level","Estimate","SE"
 write.csv(format(partable, scientific=FALSE, digits=2),  "1b_failure_overall parameter table.csv", row.names=FALSE)
 
 
-# set the wd to output to
-setwd(outputwd)
 
-#------------------------------ 1b) failure of individual management types -------------------------
-
-
-plotdat <- list()
-n <- list()
-
-for (i in 1:length(mod)) {
-  
-  # dataset to predict over is the same as the original dataset
-  pred <- predict(mod[[i]], type="response", re.form=NA)
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
-  n[i] <- nrow(moddat[[i]])
-  
-  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
-  
-}
-
-plotfinal <- do.call(rbind, plotdat)
-
-
-###-------- Output plot --------###
-png("1b_failure_overall model results.png", res=300, height=12, width=28, units="in", pointsize=20)
-par(mar=c(7,6,2,2))
-
-x <- c(1:nrow(plotfinal))
-
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
-axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 30, pos=1, xpd = TRUE, labels=c("AES","basic AES","higher AES","site protection", "mowing applied", "mowing reduced", "grazing applied", "grazing reduced", "agrochemicals \napplied","agrochemicals \nreduced","nest protection \n applied","water applied", "water reduced"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
-title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-title(ylab="Predicted probability of failure \n (significant negative impact)", cex.lab=1.5, font=2, line=3)
-abline(h=successlevel, lty=3, lwd=2)
-
-dev.off()
-
-###-------- Output table of predicted probabilities +/- CIs --------###
-write.csv(plotfinal[,c("pred","lwr","upr","mgmtvar")], "1b_failure_overall probabilities and CIs.csv", row.names=FALSE)
 
 
 

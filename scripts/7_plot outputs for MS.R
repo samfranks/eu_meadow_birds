@@ -601,31 +601,54 @@ dev.off()
 
 
 
-
-######################################################
-######################################################
-######################################################
-######################################################
-######################################################
+# =========================   SUPPLEMENTARY INFORMATION FIGURES  ========================
 
 
 
-
-
-
-
-# ===============  FIGURE S5b - Ranked invervention combination success rates  ==================
+# ===============  Fig S6a - Average invervention combination success rates  ==================
 
 
 setwd(outputwd)
 
-png("FigS5b_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
+png("FigS6a_specific combination intervention success_average.png", res=300, height=15, width=25, units="in", pointsize=20)
+
+plotdat <- readRDS(file=paste(workspacewd, "analysis 3b_average intervention plotting dataset.rds", sep="/"))
+
+par(mar=c(3,2,2,2))
+par(oma=c(3,4,1,1))
+
+x <- c(1:nrow(plotdat)) # gives an x axis to plot against
+
+plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n")
+arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05) # add error bars, lwr and upr to each prediction
+arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
+abline(h=0.05, lty=3, lwd=2)
+# axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
+text(x, par("usr")[3], srt = 0, pos=1, xpd = TRUE, labels=c("mowing\napplied","mowing\nreduced","grazing\napplied","grazing\nreduced","agro-\nchemicals\napplied","agro-\nchemicals\nreduced", "water\napplied", "water\nreduced","nest\nprotection\napplied","predator\ncontrol\napplied"), cex=1)
+
+mtext("Intervention (controlling for other interventions used)", side=1, outer=TRUE, line=0.5, cex=1.2)
+mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5)
+
+mtext("a)", side=3, adj=0, line=0.5, cex=1.2)
+
+
+dev.off()
+
+
+
+
+# ===============  Fig S6b - Ranked invervention combination success rates  ==================
+
+
+setwd(outputwd)
+
+png("FigS6b_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
 
 par(mfrow=c(2,1))
 
 par(mar=c(1,8,3,2))
 
-plotdat <- readRDS(file=paste(workspacewd, "2b_all combinations plotting dataset.rds", sep="/"))
+plotdat <- readRDS(file=paste(workspacewd, "analysis 3b_all combinations plotting dataset.rds", sep="/"))
 
 x <- c(1:nrow(plotdat))-0.5 # gives an x axis to plot against
 
@@ -634,8 +657,8 @@ arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05) # add error bars,
 arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
 abline(h=0.05, lty=3, lwd=2) # add a 'significance' line (what is the threshold for 'success'?)
 abline(v=max(which(plotdat$sig=="N")), lty=3, lwd=2) # add a line dividing 'successful' vs 'unsuccessful' intervention combos
-title(xlab="Intervention combination", cex.lab=1.5, font=2, line=0, xpd=TRUE)
-title(ylab="Predicted probability of success \n (significant positive impact) ", cex.lab=1.5, font=2, line=3)
+title(xlab="Intervention combination", cex.lab=1.2, font=2, line=0, xpd=TRUE)
+title(ylab="Predicted probability of success\n(significant positive impact) ", cex.lab=1.2, font=2, line=3)
 
 mtext("b)", side=3, adj=0, line=1, cex=1.2)
 
@@ -652,7 +675,7 @@ tab <- data.frame(x=new.x,y=new.y)
 tab <- tab[order(tab$y, decreasing=TRUE),]
 labs <- plotdat[,1:6]
 
-labs.long <- gather(labs, intervention, level, mowing:water) # convert the interventions from wide to long format using tidyr
+labs.long <- gather(labs, intervention, level, mowing:predator.control) # convert the interventions from wide to long format using tidyr
 
 # merge the table of x,y coordinates with the intervention labels
 # replace all levels of 'none' with a blank
@@ -669,7 +692,7 @@ par(mar=c(1,8,1,2)) # give a big left margin to write the intervention names; ma
 plot(tab, type="n", bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(0.2,6.8), xlim=c(1,26)) # plot a completely blank plot, with ylims and xlims only (will draw the table using abline; use exactly the same xlims as the actual data plot above so that everything lines up
 abline(v=c(min(x)-1,x,max(x)), h=c(7,y,0), lty=1) # draw the lines of the table (really the 'inner lines'), but adding 1 extra to each of top, bottom and sides to complete the outline of the table (otherwise will be inner lines only)
 abline(v=max(which(plotdat$sig=="N")), lty=1, lwd=4) # thick line showing division between 'successful' and 'unsuccessful' combinations of interventions
-axis(2, y+0.5, labels=c("mowing","grazing","fertiliser/\npesticides", "nest protection","predator control", "water"), las=1, cex.axis=1, font=2,tick=FALSE) # draw the labels for the rows, from top to bottom
+axis(2, y+0.5, labels=c("mowing","grazing","agrochemicals",  "water", "nest protection","predator control"), las=1, cex.axis=1, font=2,tick=FALSE) # draw the labels for the rows, from top to bottom
 text(tab$x-0.5, tab$y+0.5, labels=ifelse(tab.filled$level=="applied", "\U2191", ifelse(tab.filled$level=="reduced", "\U2193", tab.filled$level)), cex=2) # fill in the values of the grid cells, but if an intervention was applied then use a unicode 'up' arrow, and if it was reduced than use a down arrow
 text(tab$x-0.5, 0.5, labels=total.interventions$sum, cex=1) # add the total number of interventions to the bottom 'row' of the table
 
@@ -677,41 +700,15 @@ text(tab$x-0.5, 0.5, labels=total.interventions$sum, cex=1) # add the total numb
 dev.off()
 
 
-# ===============  FIGURE S5a - Average invervention combination success rates  ==================
+
+
+# ===============  FIGURE S7 - Failed intervention probability ==================
 
 
 setwd(outputwd)
 
-png("FigS5a_specific combination intervention success_average.png", res=300, height=12, width=26, units="in", pointsize=20)
-
-plotdat <- readRDS(file=paste(workspacewd, "2b_average intervention plotting dataset.rds", sep="/"))
-
-par(mar=c(6,6,3,2))
-
-x <- c(1:nrow(plotdat)) # gives an x axis to plot against
-
-plot(plotdat$pred~x, pch=16, cex=1.5, ylim=c(0,1), xaxt="n", xlab="", ylab="", las=1, bty="n")
-arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05) # add error bars, lwr and upr to each prediction
-arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
-abline(h=0.05, lty=3, lwd=2)
-# axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
-text(x, par("usr")[3]*2, srt = 0, pos=1, xpd = TRUE, labels=c("mowing \napplied","mowing \nreduced","grazing \napplied","grazing \nreduced","fertiliser/\npesticides \napplied","fertiliser/\npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","water \napplied", "water \nreduced"), cex=1)
-title(xlab="Intervention (controlling for other interventions used)", cex.lab=1.5, font=2, line=5, xpd=TRUE)
-title(ylab="Predicted probability of success \n (significant positive impact) ", cex.lab=1.5, font=2, line=3)
-
-mtext("a)", side=3, adj=0, line=1, cex=1.2)
-
-
-dev.off()
-
-
-# ===============  FIGURE S6 - Failed intervention probability ==================
-
-
-setwd(outputwd)
-
-moddat <- readRDS(paste(workspacewd, "model dataset_3a.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_3a_lme4.rds", sep="/"))
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1b.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_analysis 1b_lme4.rds", sep="/"))
 
 plotdat <- list()
 n <- list()
@@ -734,18 +731,19 @@ plotfinal <- do.call(rbind, plotdat)
 
 
 ###-------- Output plot --------###
-png("FigS6_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
+
+png("FigS7_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
 par(mar=c(7,6,2,2))
 
 x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.06, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic \nAES","higher \nAES","site \nprotection", "mowing \napplied", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/\npesticides \n applied","fertiliser/\npesticides \n reduced","nest \nprotection \n applied","water \napplied", "water \nreduced"))
+text(x, par("usr")[3]-0.06, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic\nAES","higher\nAES","site\nprotection", "mowing\napplied", "mowing\nreduced", "grazing\napplied", "grazing\nreduced", "agro-\nchemicals\napplied","agro-\nchemicals\nreduced","water\napplied", "water\nreduced","nest\nprotection\napplied"))
 arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05)
 arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-title(ylab="Predicted probability of failure \n (significant negative impact)", cex.lab=1.5, font=2, line=3)
+title(ylab="Predicted probability of failure\n(significant negative impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
 abline(v=4.5, lty=3, lwd=2)
 
@@ -753,58 +751,4 @@ dev.off()
 
 
 
-################################################################################
-################################################################################
-################################################################################
 
-
-# ==== Fig 3a ====
-
-
-# -------    Load data and model   -----------
-
-plotmod <- readRDS(file=paste(workspacewd, "models_2a_method 1.rds", sep="/")) # model to plot results
-origdat <- readRDS(file=paste(workspacewd, "model dataset_2a_method 1.rds", sep="/")) # original dataset
-
-unique.mgmtvars <- unique(origdat$AE.reserve)
-
-newdat <- data.frame(AE.reserve=rep(unique.mgmtvars, times=length(levels(origdat$species))), species=rep(levels(origdat$species), each=length(unique.mgmtvars)))
-
-pred <- predict(plotmod, newdat, type="response", re.form=NA)
-pred.CI <- easyPredCI(plotmod, newdat)
-fits <- data.frame(newdat, pred, pred.CI)
-
-# produce mean population level prediction for interventions across species
-sum.fits <- aggregate(fits[,c("pred","lwr","upr")], by=list(AE.reserve=fits$AE.reserve), mean)
-
-plotdat <- sum.fits
-plotdat <- merge(plotdat, unique(origdat[,c("AE","reserve.desig","AE.reserve")]), by="AE.reserve")
-plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
-
-
-
-### ---- Fig 1c: AES*site protection in combination plot (Method 1 creating a new combined AE-reserve variable) ----
-
-par(mar=c(3,2,2,2))
-
-x <- c(1:nrow(plotdat))
-
-plotdat$pch <- c(16,16,16)
-# plotdat$pch <- c(1,2,15,16,17)
-
-plot(plotdat$pred~x, pch=plotdat$pch, cex=2, ylim=c(0,1), xlim=c(0.8,3.2), xaxt="n", xlab="", ylab="", las=1, bty="n")
-arrows(x, plotdat$pred, x, plotdat$lwr, angle=90, length=0.05)
-arrows(x, plotdat$pred, x, plotdat$upr, angle=90, length=0.05)
-abline(h=0.05, lty=3, lwd=2)
-# axis(1, x, labels=rep(c("no AES","basic-level \n AES","higher-level \n AES"), times=2), tick=TRUE, cex.axis=0.8)
-# axis(1, x, labels=rep("",nrow(plotdat)), tick=TRUE)
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES only","site protection \nonly", "AES + \nsite protection"), cex=1)
-# text(x, par("usr")[3]*1.2, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES\n no nature reserve","higher-level AES\n no nature reserve", "no AES \n nature reserve", "basic-level AES\n nature reserve", "higher-level AES\n nature reserve"), cex=1)
-# text(x, par("usr")[3]*1.5, srt = 0, pos=1, xpd = TRUE, labels=c("no AES","basic-level \n AES","higher-level \n AES"), cex=1)
-# text(c(2,5), par("usr")[3]*4, srt = 0, pos=1, xpd = TRUE, labels=c("no nature reserve/designation", "nature reserve/designation"), font=2, cex=1)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
-# title(xlab="Intervention combination", cex.lab=1.2, line=4.5)
-
-mtext("c)", side=3, adj=0)
-
-dev.off()

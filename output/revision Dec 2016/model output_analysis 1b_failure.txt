@@ -2,8 +2,7 @@
 ########==========  Analysis 1b) failure of individual management types - lme4 models ==========########
 
 $AE
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ 1 + (1 | reference) + (1 | species)
    Data: mdat
@@ -29,8 +28,7 @@ Fixed effects:
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $AE.level
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ AE.level + (1 | reference) + (1 | species)
    Data: mdat
@@ -61,8 +59,7 @@ Correlation of Fixed Effects:
 AE.levlhghr -0.049
 
 $reserve.desig
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ 1 + (1 | reference) + (1 | species)
    Data: mdat
@@ -88,8 +85,7 @@ Fixed effects:
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 $mowing
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ mowing + (1 | reference) + (1 | species)
    Data: mdat
@@ -118,8 +114,7 @@ Correlation of Fixed Effects:
 mowingredcd -0.791
 
 $grazing
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ grazing + (1 | reference) + (1 | species)
    Data: mdat
@@ -150,8 +145,7 @@ Correlation of Fixed Effects:
 grazingrdcd -0.133
 
 $fertpest
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ fertpest + (1 | reference) + (1 | species)
    Data: mdat
@@ -179,36 +173,8 @@ Correlation of Fixed Effects:
             (Intr)
 fertpstrdcd -0.419
 
-$nest.protect
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
- Family: binomial  ( logit )
-Formula: failure ~ 1 + (1 | reference) + (1 | species)
-   Data: mdat
-Control: glmerControl(optimizer = "bobyqa")
-
-     AIC      BIC   logLik deviance df.resid 
-    43.5     51.0    -18.8     37.5       86 
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--0.8471 -0.0284 -0.0266 -0.0239  2.8466 
-
-Random effects:
- Groups    Name        Variance Std.Dev.
- reference (Intercept) 40.7     6.38    
- species   (Intercept)  0.0     0.00    
-Number of obs: 89, groups:  reference, 16; species, 7
-
-Fixed effects:
-            Estimate Std. Error z value Pr(>|z|)  
-(Intercept)    -7.02       3.46   -2.03    0.042 *
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
 $water
-Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [
-glmerMod]
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: failure ~ water + (1 | reference) + (1 | species)
    Data: mdat
@@ -238,6 +204,32 @@ Correlation of Fixed Effects:
             (Intr)
 waterreducd -0.627
 
+$nest.protect
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: failure ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    43.5     51.0    -18.8     37.5       86 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-0.8471 -0.0284 -0.0266 -0.0239  2.8466 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 40.7     6.38    
+ species   (Intercept)  0.0     0.00    
+Number of obs: 89, groups:  reference, 16; species, 7
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)    -7.02       3.46   -2.03    0.042 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
 
 ########==========  Warning messages lme4 models ==========########
 
@@ -259,9 +251,9 @@ NULL
 $fertpest
 NULL
 
-$nest.protect
+$water
 NULL
 
-$water
+$nest.protect
 NULL
 
