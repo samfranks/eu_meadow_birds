@@ -8,11 +8,11 @@
 # 11 March 2016
 # 22 Dec 2016
 
-#=================================  SET LOGIC STATEMENTS  ====================
+# =================================  SET LOGIC STATEMENTS  ====================
 
 
 
-#=================================  LOAD PACKAGES =================================
+# =================================  LOAD PACKAGES =================================
 
 list.of.packages <- c("MASS","reshape")
 
@@ -22,7 +22,7 @@ if(length(new.packages)) install.packages(new.packages)
 
 lapply(list.of.packages, library, character.only=TRUE)
 
-#=================================  SET DIRECTORY STRUCTURE  ================================
+# =================================  SET DIRECTORY STRUCTURE  ================================
 
 # LOCAL
 if(.Platform$OS =='windows') {
@@ -62,18 +62,29 @@ workspacewd <- paste(parentwd, "workspaces", sep="/")
 options(digits=6)
 
 
-#=================================  LOAD DATA  ===============================
+# =================================  LOAD DATA  ===============================
 
 source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
-#=================================  SUMMARY STATISTICS  ===============================
+# =================== Study frequency of unique interventions/intervention combinations ====================
+
+library(plyr)
+
+# select only the unique combinations of interventions tested by a study (i.e. some studies may assess interventions across multiple species/metrics)
+# use count() in plyr to count the number of occurrences of unique combinations of variable values in a dataset
+subdat <- unique(subset(dat, select=c("reference",mgmtvars)))
+temp <- count(subdat, vars = c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water"))
+
+write.csv(temp, paste(outputwd, "intervention combination frequency by study.csv", sep="/"), row.names=FALSE)
+
+# =================================  SUMMARY STATISTICS  ===============================
 
 # total number of studies in dataset
 num.studies <- length(unique(dat$reference))
 
-#---------- Proportion of studies by literature type (grey or primary) ----------
+# ---------- Proportion of studies by literature type (grey or primary) ----------
 
 # summarize proportions of studies of different lit types
 # create based on a unique dataset of reference id and lit.type
@@ -92,7 +103,7 @@ text(x, litsum.prop+0.02, litsum) # sample sizes for each lit type
 
 dev.off()
 
-#---------- Proportion of studies by country ----------
+# ---------- Proportion of studies by country ----------
 
 # summarize proportions of studies from different countries
 # create based on a unique dataset of reference id and country
@@ -116,7 +127,7 @@ text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
 # dev.off()
 
 
-#---------- Proportion of studies by species ----------
+# ---------- Proportion of studies by species ----------
 
 speciessum <- table(unique(dat[,c("reference","species")])$species)
 speciessum.prop <- speciessum/num.studies
@@ -133,7 +144,7 @@ text(x, speciessum.prop+0.02, speciessum) # sample sizes for each species
 dev.off()
 
 
-#---------- Proportion of studies by habitat ----------
+# ---------- Proportion of studies by habitat ----------
 
 d1.hab <- dat
 d1.hab$newhabitat <- factor(d1.hab$newhabitat, c("arable","pastoral","unenclosed"), ordered=TRUE)
@@ -152,7 +163,7 @@ text(x, habsum.prop+0.02, habsum) # sample sizes for each habitat
 dev.off()
 
 
-#---------- Proportion of studies by overall metric ----------
+# ---------- Proportion of studies by overall metric ----------
 
 # create an ordered factor of metrics for this summary (particularly for productivity so it's nest, chick, nest+chick)
 # don't want to change this factor to ordered for the analysis though, because it will be treated differently than a regular factor in the model
@@ -174,7 +185,7 @@ text(x, metricsum.prop+0.02, metricsum) # sample sizes for each metric
 
 dev.off()
 
-#---------- Proportion of studies by specific metric (for productivity)----------
+# ---------- Proportion of studies by specific metric (for productivity)----------
 
 # create an ordered factor of metrics for this summary (particularly for productivity so it's nest, chick, nest+chick)
 
@@ -201,7 +212,7 @@ text(x, c(metricsumprod.prop[1:2]+0.02, metricsum.prop["productivity"]+0.02, met
 
 dev.off()
 
-#---------- Proportion of studies examining the effect of an intervention type ----------
+# ---------- Proportion of studies examining the effect of an intervention type ----------
 
 ### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
 # create blank objects
@@ -245,7 +256,7 @@ text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention
 dev.off()
 
 
-#---------- Types of management interventions comprised within AES types ----------
+# ---------- Types of management interventions comprised within AES types ----------
 
 
 AES.level <- c("basic","higher")
@@ -284,6 +295,13 @@ for (j in 1:length(AES.level)) {
   names(intervensum.level) <- eval.mgmtvars
   names(intervensum.level.prop) <- eval.mgmtvars
   
+  # count number of unique studies that evaluate no interventions as part of AES, add to plotting dataset
+  no.interventions.tested <- subset(subdat, mowing=="none" & grazing=="none" & fertpest=="none" & water=="none" & nest.protect=="none" & predator.control=="none")
+  no.interventions.tested <- unique(no.interventions.tested[,c("reference",eval.mgmtvars)])
+  
+  intervensum <- c(nrow(no.interventions.tested), intervensum)
+  intervensum.prop <- c(nrow(no.interventions.tested)/num.studies, intervensum.prop)
+  
   # remove AE level from being plotted
   # intervensum.prop <- intervensum.prop[-which(names(intervensum.prop) %in% "AE.level")]
   # intervensum <- intervensum[-which(names(intervensum) %in% "AE.level")]
@@ -291,8 +309,8 @@ for (j in 1:length(AES.level)) {
   png(paste(outputwd, "/summary_proportion of management interventions used by AES level ", AES.level[j], ".png", sep=""), res=300, height=12, width=16, units="in", pointsize=20)
   
   par(mar=c(6,5,2,1))
-  x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-  text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("mowing","grazing","agrochemicals","nest\nprotection","predator\ncontrol","water\nmanagement"))
+  x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
+  text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("no\ninterventions\nevaluated","mowing","grazing","agrochemicals","nest\nprotection","predator\ncontrol","water\nmanagement"))
   title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
   title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
   text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
@@ -302,7 +320,7 @@ for (j in 1:length(AES.level)) {
 }
 
 
-#---------- Summary statistics text output  ----------
+# ---------- Summary statistics text output  ----------
 
 setwd(outputwd)
 sink(paste("summary statistics output.txt", sep=" "))

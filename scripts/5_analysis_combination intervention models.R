@@ -99,18 +99,6 @@ source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
-# # =================== Study frequency of unique interventions/intervention combinations ====================
-# 
-# library(plyr)
-# 
-# # select only the unique combinations of interventions tested by a study (i.e. some studies may assess interventions across multiple species/metrics)
-# # use count() in plyr to count the number of occurrences of unique combinations of variable values in a dataset
-# subdat <- unique(subset(dat, select=c("reference",mgmtvars)))
-# temp <- count(subdat, vars = c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water"))
-# 
-# write.csv(temp, paste(outputwd, "intervention combination frequency by study.csv", sep="/"), row.names=FALSE)
-
-
 # =================================  ANALYSIS  3 - INTERVENTIONS IN COMBINATION ===============================
 
 
