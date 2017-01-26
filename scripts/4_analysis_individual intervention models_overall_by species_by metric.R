@@ -75,6 +75,12 @@ source(paste(scriptswd, "source_model data preparation.R", sep="/"))
 
 
 
+# ================================ CODE STUDY QUALITY AS NUMERIC WEIGHTS ======================
+
+# turn 'study quality' = score into a weighting vector for analysis
+# give higher weights to 'good' quality studies, lowest weights to 'poor' quality studies
+
+dat$study.weight <- ifelse(dat$score=="good", 3, ifelse(dat$score=="medium", 2, 1))
 
 
 # =================================  ANALYSIS  1 - INDIVIDUAL INTERVENTIONS OVERALL ===============================
@@ -100,6 +106,7 @@ out
 
 # set up list to output models and model datasets to
 m.ind <- list()
+m.ind.w <- list()
 usedat <- list() # data subset used to run a model
 
 for (i in 1:length(mgmtvars)) {
@@ -154,14 +161,21 @@ for (i in 1:length(mgmtvars)) {
   # run a normal glmer model
   m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
+  m.ind.w[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"), weights=mdat$study.weight)
+  
+  
   
 }
 
 names(m.ind) <- mgmtvars
 names(usedat) <- mgmtvars
+names(m.ind.w) <- mgmtvars
 
 warningmessages.lme4 <- lapply(m.ind, function(x) slot(x, "optinfo")$conv$lme4$messages)
+warningmessages.lme4.w <- lapply(m.ind.w, function(x) slot(x, "optinfo")$conv$lme4$messages)
+
 warningmessages.lme4
+warningmessages.lme4.w
 
 # ### lme4 convergence troubleshooting
 # # check singularity
@@ -188,10 +202,20 @@ if (!bias) {
   
   cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
   print(warningmessages.lme4)
+  
+  
+  cat("\n########==========  WEIGHTED Analysis 1) success of individual management types - lme4 models ==========########\n", sep="\n")
+  print(lapply(m.ind.w, summary))
+  
+  cat("\n########==========  WEIGHTED Warning messages lme4 models ==========########\n", sep="\n")
+  print(warningmessages.lme4.w)
+  
   sink()
   
   ### Save individual interventions models
   saveRDS(m.ind, file=paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
+  saveRDS(m.ind.w, file=paste(workspacewd, "models_analysis 1_lme4_weighted.rds", sep="/"))
+  
   
   ### Save dataset for 0a models
   saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 1.rds", sep="/"))

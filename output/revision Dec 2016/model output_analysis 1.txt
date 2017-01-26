@@ -280,3 +280,296 @@ NULL
 $predator.control
 NULL
 
+
+########==========  WEIGHTED Analysis 1) success of individual management types - lme4 models ==========########
+
+$AE
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   743.6    754.3   -368.8    737.6      259 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-2.734 -0.958 -0.528  0.919  5.786 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 3.07     1.752   
+ species   (Intercept) 0.32     0.566   
+Number of obs: 262, groups:  reference, 31; species, 6
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -0.702      0.446   -1.57     0.12
+
+$AE.level
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ AE.level + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   729.6    743.9   -360.8    721.6      258 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-2.529 -0.998 -0.549  0.862  5.720 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 2.001    1.415   
+ species   (Intercept) 0.299    0.546   
+Number of obs: 262, groups:  reference, 31; species, 6
+
+Fixed effects:
+               Estimate Std. Error z value Pr(>|z|)    
+(Intercept)      -1.191      0.414   -2.88    0.004 ** 
+AE.levelhigher    1.037      0.257    4.03  5.5e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+AE.levlhghr -0.295
+
+$reserve.desig
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   484.5    493.7   -239.2    478.5      155 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-2.232 -1.249 -0.625  1.223  5.139 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 0.464    0.681   
+ species   (Intercept) 0.563    0.750   
+Number of obs: 158, groups:  reference, 13; species, 7
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  -0.0927     0.4118   -0.22     0.82
+
+$mowing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ mowing + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   208.3    218.4   -100.2    200.3       88 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.946 -0.818 -0.365 -0.193  5.741 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 5.3357   2.310   
+ species   (Intercept) 0.0772   0.278   
+Number of obs: 92, groups:  reference, 18; species, 7
+
+Fixed effects:
+              Estimate Std. Error z value Pr(>|z|)  
+(Intercept)      -3.23       1.85   -1.75    0.081 .
+mowingreduced     2.44       1.98    1.23    0.219  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+mowingredcd -0.918
+
+$grazing
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ grazing + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   281.8    293.0   -136.9    273.8      118 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-1.971 -0.786 -0.409  0.536  3.708 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 4.842    2.200   
+ species   (Intercept) 0.158    0.397   
+Number of obs: 122, groups:  reference, 28; species, 7
+
+Fixed effects:
+               Estimate Std. Error z value Pr(>|z|)  
+(Intercept)    -1.12368    0.62998   -1.78    0.074 .
+grazingreduced  0.00475    1.10430    0.00    0.997  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+grazingrdcd -0.510
+
+$fertpest
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ fertpest + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   102.5    109.5    -47.3     94.5       39 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.5602 -0.6370 -0.0095  0.0304  2.8745 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 160.41   12.7    
+ species   (Intercept)   1.44    1.2    
+Number of obs: 43, groups:  reference, 16; species, 7
+
+Fixed effects:
+                Estimate Std. Error z value Pr(>|z|)   
+(Intercept)       -10.38       4.59   -2.26   0.0238 * 
+fertpestreduced    17.36       6.50    2.67   0.0075 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr)
+fertpstrdcd -0.891
+
+$water
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ water + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   255.0    265.6   -123.5    247.0      101 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-2.330 -0.606 -0.256  0.461  4.922 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 6.050    2.460   
+ species   (Intercept) 0.222    0.471   
+Number of obs: 105, groups:  reference, 22; species, 7
+
+Fixed effects:
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)     0.150      0.829    0.18     0.86
+waterreduced   -2.483      1.818   -1.37     0.17
+
+Correlation of Fixed Effects:
+            (Intr)
+waterreducd -0.387
+
+$nest.protect
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+   236.4    243.9   -115.2    230.4       86 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-2.534 -0.967 -0.546  1.184  3.036 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 1.502    1.226   
+ species   (Intercept) 0.105    0.324   
+Number of obs: 89, groups:  reference, 16; species, 7
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   -0.633      0.433   -1.46     0.14
+
+$predator.control
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: success ~ 1 + (1 | reference) + (1 | species)
+   Data: mdat
+Weights: mdat$study.weight
+Control: glmerControl(optimizer = "bobyqa")
+
+     AIC      BIC   logLik deviance df.resid 
+    74.6     79.8    -34.3     68.6       39 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.4067 -0.0271 -0.0200  0.1714  2.1327 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ reference (Intercept) 200.9    14.18   
+ species   (Intercept)  44.2     6.65   
+Number of obs: 42, groups:  reference, 12; species, 5
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)    -13.9        6.1   -2.29    0.022 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+########==========  WEIGHTED Warning messages lme4 models ==========########
+
+$AE
+NULL
+
+$AE.level
+NULL
+
+$reserve.desig
+NULL
+
+$mowing
+NULL
+
+$grazing
+NULL
+
+$fertpest
+NULL
+
+$water
+NULL
+
+$nest.protect
+NULL
+
+$predator.control
+NULL
+

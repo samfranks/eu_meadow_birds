@@ -106,7 +106,7 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","wat
 
 # ==============================  FIGURE 1 - overall success of interventions ===================================
 
-png("Fig1_overall success of interventions.png", res=300, height=15, width=18, units="in", pointsize=22)
+png("Fig1_overall success of interventions_weighted.png", res=300, height=15, width=18, units="in", pointsize=22)
 
 layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
 par(oma=c(3,5,1,1))
@@ -116,7 +116,7 @@ par(oma=c(3,5,1,1))
 
 
 moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1.rds", sep="/")) 
-mod <- readRDS(paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_analysis 1_lme4_weighted.rds", sep="/"))
 
 
 # -------   Produce plotting dataset predictions   ---------
