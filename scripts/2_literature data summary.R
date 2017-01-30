@@ -315,6 +315,10 @@ for (j in 1:length(AES.level)) {
   title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
   text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
   
+  if (AES.level[j]=="basic") mtext("a)", side=3, adj=0, line=0.5)
+  if (AES.level[j]=="higher") mtext("b)", side=3, adj=0, line=0.5)
+  
+  
   dev.off()
   
 }
