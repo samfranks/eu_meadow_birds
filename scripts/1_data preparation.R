@@ -66,7 +66,7 @@ options(digits=6)
 
 # d0 <- read.csv(paste(datawd, "meadow birds data extraction template_final_primary.csv", sep="/"), header=TRUE, skip=1)
 
-d0 <- read.csv(paste(datawd, "meadow birds data extraction template_final_primary and grey_standardized_20160610.csv", sep="/"), header=TRUE)
+d0 <- read.csv(paste(datawd, "Meadow birds data extraction template_primary and grey_standardized_FINAL.csv", sep="/"), header=TRUE)
 
 #------- Meta-data reference for studies -------------
 # create a meta-data reference file for studies with reference numbers, reference name, summary, country, region
