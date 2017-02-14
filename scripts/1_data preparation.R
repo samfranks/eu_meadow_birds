@@ -14,7 +14,7 @@
 
 #=================================  LOAD PACKAGES =================================
 
-list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal")
+list.of.packages <- c("MASS","reshape","raster","sp","rgeos","rgdal","dplyr")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -75,11 +75,12 @@ metadat0 <- unique(d0[,c("reference.number","reference","literature.type","one.s
 #------- Clean dataset -----------
 
 # columns required
-d0.1 <- d0[,c("reference.number","record.number","literature.type","score","country","region1","habitat","habitat1","habitat2","start.year","end.year","type.of.study","species","assemblage","agri.environment","basic.agri.environment", "targeted.agri.environment..wader.specific.or.higher.level.", "site.protection...nature.reserve","site.protection...designation", "mowing","grazing","fertilizer","herbicides...pesticides","nest.protection...agricultural.activities","nest.protection...predation..enclosures.or.exclosures.",     "ground.water.management..drainage.inhibited.","wet.features...surface.water.management","predator.control","other.mgmt", "management.notes","overall.metric","specific.metric","reference.metric.before.management","metric.after.management","standardized.metric","standardisation.calculation","stand..reference.metric.before.management","stand..metric.after.management", "stand..effect.size","significant.effect..Y.N..U.","direction.of.effect..positive...negative...none.","unit.of.analysis","sample.size","analysis.type.1","analysis.type.2","analysis.type.details","log.effect.size.", "effect.size..where.reported.","values.obtained.from.plot.")]
+cols.required <- c("reference.number","record.number","literature.type","score","country","region1","habitat","habitat1","habitat2","start.year","end.year","type.of.study","species","assemblage","agri.environment","basic.agri.environment", "targeted.agri.environment..wader.specific.or.higher.level.", "site.protection...nature.reserve","site.protection...designation", "mowing","grazing","fertilizer","herbicides...pesticides","nest.protection...agricultural.activities","nest.protection...predation..enclosures.or.exclosures.",     "ground.water.management..drainage.inhibited.","wet.features...surface.water.management","predator.control","other.mgmt", "management.notes","overall.metric","specific.metric","reference.metric.before.management","metric.after.management","standardized.metric","standardisation.calculation","stand..reference.metric.before.management","stand..metric.after.management", "stand..effect.size","sample.size.before","sample.size.after", "uncertainty.measure.before","uncertainty.measure.after","uncertainty.measure.type","significant.effect..Y.N..U.","direction.of.effect..positive...negative...none...no.data.","unit.of.analysis","sample.size","analysis.type.1","analysis.type.2","analysis.type.details","values.obtained.from.plot.")
+d0.1 <- subset(d0, select=cols.required)
 
 # rename to easier variables 
 d0.2 <- d0.1
-names(d0.2) <- c("reference","record","lit.type","score","country","region1","habitat","habitat1","habitat2","start.year","end.year","study.type","species","assemblage","AE","basic.AE","higher.AE","reserve","designation","mowing","grazing","fertilizer","pesticide","nest.protect.ag","nest.protect.predation","groundwater.drainage","surface.water","predator.control","other.mgmt","mgmt.notes","overall.metric","specific.metric","metric.before","metric.after","stan.metric","stan.calc","stan.metric.before","stan.metric.after","stan.effect.size","sig","effect.dir","analysis.unit","sample.size","analysis1","analysis2","analysis3","log.effect.size","percent.change.effect.size","values.from.plot")
+names(d0.2) <- c("reference","record","lit.type","score","country","region1","habitat","habitat1","habitat2","start.year","end.year","study.type","species","assemblage","AE","basic.AE","higher.AE","reserve","designation","mowing","grazing","fertilizer","pesticide","nest.protect.ag","nest.protect.predation","groundwater.drainage","surface.water","predator.control","other.mgmt","mgmt.notes","overall.metric","specific.metric","metric.before","metric.after","stan.metric","stan.calc","stan.metric.before","stan.metric.after","stan.effect.size","n.before","n.after","var.before","var.after","var.type","sig","effect.dir","analysis.unit","sample.size","analysis1","analysis2","analysis3","values.from.plot")
 
 # management intervention variables
 mgmtvars <- c("AE","basic.AE","higher.AE","reserve","designation","mowing","grazing","fertilizer","pesticide","nest.protect.ag","nest.protect.predation","groundwater.drainage","surface.water","predator.control","other.mgmt")
@@ -93,6 +94,11 @@ d0.2 <- subset(d0.2, reference!=2) # remove this reference (Kleijn et al. 2004) 
 d0.2 <- droplevels(d0.2)
 
 d0.3 <- d0.2
+
+# recode certain factor variable classes to more sensible classes
+recode.as.char <- c("region1","mgmt.notes","specific.metric","stan.metric","stan.calc","var.before","var.after","analysis3")
+d0.3[,recode.as.char] <- apply(d0.3[,recode.as.char], 2, as.character)
+d0.3$stan.effect.size <- as.numeric(as.character(d0.3$stan.effect.size))
 
 # recode manamgement vars as characters to be able to use string substitution find and replace to create generic applied, restricted, removed levels for all management types
 d0.3[,mgmtvars] <- apply(d0.3[,mgmtvars], 2, as.character)
@@ -196,12 +202,10 @@ newtemp$stan.metric.before <- temp$stan.metric.after
 newtemp$stan.metric.after <- temp$stan.metric.before
 newtemp$stan.effect.size <- (newtemp$stan.metric.after - newtemp$stan.metric.before)/abs(newtemp$stan.metric.before)
 
-newtemp[,c("log.effect.size","percent.change.effect.size")] <- ""
-
 
 # remove the original records from the dataset and add these new ones in
 d0.4 <- d0.4[-which(d0.4$reference %in% c("5","10")),]
-d0.4 <- rbind(d0.4, newtemp)
+d0.5 <- rbind(d0.4, newtemp)
 
 #------------ Add the success/failure/outcome variables --------------
 
@@ -214,7 +218,10 @@ d0.4$failure <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", 1, 0) # fail
 # outcome variable: -1 = significant negative, 0 = no effect, 1 = significant positive
 d0.4$outcome <- ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="positive", 1, ifelse(d0.4$sig=="Y" & d0.4$effect.dir=="negative", -1, 0)) # success variable) # success variable
 
-#------------- Definitive dataset --------------
+
+
+
+#------------- Recode removed/restricted as single level=reduced --------------
 
 # final dataset for analysis 
 d1 <- d0.4
@@ -222,7 +229,7 @@ d1 <- d0.4
 # new set of management variables
 mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
 
-# convert removed or restricted levels of the management vars (all but AE.level) to a single level of removed/restricted
+# convert removed or restricted levels of the management vars (all but AE.level) to a single level = reduced
 # use find and replace with gsub
 d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
   gsub("removed", "reduced", x)
@@ -231,6 +238,10 @@ d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
 d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
   gsub("restricted", "reduced", x)
 })
+
+
+
+#------------- Definitive dataset --------------
 
 ### Save definitive dataset
 saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
