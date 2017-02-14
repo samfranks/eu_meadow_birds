@@ -3,41 +3,51 @@
 ####### Literature summary #######
 
     grey  primary 
-0.210526 0.789474 
+0.216216 0.783784 
 
 
 ####### Country summary #######
 
-       Denmark        Finland         France        Germany        Hungary    Netherlands         Sweden    Switzerland United Kingdom 
-     0.0789474      0.0263158      0.0263158      0.0526316      0.0131579      0.2500000      0.0657895      0.0263158      0.4605263 
+       Denmark        Finland         France        Germany        Hungary    Netherlands         Sweden 
+     0.0810811      0.0270270      0.0270270      0.0540541      0.0135135      0.2567568      0.0675676 
+   Switzerland United Kingdom 
+     0.0270270      0.4459459 
 
 
 ####### Intervention summary #######
-              AE    reserve.desig           mowing          grazing         fertpest     nest.protect predator.control            water 
-        0.407895         0.171053         0.236842         0.368421         0.210526         0.210526         0.157895         0.289474 
+                           mowing          grazing         fertpest            water     nest.protect 
+          0.5625           0.4375           0.2500           0.2500           0.3750           0.1875 
+predator.control 
+          0.0000 
 
 
 ####### Species summary #######
 
-black-tailed godwit              curlew              dunlin             lapwing       oystercatcher            redshank                ruff               snipe 
-          0.2894737           0.2105263           0.0394737           0.7368421           0.2500000           0.3815789           0.0263158           0.1973684 
+black-tailed godwit              curlew              dunlin             lapwing       oystercatcher 
+          0.2972973           0.1891892           0.0405405           0.7297297           0.2567568 
+           redshank                ruff               snipe 
+          0.3918919           0.0270270           0.1891892 
 
 
 ####### Metric summary #######
 
-       abundance/occupancy abundance/occupancy change               productivity                recruitment                   survival 
-                 0.5000000                  0.2894737                  0.4868421                  0.0263158                  0.0394737 
+       abundance/occupancy abundance/occupancy change               productivity                recruitment 
+                 0.4864865                  0.2972973                  0.5000000                  0.0270270 
+                  survival 
+                 0.0405405 
 
 
 ####### Metric summary (specific productivity metrics) #######
 
-        abundance/occupancy  abundance/occupancy change   productivity (nest level)  productivity (chick level) productivity (nest + chick)                 recruitment 
-                  0.5000000                   0.2894737                   0.3815789                   0.1184211                   0.1315789                   0.0263158 
+        abundance/occupancy  abundance/occupancy change   productivity (nest level) 
+                  0.4864865                   0.2972973                   0.3918919 
+ productivity (chick level) productivity (nest + chick)                 recruitment 
+                  0.1216216                   0.1351351                   0.0270270 
                    survival 
-                  0.0394737 
+                  0.0405405 
 
 
 ####### Habitat summary #######
 
     arable   pastoral unenclosed 
-  0.289474   0.592105   0.197368 
+  0.297297   0.608108   0.175676 

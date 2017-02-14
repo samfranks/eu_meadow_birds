@@ -138,11 +138,11 @@ countrysum <- table(unique(dat[,c("reference","country")])$country)
 countrysum.prop <- countrysum/num.studies
 
 
-png(paste(outputwd, "summary_proportion of studies by country + species.png", sep="/"), res=300, height=20, width=16, units="in", pointsize=20)
+# png(paste(outputwd, "summary_proportion of studies by country + species.png", sep="/"), res=300, height=20, width=16, units="in", pointsize=20)
 
-# png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), res=300, height=12, width=16, units="in", pointsize=20)
+png(paste(outputwd, "summary_proportion of studies by country.png", sep="/"), res=300, height=12, width=16, units="in", pointsize=20)
 
-par(mfrow=c(2,1))
+# par(mfrow=c(2,1))
 
 par(mar=c(6,5,2,1))
 x <- barplot(countrysum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
@@ -151,7 +151,7 @@ title(xlab="Country", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
 
-# dev.off()
+dev.off()
 
 
 # ---------- Proportion of studies by species ----------
@@ -159,7 +159,7 @@ text(x, countrysum.prop+0.02, countrysum) # sample sizes for each country
 speciessum <- table(unique(dat[,c("reference","species")])$species)
 speciessum.prop <- speciessum/num.studies
 
-# png(paste(outputwd, "summary_proportion of studies by species.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
+png(paste(outputwd, "summary_proportion of studies by species.png", sep="/"), res=300, height=12, width=15, units="in", pointsize=20)
 
 par(mar=c(6,5,2,1))
 x <- barplot(speciessum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
@@ -205,7 +205,7 @@ png(paste(outputwd, "summary_proportion of studies by metric.png", sep="/"), res
 
 par(mar=c(6,5,2,1))
 x <- barplot(metricsum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.8), xaxt="n")
-text(x, par("usr")[3]-0.04, srt = 30, adj=1, xpd = TRUE, labels = c("abundance/\noccupancy","abundance/\noccupancy change","productivity","recruitment","survival"))
+text(x, par("usr")[3]-0.04, srt = 0, xpd = TRUE, labels = c("abundance/\noccupancy","abundance/\noccupancy change","productivity","recruitment","survival"))
 title(xlab="Study metric", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, metricsum.prop+0.02, metricsum) # sample sizes for each metric
@@ -275,7 +275,7 @@ png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"
 
 par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","fertiliser/\npesticides","nest\nprotection","predator\ncontrol","water\nmanagement"))
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","agro-\nchemicals","nest\nprotection","predator\ncontrol","water\nmanagement"))
 title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
