@@ -244,7 +244,7 @@ d1[,mgmtvars] <- apply(d1[,mgmtvars], 2, function(x) {
 #------------- Definitive dataset --------------
 
 ### Save definitive dataset
-saveRDS(d1, file=paste(workspacewd, "meadow birds analysis dataset_full.rds", sep="/"))
+saveRDS(d1, file=paste(workspacewd, "/revision Dec 2016/meadow birds analysis dataset_full.rds", sep="/"))
 write.table(d1, file=paste(datawd, "meadow birds analysis dataset_full.txt", sep="/"), row.names=FALSE, quote=FALSE, sep="\t")
 write.csv(d1, file=paste(datawd, "meadow birds analysis dataset_full.csv", sep="/"), row.names=FALSE)
 
