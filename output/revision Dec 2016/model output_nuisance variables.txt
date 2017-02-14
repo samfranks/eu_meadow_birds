@@ -3,48 +3,49 @@
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ study.length + sample.size + analysis2 + lit.type +      score + biased.metric + (1 | reference)
+Formula: success ~ study.length + sample.size + analysis2 + lit.type +  
+    score + biased.metric + (1 | reference)
    Data: dat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   743.2    791.4   -360.6    721.2      582 
+   737.2    785.3   -357.6    715.2      577 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.502 -0.731 -0.472  0.901  2.517 
+-1.495 -0.731 -0.471  0.900  2.524 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.705    0.839   
-Number of obs: 593, groups:  reference, 76
+ reference (Intercept) 0.71     0.843   
+Number of obs: 588, groups:  reference, 74
 
 Fixed effects:
                       Estimate Std. Error z value Pr(>|z|)  
-(Intercept)            -0.5471     0.8262   -0.66    0.508  
-study.length            0.0318     0.0234    1.36    0.174  
-sample.sizemedium       0.1592     0.3727    0.43    0.669  
-sample.sizesmall       -0.1478     0.3850   -0.38    0.701  
-analysis2multivariate   1.4155     0.7839    1.81    0.071 .
-analysis2univariate     0.7582     0.7343    1.03    0.302  
-lit.typeprimary        -1.2635     0.4934   -2.56    0.010 *
-scoremedium            -0.4264     0.3770   -1.13    0.258  
-scorepoor              -0.9175     0.4708   -1.95    0.051 .
-biased.metricY         -0.0638     0.2584   -0.25    0.805  
+(Intercept)            -0.5300     0.8308   -0.64    0.524  
+study.length            0.0299     0.0235    1.27    0.203  
+sample.sizemedium       0.1557     0.3742    0.42    0.677  
+sample.sizesmall       -0.1779     0.3945   -0.45    0.652  
+analysis2multivariate   1.3696     0.7838    1.75    0.081 .
+analysis2univariate     0.7795     0.7354    1.06    0.289  
+lit.typeprimary        -1.2318     0.4954   -2.49    0.013 *
+scoremedium            -0.4388     0.3809   -1.15    0.249  
+scorepoor              -0.9333     0.4723   -1.98    0.048 *
+biased.metricY         -0.0613     0.2600   -0.24    0.814  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) stdy.l smpl.szm smpl.szs anlyss2m anlyss2n lt.typ scrmdm scorpr
-study.lngth -0.204                                                                
-sampl.szmdm -0.193 -0.036                                                         
-smpl.szsmll -0.049 -0.079  0.346                                                  
-anlyss2mltv -0.687 -0.028  0.121   -0.064                                         
-anlyss2nvrt -0.782  0.014  0.049   -0.114    0.853                                
-lt.typprmry -0.265  0.071 -0.122    0.006   -0.371   -0.092                       
-scoremedium -0.336 -0.136  0.047    0.088    0.061    0.059    0.080              
-scorepoor   -0.247 -0.057 -0.036   -0.017    0.015   -0.088    0.142  0.498       
-biasd.mtrcY -0.165  0.044  0.045   -0.162    0.107    0.183   -0.095 -0.109 -0.132
+study.lngth -0.207                                                                
+sampl.szmdm -0.194 -0.041                                                         
+smpl.szsmll -0.069 -0.060  0.345                                                  
+anlyss2mltv -0.684 -0.029  0.122   -0.057                                         
+anlyss2nvrt -0.780  0.012  0.053   -0.103    0.850                                
+lt.typprmry -0.272  0.076 -0.119    0.018   -0.368   -0.086                       
+scoremedium -0.344 -0.125  0.049    0.112    0.061    0.062    0.088              
+scorepoor   -0.244 -0.053 -0.039   -0.021    0.018   -0.090    0.137  0.490       
+biasd.mtrcY -0.172  0.045  0.050   -0.138    0.105    0.187   -0.086 -0.097 -0.136
 
 ###---  Likelihood Ratio Tests ---###
 
@@ -55,8 +56,8 @@ Model:
 success ~ study.length + sample.size + analysis2 + lit.type + 
     score + biased.metric + (1 | reference)
              Df   AIC   LRT Pr(Chi)
-<none>          743.2              
-study.length  1 742.9 1.785   0.182
+<none>          737.2              
+study.length  1 736.7 1.562   0.211
 
 [[2]]
 Single term deletions
@@ -65,8 +66,8 @@ Model:
 success ~ study.length + sample.size + analysis2 + lit.type + 
     score + biased.metric + (1 | reference)
             Df   AIC    LRT Pr(Chi)
-<none>         743.2               
-sample.size  2 739.7 0.5226    0.77
+<none>         737.2               
+sample.size  2 733.8 0.5964   0.742
 
 [[3]]
 Single term deletions
@@ -74,11 +75,9 @@ Single term deletions
 Model:
 success ~ study.length + sample.size + analysis2 + lit.type + 
     score + biased.metric + (1 | reference)
-          Df   AIC   LRT Pr(Chi)  
-<none>       743.2                
-analysis2  2 743.8 4.647  0.0979 .
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+          Df   AIC   LRT Pr(Chi)
+<none>       737.2              
+analysis2  2 737.3 4.073    0.13
 
 [[4]]
 Single term deletions
@@ -86,11 +85,11 @@ Single term deletions
 Model:
 success ~ study.length + sample.size + analysis2 + lit.type + 
     score + biased.metric + (1 | reference)
-         Df   AIC   LRT Pr(Chi)   
-<none>      743.2                 
-lit.type  1 748.1 6.931 0.00847 **
+         Df   AIC   LRT Pr(Chi)  
+<none>      737.2                
+lit.type  1 741.7 6.498  0.0108 *
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 [[5]]
 Single term deletions
@@ -99,8 +98,8 @@ Model:
 success ~ study.length + sample.size + analysis2 + lit.type + 
     score + biased.metric + (1 | reference)
        Df   AIC   LRT Pr(Chi)
-<none>    743.2              
-score   2 743.1 3.942   0.139
+<none>    737.2              
+score   2 737.3 4.067   0.131
 
 [[6]]
 Single term deletions
@@ -109,6 +108,6 @@ Model:
 success ~ study.length + sample.size + analysis2 + lit.type + 
     score + biased.metric + (1 | reference)
               Df   AIC     LRT Pr(Chi)
-<none>           743.2                
-biased.metric  1 741.2 0.05948   0.807
+<none>           737.2                
+biased.metric  1 735.2 0.05426   0.816
 
