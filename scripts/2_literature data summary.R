@@ -79,6 +79,33 @@ temp <- count(subdat, vars = c("AE","AE.level","reserve.desig","mowing","grazing
 
 write.csv(temp, paste(outputwd, "intervention combination frequency by study.csv", sep="/"), row.names=FALSE)
 
+# =================== Cross-tabulation of effect directions and significance by record ====================
+
+### OVERALL
+summary.effects <- table(dat0$effect.dir, dat0$sig)
+
+summary.effects.mgmtvar <- list()
+for (i in 1:length(mgmtvars)) {
+  print(mgmtvars[i])
+  mdat <- dat0[dat0[,mgmtvars[i]]!="none",]
+  summary.effects.mgmtvar[[i]] <- table(mdat$effect.dir, mdat[,mgm])
+}
+
+names(summary.effects.mgmtvar) <- mgmtvars
+summary.effects.mgmtvar
+
+setwd(outputwd)
+sink(paste("summary of effect directions and significance.txt", sep=" "))
+
+cat("\n########==========  Overall summary of effects ==========########\n", sep="\n")
+print(summary.effects)
+
+cat("\n########==========  Summary of effects by intervention ==========########\n", sep="\n")
+print(summary.effects.mgmtvar)
+
+sink()
+
+
 # =================================  SUMMARY STATISTICS  ===============================
 
 # total number of studies in dataset
