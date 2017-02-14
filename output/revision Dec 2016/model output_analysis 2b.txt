@@ -30,7 +30,7 @@ Fixed effects:
 new.metricabundance/occupancy change    0.222      0.389    0.57   0.5682   
 new.metricproductivity                  1.263      0.640    1.97   0.0483 * 
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.m/c
@@ -65,11 +65,11 @@ Fixed effects:
 (Intercept)                                           -1.455      0.389   -3.74  0.00018 ***
 AE.levelhigher                                         0.656      0.453    1.45  0.14750    
 new.metricabundance/occupancy change                  -0.228      0.497   -0.46  0.64633    
-new.metricproductivity                                 1.096      1.075    1.02  0.30791    
-AE.levelhigher:new.metricabundance/occupancy change    1.502      0.745    2.02  0.04383 *  
+new.metricproductivity                                 1.096      1.075    1.02  0.30790    
+AE.levelhigher:new.metricabundance/occupancy change    1.502      0.745    2.02  0.04384 *  
 AE.levelhigher:new.metricproductivity                  0.232      1.215    0.19  0.84845    
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) AE.lvl nw.m/c nw.mtr AE.:.c
@@ -108,7 +108,7 @@ Fixed effects:
 new.metricabundance/occupancy change    0.800      0.469    1.71    0.088 .
 new.metricproductivity                 -0.412      0.927   -0.44    0.657  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.m/c
@@ -147,7 +147,7 @@ new.metricproductivity                               -1.050      1.523   -0.69  
 mowingreduced:new.metricabundance/occupancy change   -2.168      1.536   -1.41    0.158  
 mowingreduced:new.metricproductivity                  3.050      1.626    1.88    0.061 .
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) mwngrd nw.m/c nw.mtr mw:./c
@@ -187,7 +187,7 @@ grazingreduced                          -0.408      0.910   -0.45    0.654
 new.metricproductivity                  -0.980      0.900   -1.09    0.276  
 grazingreduced:new.metricproductivity    1.383      1.429    0.97    0.333  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) grzngr nw.mtr
@@ -227,7 +227,7 @@ new.metricproductivity                   1.36       2.54    0.53     0.59
 Correlation of Fixed Effects:
             (Intr) nw.m/c
 nw.mtrcbn/c -0.162       
-nw.mtrcprdc -0.116  0.008
+nw.mtrcprdc -0.116  0.007
 
 $water
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
@@ -294,7 +294,7 @@ Fixed effects:
 new.metricabundance/occupancy change    0.718      0.938    0.76    0.444  
 new.metricproductivity                  1.065      0.776    1.37    0.170  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.m/c
@@ -303,8 +303,8 @@ nw.mtrcprdc -0.863  0.478
 
 $predator.control
 Cov prior  : reference ~ wishart(df = 3.5, scale = Inf, posterior.scale = cov, common.scale = TRUE)
-Fixef prior: normal(sd = c(3, 3, ...), corr = c(0 ...), common.scale = FALSE)
-Prior dev  : 9.921
+Fixef prior: normal(sd = c(3, 3), corr = 0, common.scale = FALSE)
+Prior dev  : 4.702
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['bglmerMod']
  Family: binomial  ( logit )
@@ -313,29 +313,25 @@ Formula: success ~ new.metric + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    53.8     60.8    -22.9     45.8       38 
+    42.6     46.8    -18.3     36.6       27 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.287 -0.302 -0.189  0.394  1.049 
+-1.464 -0.294 -0.162  0.463  1.105 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 11       3.32    
-Number of obs: 42, groups:  reference, 12
+ reference (Intercept) 13       3.61    
+Number of obs: 30, groups:  reference, 9
 
 Fixed effects:
-                                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                            -2.578      1.430   -1.80    0.072 .
-new.metricabundance/occupancy change    0.262      1.717    0.15    0.879  
-new.metricproductivity                  2.448      1.298    1.89    0.059 .
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                       Estimate Std. Error z value Pr(>|z|)
+(Intercept)               -1.65       1.60   -1.03     0.30
+new.metricproductivity     1.28       1.39    0.92     0.36
 
 Correlation of Fixed Effects:
-            (Intr) nw.m/c
-nw.mtrcbn/c -0.329       
-nw.mtrcprdc -0.545  0.400
+            (Intr)
+nw.mtrcprdc -0.512
 
 
 ########==========  Analysis 2b) success of individual management types by metric - lme4 models (convergence issues) ==========########
@@ -365,7 +361,7 @@ Fixed effects:
 new.metricabundance/occupancy change    0.297      0.379    0.78  0.43355    
 new.metricproductivity                  1.414      0.602    2.35  0.01878 *  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.m/c
@@ -400,7 +396,7 @@ new.metricproductivity                                 1.302      1.137    1.15 
 AE.levelhigher:new.metricabundance/occupancy change    1.492      0.765    1.95    0.051 .  
 AE.levelhigher:new.metricproductivity                  0.100      1.316    0.08    0.939    
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) AE.lvl nw.m/c nw.mtr AE.:.c
@@ -435,7 +431,7 @@ Fixed effects:
 new.metricabundance/occupancy change   1.0877     0.4910    2.21    0.027 *
 new.metricproductivity                 0.0123     0.8770    0.01    0.989  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.m/c
@@ -463,23 +459,23 @@ Number of obs: 92, groups:  reference, 18
 
 Fixed effects:
                                                     Estimate Std. Error z value Pr(>|z|)
-(Intercept)                                        -1.96e+01   2.54e+02   -0.08     0.94
-mowingreduced                                       1.77e+01   2.54e+02    0.07     0.94
-new.metricabundance/occupancy change                2.10e+01   2.54e+02    0.08     0.93
-new.metricproductivity                              8.38e-06   6.49e+02    0.00     1.00
-mowingreduced:new.metricabundance/occupancy change -2.04e+01   2.54e+02   -0.08     0.94
-mowingreduced:new.metricproductivity                2.16e+00   6.49e+02    0.00     1.00
+(Intercept)                                        -1.96e+01   1.25e+04       0        1
+mowingreduced                                       1.77e+01   1.25e+04       0        1
+new.metricabundance/occupancy change                2.10e+01   1.25e+04       0        1
+new.metricproductivity                              3.45e-06   1.42e+04       0        1
+mowingreduced:new.metricabundance/occupancy change -2.04e+01   1.25e+04       0        1
+mowingreduced:new.metricproductivity                2.16e+00   1.42e+04       0        1
 
 Correlation of Fixed Effects:
             (Intr) mwngrd nw.m/c nw.mtr mw:./c
 mowingredcd -1.000                            
 nw.mtrcbn/c -1.000  1.000                     
-nw.mtrcprdc  0.059 -0.059 -0.059              
-mwngrdc:./c  1.000 -1.000 -1.000  0.059       
-mwngrdcd:n. -0.059  0.059  0.059 -1.000 -0.059
+nw.mtrcprdc -0.882  0.882  0.882              
+mwngrdc:./c  1.000 -1.000 -1.000 -0.882       
+mwngrdcd:n.  0.882 -0.882 -0.882 -1.000  0.882
 convergence code: 0
-Model is nearly unidentifiable: large eigenvalue ratio
- - Rescale variables?
+unable to evaluate scaled gradient
+ Hessian is numerically singular: parameters are not uniquely determined
 
 
 $grazing
@@ -508,7 +504,7 @@ grazingreduced                          -0.564      0.784   -0.72    0.472
 new.metricproductivity                  -0.881      0.857   -1.03    0.304  
 grazingreduced:new.metricproductivity    1.833      1.382    1.33    0.185  
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) grzngr nw.mtr
@@ -594,7 +590,7 @@ Scaled residuals:
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0        0       
+ reference (Intercept) 4e-14    2e-07   
 Number of obs: 86, groups:  reference, 16
 
 Fixed effects:
@@ -603,7 +599,7 @@ Fixed effects:
 new.metricabundance/occupancy change    0.747      0.815    0.92   0.3591   
 new.metricproductivity                  1.398      0.619    2.26   0.0239 * 
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
             (Intr) nw.m/c
@@ -618,29 +614,25 @@ Formula: success ~ new.metric + (1 | reference)
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-    52.9     59.8    -22.4     44.9       38 
+    41.7     45.9    -17.8     35.7       27 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.260 -0.336 -0.188  0.455  1.058 
+-1.207 -0.436 -0.224  0.751  1.095 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 7.04     2.65    
-Number of obs: 42, groups:  reference, 12
+ reference (Intercept) 4.34     2.08    
+Number of obs: 30, groups:  reference, 9
 
 Fixed effects:
-                                     Estimate Std. Error z value Pr(>|z|)  
-(Intercept)                             -3.50       2.10   -1.67    0.096 .
-new.metricabundance/occupancy change     1.59       2.20    0.72    0.469  
-new.metricproductivity                   3.46       2.06    1.68    0.094 .
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                       Estimate Std. Error z value Pr(>|z|)
+(Intercept)               -1.76       1.59   -1.11     0.27
+new.metricproductivity     1.48       1.54    0.96     0.34
 
 Correlation of Fixed Effects:
-            (Intr) nw.m/c
-nw.mtrcbn/c -0.666       
-nw.mtrcprdc -0.842  0.693
+            (Intr)
+nw.mtrcprdc -0.786
 
 
 ########==========  Warning messages BLME models (good) ==========########
@@ -685,9 +677,8 @@ $reserve.desig
 NULL
 
 $mowing
-$mowing[[1]]
-[1] "Model is nearly unidentifiable: large eigenvalue ratio\n - Rescale variables?"
-
+[1] "unable to evaluate scaled gradient"                                      
+[2] " Hessian is numerically singular: parameters are not uniquely determined"
 
 $grazing
 NULL
@@ -702,5 +693,5 @@ $nest.protect
 NULL
 
 $predator.control
-NULL
+[1] " Hessian is numerically singular: parameters are not uniquely determined"
 

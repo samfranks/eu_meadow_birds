@@ -11,8 +11,7 @@
 
 # =================================  SET LOGIC STATEMENTS  ====================
 
-bias <- FALSE # setting this logic control variable to true means introducing the confounding covariate fixed effect 'biased.metric' into the intervention models
-# we have decided not to do this, so this control variable is set permanently to 'FALSE'
+
 
 # =================================  LOAD PACKAGES =================================
 
@@ -136,28 +135,16 @@ for (i in 1:length(mgmtvars)) {
   
   table(mdat[,mgmtvars[i]], mdat$species,mdat$success)
   
-  if (!bias) {
-    # create different formulas to use depending on whether management variable is 1 or 2 levels
-    if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-      modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
-    }
-    
-    if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-      modform <- as.formula("success ~ 1 + (1|reference) + (1|species)")
-    }
+  # create different formulas to use depending on whether management variable is 1 or 2 levels
+  if (length(levels(mdat[,mgmtvars[i]])) > 1) {
+    modform <- as.formula(paste("success ~ ", mgmtvars[i], " + (1|reference) + (1|species)", sep=""))
   }
   
-  # if (bias) {
-  #   # create different formulas to use depending on whether management variable is 1 or 2 levels
-  #   if (length(levels(mdat[,mgmtvars[i]])) > 1) {
-  #     modform <- as.formula(paste("success ~ ", mgmtvars[i], " + biased.metric + (1|reference) + (1|species)", sep=""))
-  #   }
-  #   
-  #   if (length(levels(mdat[,mgmtvars[i]])) < 2) {
-  #     modform <- as.formula("success ~ 1 + biased.metric + (1|reference) + (1|species)")
-  #   }
-  # }
-
+  if (length(levels(mdat[,mgmtvars[i]])) < 2) {
+    modform <- as.formula("success ~ 1 + (1|reference) + (1|species)")
+  }
+  
+  
   # run a normal glmer model
   m.ind[[i]] <- glmer(modform, data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
   
@@ -193,52 +180,31 @@ warningmessages.lme4.w
 
 # -------------- Output model results ----------------------
 
-if (!bias) {
-  setwd(outputwd)
-  sink(paste("model output_analysis 1.txt", sep=" "))
-  
-  cat("\n########==========  Analysis 1) success of individual management types - lme4 models ==========########\n", sep="\n")
-  print(lapply(m.ind, summary))
-  
-  cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
-  print(warningmessages.lme4)
-  
-  
-  cat("\n########==========  WEIGHTED Analysis 1) success of individual management types - lme4 models ==========########\n", sep="\n")
-  print(lapply(m.ind.w, summary))
-  
-  cat("\n########==========  WEIGHTED Warning messages lme4 models ==========########\n", sep="\n")
-  print(warningmessages.lme4.w)
-  
-  sink()
-  
-  ### Save individual interventions models
-  saveRDS(m.ind, file=paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
-  saveRDS(m.ind.w, file=paste(workspacewd, "models_analysis 1_lme4_weighted.rds", sep="/"))
-  
-  
-  ### Save dataset for 0a models
-  saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 1.rds", sep="/"))
-}
+setwd(outputwd)
+sink(paste("model output_analysis 1.txt", sep=" "))
+
+cat("\n########==========  Analysis 1) success of individual management types - lme4 models ==========########\n", sep="\n")
+print(lapply(m.ind, summary))
+
+cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
+print(warningmessages.lme4)
 
 
-# if (bias) {
-#   setwd(outputwd)
-#   sink(paste("model output_0a_bias.txt", sep=" "))
-#   
-#   cat("\n########==========  0a) success of individual management types - lme4 models ==========########\n", sep="\n")
-#   print(lapply(m.ind, summary))
-#   
-#   cat("\n########==========  Warning messages lme4 models ==========########\n", sep="\n")
-#   print(warningmessages.lme4)
-#   sink()
-#   
-#   ### Save individual interventions models
-#   saveRDS(m.ind, file=paste(workspacewd, "models_0a_lme4_bias.rds", sep="/"))
-#   
-#   ### Save dataset for 0a models
-#   saveRDS(usedat, file=paste(workspacewd, "model dataset_0a_bias.rds", sep="/"))
-# }
+cat("\n########==========  WEIGHTED Analysis 1) success of individual management types - lme4 models ==========########\n", sep="\n")
+print(lapply(m.ind.w, summary))
+
+cat("\n########==========  WEIGHTED Warning messages lme4 models ==========########\n", sep="\n")
+print(warningmessages.lme4.w)
+
+sink()
+
+### Save individual interventions models
+saveRDS(m.ind, file=paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
+saveRDS(m.ind.w, file=paste(workspacewd, "models_analysis 1_lme4_weighted.rds", sep="/"))
+
+
+### Save dataset for 0a models
+saveRDS(usedat, file=paste(workspacewd, "model dataset_analysis 1.rds", sep="/"))
 
 
 
@@ -364,7 +330,7 @@ for (i in 1:length(mgmtvars)) {
   
   vcov.dim <- nrow(vcov(m.ind.sp[[i]]))
   m.ind.sp.blme[[i]] <- bglmer(modform, data=mdat, family=binomial, fixef.prior = normal(cov = diag(9,vcov.dim)), control=glmerControl(optimizer="bobyqa"))
-
+  
   
 }
 
@@ -455,9 +421,13 @@ for (i in 1:length(mgmtvars)) {
   if (mgmtvars[i]=="fertpest") {
     mdat <- subset(mdat, fertpest!="applied")
   }
-
+  
   if (mgmtvars[i]=="water") {
     mdat <- subset(mdat, new.metric!="abundance/occupancy change")
+  }
+  
+  if (mgmtvars[i]=="predator.control") {
+    mdat <- subset(mdat, new.metric!="abundance/occupancy")
   }
   
   mdat <- droplevels(mdat)
