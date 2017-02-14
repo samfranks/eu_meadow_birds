@@ -30,7 +30,7 @@ speciesoystercatcher      -0.887      0.554   -1.60   0.1095
 speciesredshank           -0.225      0.451   -0.50   0.6185   
 speciessnipe              -0.585      0.529   -1.11   0.2689   
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 Correlation of Fixed Effects:
              (Intr) AE.AEr AE.AE- spcscr spcslp spcsys spcsrd
@@ -55,8 +55,8 @@ Fit: glmer(formula = success ~ AE.reserve + species + (1 | reference),
 
 Linear Hypotheses:
                                     Estimate Std. Error z value Pr(>|z|)
-AE-no reserve - no AE-reserve == 0 -0.600752   0.335312   -1.79     0.17
-AE-reserve - no AE-reserve == 0    -0.600135   0.410472   -1.46     0.31
+AE-no reserve - no AE-reserve == 0 -0.600752   0.335313   -1.79     0.17
+AE-reserve - no AE-reserve == 0    -0.600135   0.410473   -1.46     0.31
 AE-reserve - AE-no reserve == 0     0.000616   0.397625    0.00     1.00
 (Adjusted p values reported -- single-step method)
 
