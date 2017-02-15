@@ -140,8 +140,10 @@ fig1a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
 fig1b <- do.call(rbind, plotdat[c("AE.level")])
 fig1c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
+write.csv(rbind(fig1a,fig1b,fig1c), paste(outputwd, "Fig1_overall success of interventions.csv", sep="/"), row.names=FALSE)
 
-# -------- Plot policy (AES, site protection) interventions ---------
+
+# -------- Fig 1a: Plot policy (AES, site protection) interventions ---------
 
 png("Fig1_overall success of interventions.png", res=300, height=15, width=18, units="in", pointsize=22)
 
@@ -260,6 +262,7 @@ fig2a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
 fig2b <- do.call(rbind, plotdat[c("AE.level")])
 fig2c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
+write.csv(rbind(fig2a,fig2b,fig2c), paste(outputwd, "Fig2_intervention success_species.csv", sep="/"), row.names=FALSE)
 
 
 ### ---- Fig 2a: Policy level interventions plot - SPECIES ----
@@ -425,6 +428,7 @@ fig3a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
 fig3b <- do.call(rbind, plotdat[c("AE.level")])
 fig3c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
+write.csv(rbind(fig3a,fig3b,fig3c), paste(outputwd, "Fig3_intervention success_metric.csv", sep="/"), row.names=FALSE)
 
 
 ### ---- Fig 3a: Policy level interventions plot - METRIC ----
@@ -571,7 +575,7 @@ plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
 
 
 
-# ----- Fig 4 ----------
+# ----- Fig 4 - AES x site protection in combination ----------
 
 png("Fig4_intervention success_AES x site protection.png", res=300, height=12, width=14, units="in", pointsize=20)
 
@@ -602,16 +606,12 @@ dev.off()
 
 
 
-# =========================   SUPPLEMENTARY INFORMATION FIGURES  ========================
-
-
-
-# ===============  Fig S6a - Average invervention combination success rates  ==================
+# ------------ Fig 5 - Average invervention combination success rates ----------------
 
 
 setwd(outputwd)
 
-png("FigS6a_specific combination intervention success_average.png", res=300, height=15, width=25, units="in", pointsize=20)
+png("Fig5_specific combination intervention success_average.png", res=300, height=15, width=25, units="in", pointsize=20)
 
 plotdat <- readRDS(file=paste(workspacewd, "analysis 3b_average intervention plotting dataset.rds", sep="/"))
 
@@ -634,6 +634,14 @@ mtext("a)", side=3, adj=0, line=0.5, cex=1.2)
 
 
 dev.off()
+
+
+
+# =========================   SUPPLEMENTARY INFORMATION FIGURES  ========================
+
+
+
+
 
 
 
