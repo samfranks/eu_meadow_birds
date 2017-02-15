@@ -8,41 +8,31 @@
 
 ####### Country summary #######
 
-       Denmark        Finland         France        Germany        Hungary    Netherlands         Sweden 
-     0.0810811      0.0270270      0.0270270      0.0540541      0.0135135      0.2567568      0.0675676 
-   Switzerland United Kingdom 
-     0.0270270      0.4459459 
+       Denmark        Finland         France        Germany        Hungary    Netherlands         Sweden    Switzerland United Kingdom 
+     0.0810811      0.0270270      0.0270270      0.0540541      0.0135135      0.2567568      0.0675676      0.0270270      0.4459459 
 
 
 ####### Intervention summary #######
-                           mowing          grazing         fertpest            water     nest.protect 
-          0.5625           0.4375           0.2500           0.2500           0.3750           0.1875 
-predator.control 
-          0.0000 
+              AE    reserve.desig           mowing          grazing         fertpest            water     nest.protect predator.control 
+        0.418919         0.175676         0.243243         0.378378         0.216216         0.297297         0.216216         0.135135 
 
 
 ####### Species summary #######
 
-black-tailed godwit              curlew              dunlin             lapwing       oystercatcher 
-          0.2972973           0.1891892           0.0405405           0.7297297           0.2567568 
-           redshank                ruff               snipe 
-          0.3918919           0.0270270           0.1891892 
+black-tailed godwit              curlew              dunlin             lapwing       oystercatcher            redshank                ruff               snipe 
+          0.2972973           0.1891892           0.0405405           0.7297297           0.2567568           0.3918919           0.0270270           0.1891892 
 
 
 ####### Metric summary #######
 
-       abundance/occupancy abundance/occupancy change               productivity                recruitment 
-                 0.4864865                  0.2972973                  0.5000000                  0.0270270 
-                  survival 
-                 0.0405405 
+       abundance/occupancy abundance/occupancy change               productivity                recruitment                   survival 
+                 0.4864865                  0.2972973                  0.5000000                  0.0270270                  0.0405405 
 
 
 ####### Metric summary (specific productivity metrics) #######
 
-        abundance/occupancy  abundance/occupancy change   productivity (nest level) 
-                  0.4864865                   0.2972973                   0.3918919 
- productivity (chick level) productivity (nest + chick)                 recruitment 
-                  0.1216216                   0.1351351                   0.0270270 
+        abundance/occupancy  abundance/occupancy change   productivity (nest level)  productivity (chick level) productivity (nest + chick)                 recruitment 
+                  0.4864865                   0.2972973                   0.3918919                   0.1216216                   0.1351351                   0.0270270 
                    survival 
                   0.0405405 
 
