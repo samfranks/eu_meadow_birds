@@ -106,10 +106,6 @@ mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","wat
 
 # ==============================  FIGURE 1 - overall success of interventions ===================================
 
-png("Fig1_overall success of interventions.png", res=300, height=15, width=18, units="in", pointsize=22)
-
-layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
-par(oma=c(3,5,1,1))
 
 
 # -------    Load data and model   -----------
@@ -146,6 +142,11 @@ fig1c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.pr
 
 
 # -------- Plot policy (AES, site protection) interventions ---------
+
+png("Fig1_overall success of interventions.png", res=300, height=15, width=18, units="in", pointsize=22)
+
+layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
+par(oma=c(3,5,1,1))
 
 par(mar=c(3,3,3,4))
 
