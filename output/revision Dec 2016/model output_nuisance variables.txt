@@ -3,8 +3,7 @@
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ study.length + sample.size + analysis2 + lit.type +  
-    score + biased.metric + (1 | reference)
+Formula: success ~ study.length + sample.size + analysis2 + lit.type +      score + biased.metric + (1 | reference)
    Data: dat
 Control: glmerControl(optimizer = "bobyqa")
 
@@ -26,14 +25,14 @@ Fixed effects:
 study.length            0.0299     0.0235    1.27    0.203  
 sample.sizemedium       0.1557     0.3742    0.42    0.677  
 sample.sizesmall       -0.1779     0.3945   -0.45    0.652  
-analysis2multivariate   1.3696     0.7838    1.75    0.081 .
+analysis2multivariate   1.3695     0.7838    1.75    0.081 .
 analysis2univariate     0.7795     0.7354    1.06    0.289  
 lit.typeprimary        -1.2318     0.4954   -2.49    0.013 *
 scoremedium            -0.4388     0.3809   -1.15    0.249  
 scorepoor              -0.9333     0.4723   -1.98    0.048 *
 biased.metricY         -0.0613     0.2600   -0.24    0.814  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) stdy.l smpl.szm smpl.szs anlyss2m anlyss2n lt.typ scrmdm scorpr
@@ -44,7 +43,7 @@ anlyss2mltv -0.684 -0.029  0.122   -0.057
 anlyss2nvrt -0.780  0.012  0.053   -0.103    0.850                                
 lt.typprmry -0.272  0.076 -0.119    0.018   -0.368   -0.086                       
 scoremedium -0.344 -0.125  0.049    0.112    0.061    0.062    0.088              
-scorepoor   -0.244 -0.053 -0.039   -0.021    0.018   -0.090    0.137  0.490       
+scorepoor   -0.245 -0.053 -0.039   -0.021    0.018   -0.090    0.137  0.490       
 biasd.mtrcY -0.172  0.045  0.050   -0.138    0.105    0.187   -0.086 -0.097 -0.136
 
 ###---  Likelihood Ratio Tests ---###
@@ -89,7 +88,7 @@ success ~ study.length + sample.size + analysis2 + lit.type +
 <none>      737.2                
 lit.type  1 741.7 6.498  0.0108 *
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 [[5]]
 Single term deletions

@@ -88,7 +88,7 @@ summary.effects.mgmtvar <- list()
 for (i in 1:length(mgmtvars)) {
   print(mgmtvars[i])
   mdat <- dat0[dat0[,mgmtvars[i]]!="none",]
-  summary.effects.mgmtvar[[i]] <- table(mdat$effect.dir, mdat[,mgm])
+  summary.effects.mgmtvar[[i]] <- table(mdat$effect.dir, mdat[,mgmtvars])
 }
 
 names(summary.effects.mgmtvar) <- mgmtvars
@@ -275,7 +275,7 @@ png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"
 
 par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,0.6), xaxt="n")
-text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","agro-\nchemicals","nest\nprotection","predator\ncontrol","water\nmanagement"))
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","agro-\nchemicals","water\nmanagement","nest\nprotection","predator\ncontrol"))
 title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
 text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
@@ -361,7 +361,7 @@ for (j in 1:length(AES.level)) {
   
   par(mar=c(6,5,2,1))
   x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
-  text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("no\ninterventions\nevaluated","mowing","grazing","agrochemicals","nest\nprotection","predator\ncontrol","water\nmanagement"))
+  text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("no\ninterventions\nevaluated","mowing","grazing","agrochemicals","water\nmanagement","nest\nprotection","predator\ncontrol"))
   title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
   title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
   text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type

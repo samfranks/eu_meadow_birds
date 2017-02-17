@@ -3,44 +3,62 @@
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ mowing + grazing + fertpest + nest.protect + predator.control +  
-    water + species + (1 | reference)
+Formula: success ~ mowing + grazing + fertpest + nest.protect + predator.control +      water + species + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
      AIC      BIC   logLik deviance df.resid 
-   428.0    497.2   -196.0    392.0      326 
+   427.6    496.7   -195.8    391.6      326 
 
 Scaled residuals: 
    Min     1Q Median     3Q    Max 
--1.210 -0.608 -0.448  0.923  4.706 
+-1.146 -0.607 -0.448  0.896  4.685 
 
 Random effects:
  Groups    Name        Variance Std.Dev.
- reference (Intercept) 0.761    0.872   
+ reference (Intercept) 0.792    0.89    
 Number of obs: 344, groups:  reference, 61
 
 Fixed effects:
                         Estimate Std. Error z value Pr(>|z|)  
-(Intercept)              -1.1797     0.6180   -1.91    0.056 .
-mowingapplied            -0.6015     0.9647   -0.62    0.533  
-mowingreduced            -0.4333     0.5292   -0.82    0.413  
-grazingapplied            0.3878     0.5165    0.75    0.453  
-grazingreduced            0.0576     0.6206    0.09    0.926  
-fertpestapplied          -0.8560     0.9834   -0.87    0.384  
-fertpestreduced           0.8607     0.6457    1.33    0.182  
-nest.protectapplied       0.5049     0.5084    0.99    0.321  
-predator.controlapplied   0.2481     0.6608    0.38    0.707  
-waterapplied              0.7992     0.4652    1.72    0.086 .
-waterreduced              0.3101     0.9077    0.34    0.733  
-speciescurlew            -0.0463     0.6974   -0.07    0.947  
-speciesdunlin             0.0710     1.1358    0.06    0.950  
-specieslapwing            0.1960     0.4805    0.41    0.683  
-speciesoystercatcher     -0.5669     0.5728   -0.99    0.322  
-speciesredshank          -0.0126     0.5052   -0.02    0.980  
-speciessnipe             -0.8857     0.8076   -1.10    0.273  
+(Intercept)             -1.19835    0.62238   -1.92    0.054 .
+mowingapplied           -0.60955    0.97101   -0.63    0.530  
+mowingreduced           -0.45128    0.53146   -0.85    0.396  
+grazingapplied           0.38554    0.52032    0.74    0.459  
+grazingreduced           0.06142    0.62492    0.10    0.922  
+fertpestapplied         -0.88681    0.99079   -0.90    0.371  
+fertpestreduced          0.87234    0.64999    1.34    0.180  
+nest.protectapplied      0.58241    0.51000    1.14    0.253  
+predator.controlapplied  0.05851    0.68989    0.08    0.932  
+waterapplied             0.81101    0.46913    1.73    0.084 .
+waterreduced             0.35184    0.91441    0.38    0.700  
+speciescurlew            0.02258    0.70058    0.03    0.974  
+speciesdunlin            0.02249    1.14189    0.02    0.984  
+specieslapwing           0.21745    0.48215    0.45    0.652  
+speciesoystercatcher    -0.54671    0.57434   -0.95    0.341  
+speciesredshank          0.00656    0.50723    0.01    0.990  
+speciessnipe            -0.82144    0.80843   -1.02    0.310  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) mwngpp mwngrd grzngp grzngr frtpstp frtpstr nst.pr prdtr. wtrppl wtrrdc spcscr spcsdn spcslp spcsys spcsrd
+mowingappld -0.070                                                                                                           
+mowingredcd -0.180 -0.019                                                                                                    
+grazingppld -0.542 -0.104  0.035                                                                                             
+grazingrdcd -0.198  0.046 -0.395  0.192                                                                                      
+fertpstppld  0.106 -0.314 -0.053 -0.067  0.032                                                                               
+fertpstrdcd -0.285  0.046 -0.318  0.204  0.269  0.006                                                                        
+nst.prtctpp -0.554  0.075 -0.095  0.495  0.167 -0.038   0.259                                                                
+prdtr.cntrl -0.330  0.097  0.002  0.391  0.122  0.080   0.148   0.332                                                        
+waterapplid -0.522 -0.088 -0.040  0.406  0.081 -0.181   0.054   0.387  0.212                                                 
+waterreducd -0.386  0.134 -0.004  0.230  0.095 -0.386   0.151   0.339  0.115  0.294                                          
+speciescrlw -0.470  0.022  0.120  0.041  0.000 -0.091   0.091   0.089 -0.201  0.136  0.155                                   
+speciesdnln -0.167  0.040  0.072 -0.094  0.019 -0.004  -0.045  -0.185 -0.020 -0.002  0.006  0.178                            
+specislpwng -0.661  0.002  0.245  0.057  0.002 -0.158   0.052   0.063 -0.105  0.194  0.192  0.561  0.271                     
+spcsystrctc -0.489  0.038  0.109  0.002  0.012 -0.092   0.070   0.087 -0.040  0.127  0.159  0.430  0.199  0.581              
+specsrdshnk -0.572  0.053  0.138 -0.014  0.027 -0.122   0.099   0.089 -0.048  0.133  0.192  0.493  0.238  0.682  0.553       
+speciessnip -0.346 -0.005  0.126 -0.022 -0.052 -0.102   0.055   0.028 -0.200  0.059  0.119  0.407  0.150  0.477  0.369  0.427
 
 ###----  Significance of each intervention (in the presence of others)  ---###
 
@@ -50,8 +68,8 @@ Model:
 success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
     water + species + (1 | reference)
        Df   AIC   LRT Pr(Chi)
-<none>    428.0              
-mowing  2 425.1 1.062   0.588
+<none>    427.6              
+mowing  2 424.7 1.116   0.572
 
 Single term deletions
 
@@ -59,8 +77,8 @@ Model:
 success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
     water + species + (1 | reference)
         Df   AIC    LRT Pr(Chi)
-<none>     428.0               
-grazing  2 424.6 0.5526   0.759
+<none>     427.6               
+grazing  2 424.2 0.5367   0.765
 
 Single term deletions
 
@@ -68,26 +86,26 @@ Model:
 success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
     water + species + (1 | reference)
          Df   AIC   LRT Pr(Chi)
-<none>      428.0              
-fertpest  2 426.7 2.665   0.264
+<none>      427.6              
+fertpest  2 426.4 2.743   0.254
 
 Single term deletions
 
 Model:
 success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
     water + species + (1 | reference)
-             Df AIC    LRT Pr(Chi)
-<none>          428               
-nest.protect  1 427 0.9375   0.333
+             Df   AIC  LRT Pr(Chi)
+<none>          427.6             
+nest.protect  1 426.9 1.24   0.265
 
 Single term deletions
 
 Model:
 success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
     water + species + (1 | reference)
-                 Df   AIC    LRT Pr(Chi)
-<none>              428.0               
-predator.control  1 426.2 0.1341   0.714
+                 Df   AIC     LRT Pr(Chi)
+<none>              427.6                
+predator.control  1 425.6 0.00678   0.934
 
 Single term deletions
 
@@ -95,5 +113,5 @@ Model:
 success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
     water + species + (1 | reference)
        Df   AIC   LRT Pr(Chi)
-<none>    428.0              
-water   2 427.1 3.077   0.215
+<none>    427.6              
+water   2 426.7 3.107   0.211
