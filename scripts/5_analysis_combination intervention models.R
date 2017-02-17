@@ -196,14 +196,27 @@ num.interventions.sum <- apply(num.interventions, 1, sum)
 mdat <- data.frame(mdat, num.interventions.sum)
 
 # model which includes number of interventions tested at once is rank deficient, so omit this variable
-m.spec <- glmer(success ~ mowing + grazing + fertpest + nest.protect + predator.control + water + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
+m.spec <- glmer(success ~ mowing + grazing + fertpest + water + nest.protect + predator.control + species + (1|reference), data=mdat, family=binomial, control=glmerControl(optimizer="bobyqa"))
 summary(m.spec)
+
+# ------ LRT single-term deletion of combination management interventions from global model --------------
+
+vars <- c("mowing","grazing","fertpest","water","nest.protect","predator.control")
+
+m <- list()
+for (i in 1:length(vars)) {
+  m[[i]] <- drop1(m.spec, scope = as.formula(paste("~", vars[i], sep="")), test="Chisq")
+}
 
 setwd(outputwd)
 sink(paste("model output_analysis 3b.txt", sep=" "))
 
 cat("\n########==========  3b) Success of specific interventions combined ==========########\n", sep="\n")
 print(summary(m.spec))
+
+
+cat("\n###---  Likelihood Ratio Tests ---###\n", sep="\n")
+print(m)
 
 cat("\n###----  Significance of each intervention (in the presence of others)  ---###\n", sep="\n")
 print(drop1(m.spec, scope = ~mowing, test="Chisq"))
@@ -212,11 +225,12 @@ print(drop1(m.spec, scope = ~grazing, test="Chisq"))
 cat("\n")
 print(drop1(m.spec, scope = ~fertpest, test="Chisq"))
 cat("\n")
+print(drop1(m.spec, scope = ~water, test="Chisq"))
+cat("\n")
 print(drop1(m.spec, scope = ~nest.protect, test="Chisq"))
 cat("\n")
 print(drop1(m.spec, scope = ~predator.control, test="Chisq"))
-cat("\n")
-print(drop1(m.spec, scope = ~water, test="Chisq"))
+
 
 sink()
 
@@ -225,6 +239,16 @@ saveRDS(m.spec, file=paste(workspacewd, "models_analysis 3b.rds", sep="/"))
 
 ### Save dataset for 0b models
 saveRDS(mdat, file=paste(workspacewd, "model dataset_analysis 3b.rds", sep="/"))
+
+
+# ---------- OUTPUT TABLE of combination management interventions LRT results (dplyr/piping way) -------
+
+lapply(m, function(x) {data.frame(df=x[,"Df"][2], LRT=x[,"LRT"][2], pval=x[,"Pr(Chi)"][2]) %>% return
+}) %>%
+  do.call(rbind, .) %>%
+  data.frame(vars) %>%
+  write.csv(paste(outputwd, "model output_combination intervention LRT table.csv", sep="/"), row.names=FALSE)
+
 
 
 # --------  Produce plotting dataset predictions for interventions applied in combination ---------

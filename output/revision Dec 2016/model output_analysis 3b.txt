@@ -3,7 +3,7 @@
 
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
-Formula: success ~ mowing + grazing + fertpest + nest.protect + predator.control +      water + species + (1 | reference)
+Formula: success ~ mowing + grazing + fertpest + water + nest.protect +      predator.control + species + (1 | reference)
    Data: mdat
 Control: glmerControl(optimizer = "bobyqa")
 
@@ -21,52 +21,115 @@ Number of obs: 344, groups:  reference, 61
 
 Fixed effects:
                         Estimate Std. Error z value Pr(>|z|)  
-(Intercept)             -1.19835    0.62238   -1.92    0.054 .
+(Intercept)             -1.19835    0.62236   -1.92    0.054 .
 mowingapplied           -0.60955    0.97101   -0.63    0.530  
 mowingreduced           -0.45128    0.53146   -0.85    0.396  
-grazingapplied           0.38554    0.52032    0.74    0.459  
+grazingapplied           0.38554    0.52031    0.74    0.459  
 grazingreduced           0.06142    0.62492    0.10    0.922  
-fertpestapplied         -0.88681    0.99079   -0.90    0.371  
+fertpestapplied         -0.88682    0.99079   -0.90    0.371  
 fertpestreduced          0.87234    0.64999    1.34    0.180  
-nest.protectapplied      0.58241    0.51000    1.14    0.253  
-predator.controlapplied  0.05851    0.68989    0.08    0.932  
 waterapplied             0.81101    0.46913    1.73    0.084 .
-waterreduced             0.35184    0.91441    0.38    0.700  
-speciescurlew            0.02258    0.70058    0.03    0.974  
-speciesdunlin            0.02249    1.14189    0.02    0.984  
-specieslapwing           0.21745    0.48215    0.45    0.652  
-speciesoystercatcher    -0.54671    0.57434   -0.95    0.341  
-speciesredshank          0.00656    0.50723    0.01    0.990  
-speciessnipe            -0.82144    0.80843   -1.02    0.310  
+waterreduced             0.35184    0.91440    0.38    0.700  
+nest.protectapplied      0.58241    0.50999    1.14    0.253  
+predator.controlapplied  0.05851    0.68989    0.08    0.932  
+speciescurlew            0.02258    0.70057    0.03    0.974  
+speciesdunlin            0.02248    1.14189    0.02    0.984  
+specieslapwing           0.21745    0.48214    0.45    0.652  
+speciesoystercatcher    -0.54671    0.57433   -0.95    0.341  
+speciesredshank          0.00656    0.50722    0.01    0.990  
+speciessnipe            -0.82144    0.80842   -1.02    0.310  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) mwngpp mwngrd grzngp grzngr frtpstp frtpstr nst.pr prdtr. wtrppl wtrrdc spcscr spcsdn spcslp spcsys spcsrd
+            (Intr) mwngpp mwngrd grzngp grzngr frtpstp frtpstr wtrppl wtrrdc nst.pr prdtr. spcscr spcsdn spcslp spcsys spcsrd
 mowingappld -0.070                                                                                                           
 mowingredcd -0.180 -0.019                                                                                                    
 grazingppld -0.542 -0.104  0.035                                                                                             
 grazingrdcd -0.198  0.046 -0.395  0.192                                                                                      
 fertpstppld  0.106 -0.314 -0.053 -0.067  0.032                                                                               
 fertpstrdcd -0.285  0.046 -0.318  0.204  0.269  0.006                                                                        
-nst.prtctpp -0.554  0.075 -0.095  0.495  0.167 -0.038   0.259                                                                
-prdtr.cntrl -0.330  0.097  0.002  0.391  0.122  0.080   0.148   0.332                                                        
-waterapplid -0.522 -0.088 -0.040  0.406  0.081 -0.181   0.054   0.387  0.212                                                 
-waterreducd -0.386  0.134 -0.004  0.230  0.095 -0.386   0.151   0.339  0.115  0.294                                          
-speciescrlw -0.470  0.022  0.120  0.041  0.000 -0.091   0.091   0.089 -0.201  0.136  0.155                                   
-speciesdnln -0.167  0.040  0.072 -0.094  0.019 -0.004  -0.045  -0.185 -0.020 -0.002  0.006  0.178                            
-specislpwng -0.661  0.002  0.245  0.057  0.002 -0.158   0.052   0.063 -0.105  0.194  0.192  0.561  0.271                     
-spcsystrctc -0.489  0.038  0.109  0.002  0.012 -0.092   0.070   0.087 -0.040  0.127  0.159  0.430  0.199  0.581              
-specsrdshnk -0.572  0.053  0.138 -0.014  0.027 -0.122   0.099   0.089 -0.048  0.133  0.192  0.493  0.238  0.682  0.553       
-speciessnip -0.346 -0.005  0.126 -0.022 -0.052 -0.102   0.055   0.028 -0.200  0.059  0.119  0.407  0.150  0.477  0.369  0.427
+waterapplid -0.522 -0.088 -0.040  0.406  0.081 -0.181   0.054                                                                
+waterreducd -0.386  0.134 -0.004  0.230  0.095 -0.386   0.151   0.294                                                        
+nst.prtctpp -0.554  0.075 -0.095  0.495  0.167 -0.038   0.259   0.387  0.339                                                 
+prdtr.cntrl -0.330  0.097  0.002  0.391  0.122  0.080   0.148   0.212  0.115  0.332                                          
+speciescrlw -0.470  0.022  0.120  0.041  0.000 -0.091   0.091   0.136  0.155  0.089 -0.201                                   
+speciesdnln -0.167  0.040  0.072 -0.094  0.019 -0.004  -0.045  -0.002  0.006 -0.185 -0.020  0.178                            
+specislpwng -0.661  0.002  0.245  0.057  0.002 -0.158   0.052   0.194  0.192  0.063 -0.105  0.561  0.271                     
+spcsystrctc -0.489  0.038  0.109  0.002  0.012 -0.092   0.070   0.127  0.159  0.087 -0.040  0.430  0.199  0.581              
+specsrdshnk -0.572  0.053  0.138 -0.014  0.027 -0.122   0.099   0.133  0.192  0.089 -0.048  0.493  0.238  0.682  0.553       
+speciessnip -0.346 -0.005  0.126 -0.022 -0.052 -0.102   0.055   0.059  0.119  0.028 -0.200  0.407  0.150  0.477  0.369  0.427
+
+###---  Likelihood Ratio Tests ---###
+
+[[1]]
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+       Df   AIC   LRT Pr(Chi)
+<none>    427.6              
+mowing  2 424.7 1.116   0.572
+
+[[2]]
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+        Df   AIC    LRT Pr(Chi)
+<none>     427.6               
+grazing  2 424.2 0.5367   0.765
+
+[[3]]
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+         Df   AIC   LRT Pr(Chi)
+<none>      427.6              
+fertpest  2 426.4 2.743   0.254
+
+[[4]]
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+       Df   AIC   LRT Pr(Chi)
+<none>    427.6              
+water   2 426.7 3.107   0.211
+
+[[5]]
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+             Df   AIC  LRT Pr(Chi)
+<none>          427.6             
+nest.protect  1 426.9 1.24   0.265
+
+[[6]]
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+                 Df   AIC     LRT Pr(Chi)
+<none>              427.6                
+predator.control  1 425.6 0.00678   0.934
+
 
 ###----  Significance of each intervention (in the presence of others)  ---###
 
 Single term deletions
 
 Model:
-success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
-    water + species + (1 | reference)
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
        Df   AIC   LRT Pr(Chi)
 <none>    427.6              
 mowing  2 424.7 1.116   0.572
@@ -74,8 +137,8 @@ mowing  2 424.7 1.116   0.572
 Single term deletions
 
 Model:
-success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
-    water + species + (1 | reference)
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
         Df   AIC    LRT Pr(Chi)
 <none>     427.6               
 grazing  2 424.2 0.5367   0.765
@@ -83,8 +146,8 @@ grazing  2 424.2 0.5367   0.765
 Single term deletions
 
 Model:
-success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
-    water + species + (1 | reference)
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
          Df   AIC   LRT Pr(Chi)
 <none>      427.6              
 fertpest  2 426.4 2.743   0.254
@@ -92,8 +155,17 @@ fertpest  2 426.4 2.743   0.254
 Single term deletions
 
 Model:
-success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
-    water + species + (1 | reference)
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
+       Df   AIC   LRT Pr(Chi)
+<none>    427.6              
+water   2 426.7 3.107   0.211
+
+Single term deletions
+
+Model:
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
              Df   AIC  LRT Pr(Chi)
 <none>          427.6             
 nest.protect  1 426.9 1.24   0.265
@@ -101,17 +173,8 @@ nest.protect  1 426.9 1.24   0.265
 Single term deletions
 
 Model:
-success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
-    water + species + (1 | reference)
+success ~ mowing + grazing + fertpest + water + nest.protect + 
+    predator.control + species + (1 | reference)
                  Df   AIC     LRT Pr(Chi)
 <none>              427.6                
 predator.control  1 425.6 0.00678   0.934
-
-Single term deletions
-
-Model:
-success ~ mowing + grazing + fertpest + nest.protect + predator.control + 
-    water + species + (1 | reference)
-       Df   AIC   LRT Pr(Chi)
-<none>    427.6              
-water   2 426.7 3.107   0.211
