@@ -115,6 +115,35 @@ moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1.rds", sep="/"))
 mod <- readRDS(paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
 
 
+# -------    Output model parameter table   -----------
+
+# Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
+coeftab <- lapply(mod, function(x) summary(x)$coefficients)
+coeftab <- lapply(coeftab, function(x) {
+  out <- as.data.frame(x)
+  out$parameter <- rownames(out)
+  rownames(out) <- 1:nrow(out)
+  return(out) })
+coeftab2 <- do.call(rbind, coeftab)
+coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
+coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
+rownames(coeftab3) <- c(1:nrow(coeftab3))
+partable <- coeftab3
+partable <- partable[,c(6,5,1,2,4)] # omit z value column
+names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+
+n <- unlist(lapply(moddat, nrow))
+n <- data.frame(management=names(n), n)
+names(n) <- c("Management intervention","n")
+
+partable <- merge(partable, n, sort=FALSE)
+
+# Write the parameter table
+write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 1_lme4.csv", row.names=FALSE)
+
+
+
+
 # -------   Produce plotting dataset predictions   ---------
 
 plotdat <- list()
@@ -236,6 +265,37 @@ par(oma=c(3,5,3,1))
 
 moddat <- readRDS(paste(workspacewd, "model dataset_analysis 2a.rds", sep="/"))
 mod <- readRDS(paste(workspacewd, "models_analysis 2a_blme.rds", sep="/"))
+
+
+
+# -------    Output model parameter table   -----------
+
+# Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
+coeftab <- lapply(mod, function(x) summary(x)$coefficients)
+coeftab <- lapply(coeftab, function(x) {
+  out <- as.data.frame(x)
+  out$parameter <- rownames(out)
+  rownames(out) <- 1:nrow(out)
+  return(out) })
+coeftab2 <- do.call(rbind, coeftab)
+coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
+coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
+rownames(coeftab3) <- c(1:nrow(coeftab3))
+partable <- coeftab3
+partable <- partable[,c(6,5,1,2,4)] # omit z value column
+names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+
+n <- unlist(lapply(moddat, nrow))
+n <- data.frame(management=names(n), n)
+names(n) <- c("Management intervention","n")
+
+partable <- merge(partable, n, sort=FALSE)
+
+# Write the parameter table
+write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 2a_lme4.csv", row.names=FALSE)
+
+
+
 
 
 # -------   Produce plotting dataset predictions   ---------
@@ -402,6 +462,35 @@ par(oma=c(3,5,3,1))
 
 moddat <- readRDS(paste(workspacewd, "model dataset_analysis 2b.rds", sep="/"))
 mod <- readRDS(paste(workspacewd, "models_analysis 2b_blme.rds", sep="/"))
+
+
+
+# -------    Output model parameter table   -----------
+
+# Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
+coeftab <- lapply(mod, function(x) summary(x)$coefficients)
+coeftab <- lapply(coeftab, function(x) {
+  out <- as.data.frame(x)
+  out$parameter <- rownames(out)
+  rownames(out) <- 1:nrow(out)
+  return(out) })
+coeftab2 <- do.call(rbind, coeftab)
+coeftab3 <- data.frame(coeftab2, mgmtvar=rep(names(coeftab),lapply(coeftab,nrow)))
+coeftab3$mgmtvar <- as.character(coeftab3$mgmtvar)
+rownames(coeftab3) <- c(1:nrow(coeftab3))
+partable <- coeftab3
+partable <- partable[,c(6,5,1,2,4)] # omit z value column
+names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
+
+n <- unlist(lapply(moddat, nrow))
+n <- data.frame(management=names(n), n)
+names(n) <- c("Management intervention","n")
+
+partable <- merge(partable, n, sort=FALSE)
+
+# Write the parameter table
+write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 2b_lme4.csv", row.names=FALSE)
+
 
 
 

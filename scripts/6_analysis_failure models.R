@@ -214,6 +214,9 @@ successlevel <- 0.05
 
 #------------------------------ 1b) failure of individual management types -------------------------
 
+
+# -------    Output model parameter table   -----------
+
 # Output model coefficient tables for each management type, and convert parameter table to a dataframe instead of a matrix
 coeftab <- lapply(mod, function(x) summary(x)$coefficients)
 coeftab <- lapply(coeftab, function(x) {
@@ -229,11 +232,14 @@ partable <- coeftab3
 partable <- partable[,c(6,5,1,2,4)] # omit z value column
 names(partable) <- c("Management intervention","Parameter level","Estimate","SE","p-value")
 
+n <- unlist(lapply(moddat, nrow))
+n <- data.frame(management=names(n), n)
+names(n) <- c("Management intervention","n")
+
+partable <- merge(partable, n, sort=FALSE)
+
 # Write the parameter table
-write.csv(format(partable, scientific=FALSE, digits=2),  "1b_failure_overall parameter table.csv", row.names=FALSE)
-
-
-
+write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 1b_failure_lme4.csv", row.names=FALSE)
 
 
 
