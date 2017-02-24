@@ -307,8 +307,12 @@ sink()
 
 
 
-# ---------- Types of management interventions comprised within AES types ----------
+# ---------- Types of management interventions comprised within AES types and site protection ----------
 
+png(paste(outputwd, "/summary_proportion of management interventions used by AES level and site protection.png", sep=""), res=300, height=18, width=24, units="in", pointsize=20)
+
+par(mfrow=c(2,2))
+par(oma=c(2,2,2,1))
 
 AES.level <- c("basic","higher")
 
@@ -320,12 +324,13 @@ for (j in 1:length(AES.level)) {
   num.studies <- length(unique(subdat$reference))
   
   
-  ### determine how many AES = BASIC studies evaluated the effect of the intervention (repeat for each intervention)
+  ### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
   # create blank objects
   intervensum <- numeric()
   intervensum.prop <- numeric()
   intervensum.level <- list()
   intervensum.level.prop <- list()
+  studies.testing.intervention <- list()
   
   # mgmtvars to evluate, minus AE.level
   eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% c("AE","AE.level","reserve.desig"))]
@@ -335,46 +340,115 @@ for (j in 1:length(AES.level)) {
     # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
     x <- unique(subdat[,c("reference",eval.mgmtvars[i])]) # unique references and levels of the intervention
     y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
+    studies.testing.intervention[[i]] <- unique(y$reference)
     intervensum[i] <- length(unique(y$reference)) # the number of studies that evaluated the intervention
     intervensum.prop[i] <- intervensum[i]/num.studies
     intervensum.level[[i]] <- table(y[,eval.mgmtvars[i]])
     intervensum.level.prop[[i]] <- intervensum.level[[i]]/num.studies
+    
   }
   
   names(intervensum) <- eval.mgmtvars
   names(intervensum.prop) <- eval.mgmtvars
   names(intervensum.level) <- eval.mgmtvars
   names(intervensum.level.prop) <- eval.mgmtvars
+  names(studies.testing.intervention) <- eval.mgmtvars
+  
   
   # count number of unique studies that evaluate no interventions as part of AES, add to plotting dataset
+  # remove any study that DOES test an intervention, as some might have been included because they have a 'none' level of the intervention to do along with 'applied' or 'reduced'
   no.interventions.tested <- subset(subdat, mowing=="none" & grazing=="none" & fertpest=="none" & water=="none" & nest.protect=="none" & predator.control=="none")
   no.interventions.tested <- unique(no.interventions.tested[,c("reference",eval.mgmtvars)])
+  no.interventions.tested.study <- no.interventions.tested$reference
+  no.interventions.tested.study <- no.interventions.tested.study[-which(no.interventions.tested.study %in% unlist(studies.testing.intervention))]
   
-  intervensum <- c(nrow(no.interventions.tested), intervensum)
-  intervensum.prop <- c(nrow(no.interventions.tested)/num.studies, intervensum.prop)
   
-  # remove AE level from being plotted
-  # intervensum.prop <- intervensum.prop[-which(names(intervensum.prop) %in% "AE.level")]
-  # intervensum <- intervensum[-which(names(intervensum) %in% "AE.level")]
+  intervensum <- c(length(no.interventions.tested.study), intervensum)
+  intervensum.prop <- c(length(no.interventions.tested.study)/num.studies, intervensum.prop)
   
-  png(paste(outputwd, "/summary_proportion of management interventions used by AES level ", AES.level[j], ".png", sep=""), res=300, height=12, width=16, units="in", pointsize=20)
+  
+  # png(paste(outputwd, "/summary_proportion of management interventions used by AES level ", AES.level[j], ".png", sep=""), res=300, height=12, width=16, units="in", pointsize=20)
   
   par(mar=c(6,5,2,1))
   x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
-  text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("no\ninterventions\nevaluated","mowing","grazing","agrochemicals","water\nmanagement","nest\nprotection","predator\ncontrol"))
+  text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("no\ninterventions\nspecified","mowing","grazing","agrochemicals","water\nmanagement","nest\nprotection","predator\ncontrol"))
   title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
   title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
   text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
   
-  if (AES.level[j]=="basic") mtext("a)", side=3, adj=0, line=0.5)
-  if (AES.level[j]=="higher") mtext("b)", side=3, adj=0, line=0.5)
+  if (AES.level[j]=="basic") mtext("a) Basic AES", side=3, adj=0, line=0.5)
+  if (AES.level[j]=="higher") mtext("b) Higher AES", side=3, adj=0, line=0.5)
   
   
-  dev.off()
+  # dev.off()
   
 }
 
 
+# ---------- Types of management interventions comprised within site protection ----------
+
+### filter dataset to only those studies which test site protection effects
+subdat <- subset(dat, reserve.desig=="applied")
+
+num.studies <- length(unique(subdat$reference))
+
+
+### determine how many studies evaluated the effect of the intervention (repeat for each intervention)
+# create blank objects
+intervensum <- numeric()
+intervensum.prop <- numeric()
+intervensum.level <- list()
+intervensum.level.prop <- list()
+studies.testing.intervention <- list()
+
+# mgmtvars to evluate, minus AE.level
+eval.mgmtvars <- mgmtvars[-which(mgmtvars %in% c("AE","AE.level","reserve.desig"))]
+
+for (i in 1:length(eval.mgmtvars)) {
+  
+  # number of unique cases (i.e. unique studies) where mgmtvar level != 'none'
+  x <- unique(subdat[,c("reference",eval.mgmtvars[i])]) # unique references and levels of the intervention
+  y <- x[x[eval.mgmtvars[i]] != "none",] # remove the cases where intervention not evaluated
+  studies.testing.intervention[[i]] <- unique(y$reference)
+  intervensum[i] <- length(unique(y$reference)) # the number of studies that evaluated the intervention
+  intervensum.prop[i] <- intervensum[i]/num.studies
+  intervensum.level[[i]] <- table(y[,eval.mgmtvars[i]])
+  intervensum.level.prop[[i]] <- intervensum.level[[i]]/num.studies
+  
+}
+
+names(intervensum) <- eval.mgmtvars
+names(intervensum.prop) <- eval.mgmtvars
+names(intervensum.level) <- eval.mgmtvars
+names(intervensum.level.prop) <- eval.mgmtvars
+names(studies.testing.intervention) <- eval.mgmtvars
+
+
+# count number of unique studies that evaluate no interventions as part of AES, add to plotting dataset
+# remove any study that DOES test an intervention, as some might have been included because they have a 'none' level of the intervention to do along with 'applied' or 'reduced'
+no.interventions.tested <- subset(subdat, mowing=="none" & grazing=="none" & fertpest=="none" & water=="none" & nest.protect=="none" & predator.control=="none")
+no.interventions.tested <- unique(no.interventions.tested[,c("reference",eval.mgmtvars)])
+no.interventions.tested.study <- no.interventions.tested$reference
+no.interventions.tested.study <- no.interventions.tested.study[-which(no.interventions.tested.study %in% unlist(studies.testing.intervention))]
+
+
+intervensum <- c(length(no.interventions.tested.study), intervensum)
+intervensum.prop <- c(length(no.interventions.tested.study)/num.studies, intervensum.prop)
+
+
+# png(paste(outputwd, "/summary_proportion of management interventions used with site protection.png", sep=""), res=300, height=12, width=16, units="in", pointsize=20)
+
+par(mar=c(6,5,2,1))
+x <- barplot(intervensum.prop, space=0.1, las=1, col="grey90", ylim=c(0,1), xaxt="n")
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("no\ninterventions\nspecified","mowing","grazing","agrochemicals","water\nmanagement","nest\nprotection","predator\ncontrol"))
+title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5)
+title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3)
+text(x, intervensum.prop+0.02, intervensum) # sample sizes for each intervention type
+
+mtext("c) Site protection", side=3, adj=0, line=0.5)
+
+
+dev.off()
 
 # #---------- Proportion of studies by intervention level  ----------
 # 
