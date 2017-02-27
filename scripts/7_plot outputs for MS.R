@@ -194,6 +194,7 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
+abline(v=2.5, lty=1, lwd=2, col="grey50")
 
 mtext("a)", side=3, adj=0, line=1)
 
@@ -216,6 +217,7 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
+abline(v=2.5, lty=3, lwd=2)
 
 mtext("b)", side=3, adj=0, line=1)
 
@@ -229,6 +231,15 @@ plotfinal <- fig1c
 
 x <- c(1:nrow(plotfinal))
 
+plotfinal$rowid <- 1:nrow(plotfinal)
+
+xloc.divide <- x+0.5
+xloc.divide <- xloc.divide[-length(xloc.divide)]
+
+xloc.line.lty <- c(3,1,3,1,3,1,3,1,1)
+xloc.line.col <- ifelse(xloc.line.lty==1, "grey50", "black")
+xloc.line <- data.frame(lty=xloc.line.lty, col=xloc.line.col)
+
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x), max(x)))
 # axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
 text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\napplied", "mowing\nreduced", "grazing\napplied", "grazing\nreduced", "agro-\nchemicals\napplied","agro-\nchemicals\nreduced","water\napplied","water\nreduced","nest\nprotection\napplied", "predator\ncontrol\napplied"))
@@ -238,6 +249,8 @@ arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05)
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
+abline(v=xloc.divide, lty=xloc.line$lty, lwd=2, col=as.character(xloc.line$col))
+
 
 mtext("c)", side=3, adj=0, line=1)
 
@@ -349,10 +362,10 @@ x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
+abline(v=xloc.divide, lty=1, lwd=2, col="grey50")
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey50")
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey50")
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
@@ -388,11 +401,11 @@ x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
+abline(v=xloc.divide, lty=3, lwd=2)
 # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey50")
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey50")
 abline(h=0.05, lty=3, lwd=2)
 
 mtext("b)", side=3, adj=0, line=1)
@@ -420,15 +433,19 @@ xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
 xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
 xloc.divide <- xloc.divide[-length(xloc.divide)]
 
+xloc.line.lty <- c(1,3,1,1,1,1)
+xloc.line.col <- ifelse(xloc.line.lty==1, "grey50", "black")
+xloc.line <- data.frame(lty=xloc.line.lty, col=xloc.line.col)
+
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
+abline(v=xloc.divide, lty=xloc.line$lty, lwd=2, col=as.character(xloc.line$col))
 # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
 text(xloc.mgmtvars, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\nreduced", "grazing\napplied", "grazing\nreduced","agro-\nchemicals\nreduced","water\napplied","nest\nprotection\napplied","predator \ncontrol\napplied"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey50")
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey50")
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=0.05, lty=3, lwd=2)
@@ -544,10 +561,10 @@ x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid)-0.5,max(plotfinal$rowid)+0.2), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
+abline(v=xloc.divide, lty=1, lwd=2, col="grey50")
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey50")
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey50")
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=successlevel, lty=3, lwd=2)
@@ -583,11 +600,11 @@ x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid)-0.5,max(plotfinal$rowid)+0.2), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
+abline(v=xloc.divide, lty=3, lwd=2)
 # text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"))
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey50")
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey50")
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=0.05, lty=3, lwd=2)
@@ -615,15 +632,19 @@ xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
 xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
 xloc.divide <- xloc.divide[-length(xloc.divide)]
 
+xloc.line.lty <- c(3,1,3,1,1,3,1,1)
+xloc.line.col <- ifelse(xloc.line.lty==1, "grey50", "black")
+xloc.line <- data.frame(lty=xloc.line.lty, col=xloc.line.col)
+
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n")
 # axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5)
+abline(v=xloc.divide, lty=xloc.line$lty, lwd=2, col=as.character(xloc.line$col))
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\napplied","mowing\nreduced", "grazing\napplied", "grazing\nreduced","agro-\nchemicals\nreduced","water\napplied", "water\nreduced","nest\nprotection\napplied","predator \ncontrol\napplied"))
 
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey30")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey30")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="grey50")
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="grey50")
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
 abline(h=0.05, lty=3, lwd=2)
