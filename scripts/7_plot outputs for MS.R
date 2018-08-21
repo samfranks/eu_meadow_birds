@@ -14,6 +14,7 @@ set.seed(2)
 
 alphalevel <- 0.05
 successlevel <- 0.05
+high_res_figs <- TRUE # controls output as png (FALSE) or pdf (TRUE)
 
 # =================================  LOAD PACKAGES =================================
 
@@ -89,14 +90,14 @@ if (!cluster) {
 
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
-outputwd <- paste(parentwd, "output/revision Dec 2016", sep="/")
+outputwd <- paste(parentwd, "output/accepted Aug 2018", sep="/")
 workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
 # ==============================  SET OUTPUT DIRECTORY  ===================================
 
-setwd(outputwd)
+# setwd(outputwd)
 
 # ================================    MANAGEMENT VARIABLE NAMES    ===============================
 
@@ -139,7 +140,7 @@ names(n) <- c("Management intervention","n")
 partable <- merge(partable, n, sort=FALSE)
 
 # Write the parameter table
-write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 1_lme4.csv", row.names=FALSE)
+write.csv(format(partable, scientific=FALSE, digits=2),  paste(outputwd,"parameter table_analysis 1_lme4.csv", sep="/"), row.names=FALSE)
 
 
 
@@ -174,7 +175,13 @@ write.csv(rbind(fig1a,fig1b,fig1c), paste(outputwd, "Fig1_overall success of int
 
 # -------- Fig 1a: Plot policy (AES, site protection) interventions ---------
 
-png("Fig1_overall success of interventions.png", res=300, height=15, width=18, units="in", pointsize=22)
+if (!high_res_figs) {
+  png(paste(outputwd, "Fig1_overall success of interventions.png", sep="/"), res=300, height=15, width=18, units="in", pointsize=22)
+}
+
+if (high_res_figs) {
+  cairo_pdf(paste(outputwd, "Fig1_overall success of interventions.pdf", sep="/"), height=15, width=18, pointsize=22)
+}
 
 layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
 par(oma=c(3,5,1,1))
@@ -267,8 +274,14 @@ dev.off()
 # Fig 2b = AES level by species (Analysis 2a)
 # Fig 2c = management by species (Analysis 2a)
 
+if (!high_res_figs) {
+  png(paste(outputwd, "Fig2_intervention success_species.png", sep="/"), res=300, height=15, width=22, units="in", pointsize=22)
+}
+  
 
-png("Fig2_intervention success_species.png", res=300, height=15, width=22, units="in", pointsize=22)
+if (high_res_figs) {
+  cairo_pdf(paste(outputwd, "Fig2_intervention success_species.pdf", sep="/"), height=15, width=22, pointsize=22)
+}
 
 layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
 par(oma=c(3,5,3,1))
@@ -305,7 +318,7 @@ names(n) <- c("Management intervention","n")
 partable <- merge(partable, n, sort=FALSE)
 
 # Write the parameter table
-write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 2a_lme4.csv", row.names=FALSE)
+write.csv(format(partable, scientific=FALSE, digits=2),  paste(outputwd,"parameter table_analysis 2a_lme4.csv", sep="/"), row.names=FALSE)
 
 
 
@@ -468,8 +481,13 @@ dev.off()
 # Fig 3b = AES level by metric (Analysis 2b)
 # Fig 3c = management by metric (Analysis 2b)
 
+if (!high_res_figs) {
+  png(paste(outputwd,"Fig3_intervention success_metric.png",sep="/"), res=300, height=15, width=22, units="in", pointsize=22)
+}
 
-png("Fig3_intervention success_metric.png", res=300, height=15, width=22, units="in", pointsize=22)
+if (high_res_figs) {
+  cairo_pdf(paste(outputwd,"Fig3_intervention success_metric.pdf",sep="/"), height=15, width=22, pointsize=22)
+}
 
 layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
 par(oma=c(3,5,3,1))
@@ -506,7 +524,7 @@ names(n) <- c("Management intervention","n")
 partable <- merge(partable, n, sort=FALSE)
 
 # Write the parameter table
-write.csv(format(partable, scientific=FALSE, digits=2),  "parameter table_analysis 2b_lme4.csv", row.names=FALSE)
+write.csv(format(partable, scientific=FALSE, digits=2),  paste(outputwd,"parameter table_analysis 2b_lme4.csv",sep="/"), row.names=FALSE)
 
 
 
@@ -687,7 +705,13 @@ plotdat <- plotdat[order(plotdat$reserve.desig, plotdat$AE),]
 
 # ----- Fig 4 - AES x site protection in combination ----------
 
-png("Fig4_intervention success_AES x site protection.png", res=300, height=12, width=14, units="in", pointsize=20)
+if (!high_res_figs) {
+  png(paste(outputwd,"Fig4_intervention success_AES x site protection.png",sep="/"), res=300, height=12, width=14, units="in", pointsize=20)
+}
+
+if (high_res_figs) {
+  cairo_pdf(paste(outputwd,"Fig4_intervention success_AES x site protection.pdf",sep="/"), height=12, width=14, pointsize=20)
+}
 
 par(oma=c(3,5,0,1))
 par(mar=c(3,2,2,2))
@@ -718,10 +742,13 @@ dev.off()
 
 # ------------ Fig 5 - Average invervention combination success rates ----------------
 
+if (!high_res_figs) {
+  png(paste(outputwd,"Fig5_specific combination intervention success_average.png",sep="/"), res=300, height=10, width=20, units="in", pointsize=20)
+}
 
-setwd(outputwd)
-
-png("Fig5_specific combination intervention success_average.png", res=300, height=10, width=20, units="in", pointsize=20)
+if (high_res_figs) {
+  cairo_pdf(paste(outputwd,"Fig5_specific combination intervention success_average.pdf",sep="/"), height=10, width=20, pointsize=20)
+}
 
 plotdat <- readRDS(file=paste(workspacewd, "analysis 3b_average intervention plotting dataset.rds", sep="/"))
 
@@ -754,8 +781,6 @@ dev.off()
 # ===============  Fig S6 - Failed intervention probability ==================
 
 
-setwd(outputwd)
-
 moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1b.rds", sep="/"))
 mod <- readRDS(paste(workspacewd, "models_analysis 1b_lme4.rds", sep="/"))
 
@@ -784,7 +809,7 @@ write.csv(plotfinal, paste(outputwd, "FigS6_overall model results_failures.csv",
 
 ###-------- Output plot --------###
 
-png("FigS6_overall model results_failures.png", res=300, height=12, width=28, units="in", pointsize=20)
+png(paste(outputwd,"FigS6_overall model results_failures.png", sep="/"), res=300, height=12, width=28, units="in", pointsize=20)
 par(mar=c(7,6,2,2))
 
 x <- c(1:nrow(plotfinal))
@@ -810,9 +835,7 @@ dev.off()
 # ===============  Fig S6b - Ranked invervention combination success rates  ==================
 
 
-setwd(outputwd)
-
-png("FigS7_specific combination intervention success.png", res=300, height=15, width=30, units="in", pointsize=20)
+png(paste(outputwd,"FigS7_specific combination intervention success.png", sep="/"), res=300, height=15, width=30, units="in", pointsize=20)
 
 par(mfrow=c(2,1))
 
