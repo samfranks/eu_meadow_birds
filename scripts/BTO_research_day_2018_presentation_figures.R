@@ -54,7 +54,7 @@ if (!cluster) {
 scriptswd <- paste(parentwd, "scripts", sep="/")
 datawd <- paste(parentwd, "data", sep="/")
 outputwd <- paste(parentwd, "output/presentation", sep="/")
-workspacewd <- paste(parentwd, "workspaces", sep="/")
+workspacewd <- paste(parentwd, "workspaces/revision Dec 2016", sep="/")
 
 options(digits=6)
 
@@ -153,35 +153,6 @@ dev.off()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# create an ordered factor of metrics for this summary (particularly for productivity so it's nest, chick, nest+chick)
-# don't want to change this factor to ordered for the analysis though, because it will be treated differently than a regular factor in the model
-
-d1.metric <- dat
-d1.metric$new.metric <- factor(d1.metric$new.metric, c("abundance/occupancy","abundance/occupancy change","productivity","recruitment","survival"), ordered=TRUE)
-
-metricsum <- table(unique(d1.metric[,c("reference","new.metric")])$new.metric)
-metricsum.prop <- metricsum/num.studies
-
-
 #---------- Proportion of studies by specific metric (for productivity)----------
 
 # create an ordered factor of metrics for this summary (particularly for productivity so it's nest, chick, nest+chick)
@@ -246,12 +217,13 @@ png(paste(outputwd, "summary_proportion of studies by intervention.png", sep="/"
 
 par(mar=c(6,5,2,1))
 x <- barplot(intervensum.prop, space=0.1, las=1, col="white", ylim=c(0,0.6), xaxt="n", col.axis="white", fg="white")
-text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","fertiliser/\npesticides","nest\nprotection","predator\ncontrol","water\nmanagement"), col="white")
+text(x, par("usr")[3]-0.02, srt = 0, pos=1, xpd = TRUE, labels = c("AES","site\nprotection", "mowing","grazing","agro-\nchemicals","water\nmanagement","nest\nprotection","predator\ncontrol"), col="white")
 title(xlab="Intervention", font=2, cex.lab=1.2, line=4.5, col.lab="white")
 title(ylab=paste("Proportion of total studies (n=", num.studies, ")", sep=""), font=2, cex.lab=1.2, line=3, col.lab="white")
 text(x, intervensum.prop+0.02, intervensum, col="white") # sample sizes for each intervention type
 
 dev.off()
+
 
 
 #=================================  EFFECTIVENESS OF INTERVENTIONS  ===============================
@@ -301,32 +273,26 @@ easyPredCI <- function(model,newdata,alpha=alphalevel) {
 
 setwd(outputwd)
 
+
 # ================================    MANAGEMENT VARIABLE NAMES    ===============================
 
 
-mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","nest.protect","predator.control","water")
+mgmtvars <- c("AE","AE.level","reserve.desig","mowing","grazing","fertpest","water","nest.protect","predator.control")
 
 
-# ==============================  FIGURE 1  ===================================
+# ==============================  FIGURE 1ab - overall success of interventions ===================================
 
 # Fig 1a = AES, site protection (Analysis 0a)
 # Fig 1b = basic vs higher AES (Analysis 0a)
 # Fig 1c = combined effects of AES and site protection (Analysis 2a)
 
 
-png("Fig1_AES_site protection.png", res=300, height=10, width=18, units="in", pointsize=24, bg="transparent")
-
-par(mfrow=c(1,2), oma=c(3,5,1,1))
-
-
-# ==== Fig 1a and 1b ====
-
-
 # -------    Load data and model   -----------
 
 
-moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/")) #[c("AE","reserve.desig")]
-mod <- readRDS(paste(workspacewd, "models_0a_lme4.rds", sep="/")) #[c("AE","reserve.desig")]
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 1.rds", sep="/")) 
+mod <- readRDS(paste(workspacewd, "models_analysis 1_lme4.rds", sep="/"))
+
 
 
 # -------   Produce plotting dataset predictions   ---------
@@ -352,44 +318,46 @@ names(plotdat) <- mgmtvars #c("AE","reserve.desig")
 
 fig1a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
 fig1b <- do.call(rbind, plotdat[c("AE.level")])
+fig1c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
 
 
 
-### ---- Fig 1a: Policy level interventions plot ----
+# -------- Fig 1a: Plot policy (AES, site protection) interventions ---------
 
+png("Fig1_AES_site protection.png", res=300, height=10, width=18, units="in", pointsize=24, bg="transparent")
 
-par(mar=c(3,2,2,2))
+par(mfrow=c(1,2), oma=c(3,5,1,1))
+par(mar=c(3,3,3,4))
 
 plotfinal <- fig1a
 
-x <- c(1:nrow(plotfinal))
+x <- c(2:3)
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5), col.axis="white", fg="white", col="white")
-# axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
-# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.2, line=3)
+
+
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site\nprotection"), col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=2)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=2)
+
 abline(h=successlevel, lty=3, lwd=2, col="white")
 
 
 
-### ---- Fig 1b: AES level interventions plot ----
 
+# -------- Fig 1b: plot AES levels ---------
 
-par(mar=c(3,2,2,2))
+par(mar=c(3,3,3,4))
 
 plotfinal <- fig1b
 
-x <- c(1:nrow(plotfinal))
+x <- c(2:3)
 
 plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5), col.axis="white", fg="white", col="white")
-# axis(1, x, labels=rep("",nrow(plotfinal)), tick=TRUE)
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("basic-level AES","higher-level AES"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("basic\nAES","higher\nAES"), col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=2)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=2)
 # title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
 # title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1, line=3)
 abline(h=successlevel, lty=3, lwd=2, col="white")
@@ -398,6 +366,10 @@ mtext("Intervention", side=1, outer=TRUE, line=1.5, cex=1.2, col="white")
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5, col="white")
 
 dev.off()
+
+
+
+
 
 
 # # ==== Fig 1c ====
@@ -454,19 +426,10 @@ dev.off()
 # ==============================  FIGURE 2 - by species ===================================
 
 
-
-png("Fig2_AES_site protection_species.png", res=300, height=10, width=18, units="in", pointsize=20, bg="transparent")
-
-par(mfcol=c(1,2), oma=c(3,5,3,1))
-
-
-# ==== Fig 2a and 2b - SPECIES ====
-
-
 # -------    Load data and model   -----------
 
-moddat <- readRDS(paste(workspacewd, "model dataset_0b.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 2a.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_analysis 2a_blme.rds", sep="/"))
 
 
 # -------   Produce plotting dataset predictions   ---------
@@ -488,13 +451,18 @@ for (i in 1:length(mod)) {
 
 names(plotdat) <- mgmtvars
 
+
 fig2a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
 fig2b <- do.call(rbind, plotdat[c("AE.level")])
+fig2c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
 
 
 ### ---- Fig 2a: Policy level interventions plot ----
 
+png("Fig2_AES_site protection_species.png", res=300, height=10, width=18, units="in", pointsize=20, bg="transparent")
+
+par(mfcol=c(1,2), oma=c(3,5,3,1))
 
 par(mar=c(3,3,2,2))
 
@@ -502,8 +470,8 @@ plotfinal <- fig2a
 maxspecies <- levels(do.call(rbind, plotdat)$species)
 n <- length(maxspecies)
 
-set.seed(2)
-pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(c("blue","darkmagenta","orange"), replace=TRUE, n))
+set.seed(1)
+pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(c("lightseagreen","darkmagenta","darkorange"), replace=TRUE, n))
 pch
 plotfinal <- merge(plotfinal,pch, by="species")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
@@ -516,14 +484,13 @@ xloc.divide <- xloc.divide[-length(xloc.divide)]
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n", col.axis="white", fg="white", col="white")
-# axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
+
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
-# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
 abline(h=successlevel, lty=3, lwd=2, col="white")
+abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
 
 legend("topleft", legend=levels(plotfinal$species), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.05), text.col="white", col="white")
 
@@ -540,8 +507,8 @@ plotfinal <- fig2b
 maxspecies <- levels(do.call(rbind, plotdat)$species)
 n <- length(maxspecies)
 
-set.seed(2)
-pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(c("blue","darkmagenta","orange"), replace=TRUE, n))
+set.seed(1)
+pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(c("lightseagreen","darkmagenta","darkorange"), replace=TRUE, n))
 pch
 plotfinal <- merge(plotfinal,pch, by="species")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
@@ -554,14 +521,13 @@ xloc.divide <- xloc.divide[-length(xloc.divide)]
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n", col.axis="white", fg="white", col="white")
-# axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
-# text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","basic-level \nAES","higher-level \nAES","nature reserve/ \ndesignation", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/ \npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","more water \napplied"))
-text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
-abline(h=0.05, lty=3, lwd=2, col="white")
 
+text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"), col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
+abline(h=0.05, lty=3, lwd=2, col="white")
+abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
 
 dev.off()
 
@@ -571,16 +537,10 @@ dev.off()
 
 
 
-png("Fig3_AES_site protection_metric.png", res=300, height=10, width=18, units="in", pointsize=20, bg="transparent")
-
-par(mfcol=c(1,2), oma=c(3,5,3,1))
-
-
-
 # -------    Load data and model   -----------
 
-moddat <- readRDS(paste(workspacewd, "model dataset_0c.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
+moddat <- readRDS(paste(workspacewd, "model dataset_analysis 2b.rds", sep="/"))
+mod <- readRDS(paste(workspacewd, "models_analysis 2b_blme.rds", sep="/"))
 
 
 # -------   Produce plotting dataset predictions   ---------
@@ -602,22 +562,27 @@ for (i in 1:length(mod)) {
 
 names(plotdat) <- mgmtvars
 
-fig2c <- do.call(rbind, plotdat[c("AE","reserve.desig")])
-fig2d <- do.call(rbind, plotdat[c("AE.level")])
+fig3a <- do.call(rbind, plotdat[c("AE","reserve.desig")])
+fig3b <- do.call(rbind, plotdat[c("AE.level")])
+fig3c <- do.call(rbind, plotdat[c("mowing","grazing","fertpest","water","nest.protect","predator.control")])
 
 
 
 ### ---- Fig 2c: Policy level interventions plot ----
 
 
+png("Fig3_AES_site protection_metric.png", res=300, height=10, width=18, units="in", pointsize=20, bg="transparent")
+
+par(mfcol=c(1,2), oma=c(3,5,3,1))
+
 par(mar=c(3,3,2,2))
 
-plotfinal <- fig2c
+plotfinal <- fig3a
 maxmetric <- levels(do.call(rbind, plotdat)$metric)
 n <- length(maxmetric)
 
 set.seed(2)
-pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(c("blue","darkmagenta","orange"), n))
+pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(c("lightseagreen","darkmagenta","darkorange"), n))
 pch
 plotfinal <- merge(plotfinal,pch, by="metric")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$metric),]
@@ -630,16 +595,15 @@ xloc.divide <- xloc.divide[-length(xloc.divide)]
 x <- c(1:nrow(plotfinal))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid)-0.5,max(plotfinal$rowid)+0.2), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n", col.axis="white", fg="white", col="white")
-# axis(1, xloc.mgmtvars, labels=rep("",length(xloc.mgmtvars)), tick=TRUE)
-abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
-text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
-# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
-abline(h=successlevel, lty=3, lwd=2, col="white")
 
-legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.05), text.col="white", col="white")
+text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("AES","site protection"), col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
+abline(h=successlevel, lty=3, lwd=2, col="white")
+abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
+
+legend("topleft", legend=c("count","trend","productivity"), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.05), text.col="white", col="white")
 
 mtext("Intervention", side=1, outer=TRUE, line=0.5, cex=1.2, col="white")
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5, col="white")
@@ -649,12 +613,12 @@ mtext("Predicted probability of success \n (significant positive impact)", side=
 
 par(mar=c(3,3,2,2))
 
-plotfinal <- fig2d
+plotfinal <- fig3b
 maxmetric <- levels(do.call(rbind, plotdat)$metric)
 n <- length(maxmetric)
 
 set.seed(2)
-pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(c("blue","darkmagenta","orange"), n))
+pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(c("lightseagreen","darkmagenta","darkorange"), n))
 pch
 plotfinal <- merge(plotfinal,pch, by="metric")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$metric),]
@@ -667,10 +631,12 @@ xloc.divide <- xloc.divide[-length(xloc.divide)]
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid)-0.5,max(plotfinal$rowid)+0.2), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n", col.axis="white", fg="white", col="white")
-abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
+
 text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("basic AES","higher AES"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
+abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
 abline(h=0.05, lty=3, lwd=2, col="white")
 
 
@@ -681,60 +647,37 @@ dev.off()
 # ==============================  FIGURE 4 - habitat management ===================================
 
 
+# ==== OVERALL ====
+
+### ---- Fig 1c: Specific management interventions plot ----
+
 png("Fig4_specifc management_overall.png", res=300, height=10, width=18, units="in", pointsize=20, "transparent")
 
 par(oma=c(3,5,1,0))
 
-
-# ==== OVERALL ====
-
-
-# -------    Load data and model   -----------
-
-
-moddat <- readRDS(paste(workspacewd, "model dataset_0a.rds", sep="/")) #[c("AE","reserve.desig")]
-mod <- readRDS(paste(workspacewd, "models_0a_lme4.rds", sep="/")) #[c("AE","reserve.desig")]
-
-
-# -------   Produce plotting dataset predictions   ---------
-
-plotdat <- list()
-n <- list()
-
-for (i in 1:length(mod)) {
-  
-  # dataset to predict over is the same as the original dataset
-  pred <- predict(mod[[i]], type="response", re.form=NA)
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
-  n[i] <- nrow(moddat[[i]])
-  
-  fits <- data.frame(pred,pred.CI,lit.type=moddat[[i]][,"lit.type"],mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]))
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar), mean)
-  
-}
-
-names(plotdat) <- mgmtvars #c("AE","reserve.desig")
-
-fig3a <- do.call(rbind, plotdat[4:9])
-
-
-### ---- Fig 3a: Specific management interventions plot ----
-
-
 par(mar=c(5,3,3,1))
 
-plotfinal <- fig3a
+plotfinal <- fig1c
 
 x <- c(1:nrow(plotfinal))
 
-plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x)-0.5, max(x)+0.5), col.axis="white", fg="white", col="white")
-text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing \napplied", "mowing \nreduced", "grazing \napplied", "grazing \nreduced", "fertiliser/\npesticides \napplied","fertiliser/\npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","water \napplied", "water \nreduced"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
-abline(h=successlevel, lty=3, lwd=2, col="white")
+plotfinal$rowid <- 1:nrow(plotfinal)
 
+xloc.divide <- x+0.5
+xloc.divide <- xloc.divide[-length(xloc.divide)]
+
+xloc.line.lty <- c(3,1,3,1,3,1,3,1,1)
+xloc.line.col <- ifelse(xloc.line.lty==1, "white", "grey50")
+xloc.line <- data.frame(lty=xloc.line.lty, col=xloc.line.col)
+
+plot(plotfinal$pred~x, ylim=c(0,1), pch=16, cex=2, xaxt="n", xlab="", ylab="", las=1, bty="n", xlim=c(min(x), max(x)), col.axis="white", fg="white", col="white")
+text(x, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\napplied", "mowing\nreduced", "grazing\napplied", "grazing\nreduced", "agro-\nchemicals\napplied","agro-\nchemicals\nreduced","water\napplied","water\nreduced","nest\nprotection\napplied", "predator\ncontrol\napplied"), col="white")
+
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
+abline(h=successlevel, lty=3, lwd=2, col="white")
+abline(v=xloc.divide, lty=xloc.line$lty, lwd=2, col=as.character(xloc.line$col))
 
 mtext("Intervention", side=1, outer=TRUE, line=0.5, cex=1.2, col="white")
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5, col="white")
@@ -746,50 +689,20 @@ dev.off()
 # ====  SPECIES ====
 
 
-png("Fig5_specifc management_species.png", res=300, height=9, width=18, units="in", pointsize=20, "transparent")
+### ---- Fig 2c: Specific management interventions plot - SPECIES ----
+
+png("Fig5_specifc management_species.png", res=300, height=10, width=20, units="in", pointsize=20, "transparent")
 
 par(oma=c(3,5,1,0))
 
-# -------    Load data and model   -----------
-
-moddat <- readRDS(paste(workspacewd, "model dataset_0b.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_0b_blme.rds", sep="/"))
-
-
-# -------   Produce plotting dataset predictions   ---------
-
-plotdat <- list()
-
-for (i in 1:length(mod)) {
-  
-  # dataset to predict over is the same as the original dataset
-  pred <- predict(mod[[i]], type="response", re.form=NA)
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
-  
-  fits <- data.frame(pred, pred.CI, species=moddat[[i]]$species, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, species=unique.fits$species), mean)
-  
-}
-
-names(plotdat) <- mgmtvars
-
-fig3b <- do.call(rbind, plotdat[4:9])
-
-
-### ---- Fig 3b: Specific management interventions plot - SPECIES ----
-
-
 par(mar=c(5,3,3,0))
 
-plotfinal <- fig3b
+plotfinal <- fig2c
 maxspecies <- levels(do.call(rbind, plotdat)$species)
 n <- length(maxspecies)
 
-set.seed(2)
-pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(c("blue","darkmagenta","orange"), replace=TRUE, n))
-
+set.seed(1)
+pch <- data.frame(species=maxspecies, pch=rep(c(21,22,23,24,25),length.out=n), col=sample(c("lightseagreen","darkmagenta","darkorange"), replace=TRUE, n))
 pch
 plotfinal <- merge(plotfinal,pch, by="species")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$species),]
@@ -799,17 +712,20 @@ xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
 xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
 xloc.divide <- xloc.divide[-length(xloc.divide)]
 
+xloc.line.lty <- c(1,3,1,1,1,1)
+xloc.line.col <- ifelse(xloc.line.lty==1, "white", "grey50")
+xloc.line <- data.frame(lty=xloc.line.lty, col=xloc.line.col)
+
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n", col.axis="white", fg="white", col="white")
-abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
-text(xloc.mgmtvars, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing \nreduced", "grazing \napplied", "grazing \nreduced","fertiliser/\npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","water \napplied"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
-# title(xlab="Intervention", cex.lab=1.5, font=2, line=5)
-# title(ylab="Predicted probability of success \n (significant positive impact)", cex.lab=1.5, font=2, line=3)
-abline(h=0.05, lty=3, lwd=2, col="white")
 
+text(xloc.mgmtvars, par("usr")[3]-0.03, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\nreduced", "grazing\napplied", "grazing\nreduced","agro-\nchemicals\nreduced","water\napplied","nest\nprotection\napplied","predator \ncontrol\napplied"), col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
+abline(h=successlevel, lty=3, lwd=2, col="white")
+abline(v=xloc.divide, lty=xloc.line$lty, lwd=2, col=as.character(xloc.line$col))
 
 legend("topleft", legend=pch$species, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.15), text.col="white", col="white")
 
@@ -823,50 +739,22 @@ dev.off()
 
 # ====  METRIC ====
 
+# -------    Load data and model   -----------
+
+### ---- Fig 3c: Specific management interventions plot - METRIC ----
+
 png("Fig6_specifc management_metric.png", res=300, height=9, width=18, units="in", pointsize=20, "transparent")
 
 par(oma=c(3,5,1,0))
 
-
-# -------    Load data and model   -----------
-
-moddat <- readRDS(paste(workspacewd, "model dataset_0c.rds", sep="/"))
-mod <- readRDS(paste(workspacewd, "models_0c_blme.rds", sep="/"))
-
-
-# -------   Produce plotting dataset predictions   ---------
-
-plotdat <- list()
-
-for (i in 1:length(mod)) {
-  
-  # dataset to predict over is the same as the original dataset
-  pred <- predict(mod[[i]], type="response", re.form=NA)
-  pred.CI <- easyPredCI(mod[[i]], moddat[[i]])
-  
-  fits <- data.frame(pred, pred.CI, metric=moddat[[i]]$new.metric, mgmtvar=paste(mgmtvars[i], moddat[[i]][,mgmtvars[i]]), mgmt.type=i)
-  unique.fits <- unique(fits)
-  
-  plotdat[[i]] <- aggregate(unique.fits[,c("pred","lwr","upr")], by=list(mgmtvar=unique.fits$mgmtvar, mgmt.type=unique.fits$mgmt.type, metric=unique.fits$metric), mean)
-  
-}
-
-names(plotdat) <- mgmtvars
-
-fig3c <- do.call(rbind, plotdat[4:9])
-
-
-### ---- Fig 3c: Specific management interventions plot - METRIC ----
-
-
-par(mar=c(5,3,3,0))
+par(mar=c(5,3,3,2))
 
 plotfinal <- fig3c
 maxmetric <- levels(do.call(rbind, plotdat)$metric)
 n <- length(maxmetric)
 
 set.seed(2)
-pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(c("blue","darkmagenta","orange"), n))
+pch <- data.frame(metric=maxmetric, pch=rep(c(21,22,23),length.out=n), col=sample(c("lightseagreen","darkmagenta","darkorange"), n))
 pch
 plotfinal <- merge(plotfinal,pch, by="metric")
 plotfinal <- plotfinal[order(plotfinal$mgmtvar,plotfinal$metric),]
@@ -876,18 +764,23 @@ xloc.mgmtvars <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), mean)$x
 xloc.divide <- aggregate(plotfinal$rowid, list(plotfinal$mgmtvar), max)$x + 0.5
 xloc.divide <- xloc.divide[-length(xloc.divide)]
 
+xloc.line.lty <- c(3,1,3,1,1,3,1,1)
+xloc.line.col <- ifelse(xloc.line.lty==1, "white", "grey50")
+xloc.line <- data.frame(lty=xloc.line.lty, col=xloc.line.col)
+
 x <- c(min(plotfinal$rowid):max(plotfinal$rowid))
 
+
 plot(plotfinal$pred~x, ylim=c(0,1), xlim=c(min(plotfinal$rowid),max(plotfinal$rowid)), pch=plotfinal$pch, bg=as.character(plotfinal$col), cex=1.8, xaxt="n", xlab="", ylab="", las=1, bty="n", col.axis="white", fg="white", col="white")
-abline(v=xloc.divide, lty=3, lwd=1.5, col="white")
-text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("mowing \napplied","mowing \nreduced", "grazing \napplied", "grazing \nreduced","fertiliser/\npesticides \nreduced","nest \nprotection \napplied","predator \ncontrol \napplied","water \napplied", "water \nreduced"), col="white")
-arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white")
-arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white")
+
+text(xloc.mgmtvars, par("usr")[3]-0.05, srt = 0, pos=1, xpd = TRUE, labels=c("mowing\napplied","mowing\nreduced", "grazing\napplied", "grazing\nreduced","agro-\nchemicals\nreduced","water\napplied", "water\nreduced","nest\nprotection\napplied","predator \ncontrol\napplied"), col="white")
+arrows(x, plotfinal$pred, x, plotfinal$lwr, angle=90, length=0.05, col="white", lwd=1.5)
+arrows(x, plotfinal$pred, x, plotfinal$upr, angle=90, length=0.05, col="white", lwd=1.5)
+
 abline(h=0.05, lty=3, lwd=2, col="white")
+abline(v=xloc.divide, lty=xloc.line$lty, lwd=2, col=as.character(xloc.line$col))
 
-
-legend("topleft", legend=pch$metric, pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.2), text.col="white", col="white")
-
+legend("topleft", legend=c("count","trend","productivity"), pch=pch$pch, pt.bg=as.character(pch$col), pt.cex=1.2, bty="n", xpd=TRUE, inset=c(0.01,-0.2), text.col="white", col="white")
 
 mtext("Intervention", side=1, outer=TRUE, at=0.35, line=-1, cex=1.2, col="white")
 mtext("Predicted probability of success \n (significant positive impact)", side=2, outer=TRUE, cex=1.2, line=1.5, col="white")
